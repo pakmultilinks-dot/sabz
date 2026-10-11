@@ -1,5 +1,9 @@
 frames/
 hidden_files/
 files/
+crons/
 GOAL.md
 __pycache__/
+*.log
+*.npz
+*.tmp.npz

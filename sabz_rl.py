@@ -95,6 +95,135 @@ class DQN:
         return float(np.mean((q[np.arange(n), a] - y) ** 2))
 
 
+CKPT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                   "sabz_dqn_ckpt.npz")
+BEST = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                    "sabz_dqn_best.npz")
+DONE_FLAG = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         "rl_train.done")
+
+
+def save_ckpt(path, net, tgt, eps, episode, best_score):
+    d = {f"net_{k}": v for k, v in net.p.items()}
+    d.update({f"tgt_{k}": v for k, v in tgt.p.items()})
+    d.update({f"m_{k}": v for k, v in net.m.items()})
+    d.update({f"v_{k}": v for k, v in net.v.items()})
+    d["adam_t"] = np.array([net.t])
+    d["eps"] = np.array([eps])
+    d["episode"] = np.array([episode])
+    d["best_score"] = np.array([best_score])
+    tmp = path + ".tmp"
+    with open(tmp, "wb") as f:
+        np.savez(f, **d)
+    os.replace(tmp, path)
+
+
+def load_ckpt(path, net, tgt):
+    d = np.load(path)
+    for k in net.p:
+        net.p[k] = d[f"net_{k}"]
+        tgt.p[k] = d[f"tgt_{k}"]
+        net.m[k] = d[f"m_{k}"]
+        net.v[k] = d[f"v_{k}"]
+    net.t = int(d["adam_t"][0])
+    return float(d["eps"][0]), int(d["episode"][0]), float(d["best_score"][0])
+
+
+def quick_eval(net):
+    """Greedy policy score: mean delay, lower is better. Fast eval."""
+    def rl_decide(state, prio):
+        q = [state["queue"][a] / 20.0 for a in ("N", "S", "E", "W")]
+        ap = [state["approaching"][a] / 10.0 for a in ("N", "S", "E", "W")]
+        s = np.array(q + ap + [1.0 if state["phase"] == "NS" else 0.0,
+                              state["green_elapsed"] / MAX_GREEN])
+        return "switch" if net.act(s) == 1 else "stay"
+
+    def asym(a, t):
+        return 0.25 if a in ("N", "S") else 0.035
+
+    def bal(a, t):
+        return 0.22
+
+    ds = []
+    for rates in (asym, bal):
+        for sd in (11, 22):
+            m = run_v2(rl_decide, rates, T=1800.0, seed=sd, safety_on=True)
+            ds.append(m["avg_delay_s"])
+    return float(np.mean(ds))
+
+
+def bc_pretrain(net, episodes=300, T=900.0, lr=3e-3, batch=256):
+    """Behavioral cloning: teach the net to imitate the actuated controller.
+
+    Gives our network a strong, sensible starting policy in minutes.
+    DQN then refines it further. (Supervised cross-entropy on the Q-head
+    treated as logits.)
+    """
+    from sabz_sim2 import actuated_decide
+    rng = np.random.default_rng(11)
+    Xs, Ys = [], []
+    for ep in range(episodes):
+        rates, sched = scenario_sampler(rng)
+        sim = IntersectionV2(seed=int(rng.integers(1e9)), safety_on=True)
+        s = get_state(sim)
+        while sim.t < T:
+            st = {"t": sim.t, "phase": sim.phase,
+                  "green_elapsed": sim.green_elapsed,
+                  "queue": {a: len(sim.queue_of(a)) for a in
+                            ("N", "S", "E", "W")},
+                  "approaching": {a: len(sim.approaching(a)) for a in
+                                  ("N", "S", "E", "W")},
+                  "dilemma": sim.dilemma(), "obs": sim.observe()}
+            a = 1 if actuated_decide(st, sched(sim.t) if sched else None) \
+                == "switch" else 0
+            # small exploration so the net sees off-policy states too
+            if rng.random() < 0.15:
+                a = int(rng.integers(2))
+            Xs.append(s)
+            Ys.append(a)
+            sim.step(rates,
+                     lambda st2, pr: "switch" if a == 1 else "stay",
+                     schedule=sched)
+            s = get_state(sim)
+    X = np.array(Xs)
+    Y = np.array(Ys)
+    n = len(X)
+    # Adam from scratch for the supervised phase
+    m = {k: np.zeros_like(v) for k, v in net.p.items()}
+    v = {k: np.zeros_like(v) for k, v in net.p.items()}
+    for step in range(1, 2001):
+        idx = rng.integers(n, size=batch)
+        xb, yb = X[idx], Y[idx]
+        q, (x, z1, a1, z2, a2) = net.forward(xb)
+        e = np.exp(q - q.max(1, keepdims=True))
+        p = e / e.sum(1, keepdims=True)
+        loss = -np.log(p[np.arange(batch), yb] + 1e-12).mean()
+        dq = p
+        dq[np.arange(batch), yb] -= 1
+        dq /= batch
+        dW3 = a2.T @ dq
+        db3 = dq.sum(0)
+        dz2 = (dq @ net.p["W3"].T) * (z2 > 0)
+        dW2 = a1.T @ dz2
+        db2 = dz2.sum(0)
+        dz1 = (dz2 @ net.p["W2"].T) * (z1 > 0)
+        dW1 = x.T @ dz1
+        db1 = dz1.sum(0)
+        g = {"W1": dW1, "b1": db1, "W2": dW2, "b2": db2,
+             "W3": dW3, "b3": db3}
+        b1, b2, eps_ = 0.9, 0.999, 1e-8
+        for k in net.p:
+            m[k] = b1 * m[k] + (1 - b1) * g[k]
+            v[k] = b2 * v[k] + (1 - b2) * g[k] ** 2
+            net.p[k] -= lr * (m[k] / (1 - b1 ** step)) / (
+                np.sqrt(v[k] / (1 - b2 ** step)) + eps_)
+        if step % 500 == 0:
+            pred = net.forward(X[:2000])[0].argmax(1)
+            acc = (pred == Y[:2000]).mean()
+            print(f"bc step {step} loss={loss:.3f} acc={acc:.3f}", flush=True)
+    return net
+
+
 def scenario_sampler(rng):
     r = rng.random()
     if r < 0.4:
@@ -109,19 +238,23 @@ def scenario_sampler(rng):
     return rates, sched
 
 
-def train(episodes=1200, T=900.0, out="sabz_dqn.npz", log_every=100):
+def train(episodes=120000, T=900.0, out="sabz_dqn.npz", log_every=100,
+          ckpt_every=500, eval_every=2000):
     rng = np.random.default_rng(7)
     net, tgt = DQN(seed=1), DQN(seed=1)
+    eps, start_ep, best_score = EPS0, 0, 1e9
+    if os.path.exists(CKPT):
+        eps, start_ep, best_score = load_ckpt(CKPT, net, tgt)
+        print(f"resumed from episode {start_ep} (eps={eps:.3f}, "
+              f"best={best_score:.1f}s)", flush=True)
     buf_s, buf_a, buf_r, buf_s2, buf_d = [], [], [], [], []
-    eps = EPS0
     steps = 0
     ep_rewards = []
-    for ep in range(episodes):
+    for ep in range(start_ep, episodes):
         rates, sched = scenario_sampler(rng)
         sim = IntersectionV2(seed=int(rng.integers(1e9)), safety_on=True)
         s = get_state(sim)
         ep_r = 0.0
-        sw_before = 0
         while sim.t < T:
             a = int(rng.integers(2)) if rng.random() < eps \
                 else net.act(s)
@@ -155,13 +288,27 @@ def train(episodes=1200, T=900.0, out="sabz_dqn.npz", log_every=100):
                     np.array([buf_d[i] for i in idx]), tgt)
             if steps % TARGET_SYNC == 0:
                 tgt.copy_from(net)
-        eps = max(EPS1, eps * (EPS_DECAY ** 1))
+        eps = max(EPS1, eps * EPS_DECAY)
         ep_rewards.append(ep_r)
-        if (ep + 1) % log_every == 0:
-            print(f"ep {ep+1}/{episodes} eps={eps:.3f} "
-                  f"avg_r(last {log_every})={np.mean(ep_rewards[-log_every:]):.1f}",
-                  flush=True)
+        done_ep = ep + 1
+        if done_ep % ckpt_every == 0:
+            save_ckpt(CKPT, net, tgt, eps, done_ep, best_score)
+        if done_ep % eval_every == 0:
+            score = quick_eval(net)
+            if score < best_score:
+                best_score = score
+                np.savez(BEST, **{f"p_{k}": v for k, v in net.p.items()})
+                print(f"ep {done_ep}: NEW BEST eval delay {score:.1f}s",
+                      flush=True)
+            save_ckpt(CKPT, net, tgt, eps, done_ep, best_score)
+        if done_ep % log_every == 0:
+            print(f"ep {done_ep}/{episodes} eps={eps:.3f} "
+                  f"avg_r(last {log_every})={np.mean(ep_rewards[-log_every:]):.1f} "
+                  f"best={best_score:.1f}s", flush=True)
     np.savez(out, **{f"p_{k}": v for k, v in net.p.items()})
+    if os.path.exists(BEST):
+        os.replace(BEST, out)
+    open(DONE_FLAG, "w").write(f"episodes={episodes}\n")
     print("saved", out)
     return out
 
@@ -207,5 +354,14 @@ if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == "eval":
         evaluate("sabz_dqn.npz")
+    elif len(sys.argv) > 1 and sys.argv[1] == "bc":
+        net = DQN(seed=1)
+        bc_pretrain(net)
+        np.savez("sabz_dqn_bc.npz",
+                 **{f"p_{k}": v for k, v in net.p.items()})
+        tgt = DQN(seed=1)
+        tgt.copy_from(net)
+        save_ckpt(CKPT, net, tgt, 0.3, 0, 1e9)
+        print("BC done; checkpoint seeded for DQN refinement")
     else:
         train()
