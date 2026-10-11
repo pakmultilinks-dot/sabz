@@ -1,0 +1,5 @@
+1. Adaptive Traffic Signal Control
+2. Computer Vision Vehicle Detection
+3. Smart Urban Mobility
+4. Traffic Congestion Reduction
+5. Edge AI for Smart Cities
