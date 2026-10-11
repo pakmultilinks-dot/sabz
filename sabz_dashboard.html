@@ -230,40 +230,71 @@ const SCEN={
 let scen="asymmetric", speed=8, paused=false;
 const simF=new Sim(1234,"fixed"), simS=new Sim(1234,"sabz");
 function fmt(n,d){ return n.toLocaleString("en-US",{maximumFractionDigits:d||0}); }
-function draw(cv,sim,title,color){
+function draw(cv,sim){
   const c=cv.getContext("2d"), W=cv.width, H=cv.height;
   c.clearRect(0,0,W,H);
-  const cx=W/2, cy=H/2-10, S=11; // px per meter-ish scale
-  c.fillStyle="#1b2742";
-  c.fillRect(0,cy-16,W,32); c.fillRect(cx-16,0,32,H); // roads
-  c.fillStyle="#0e1626"; c.fillRect(cx-16,cy-16,32,32);
-  c.strokeStyle="#3b4a6b"; c.setLineDash([6,6]); c.beginPath();
-  c.moveTo(0,cy); c.lineTo(cx-18,cy); c.moveTo(cx+18,cy); c.lineTo(W,cy);
-  c.moveTo(cx,0); c.lineTo(cx,cy-18); c.moveTo(cx,cy+18); c.lineTo(cx,H); c.stroke();
+  const cx=W/2, cy=H/2-6;
+  const SC=1.7, STOP=26, MAXD=125;
+  // roads
+  c.fillStyle="#2b3a5c";
+  c.fillRect(0,cy-26,W,52); c.fillRect(cx-26,0,52,H);
+  c.fillStyle="#223052"; c.fillRect(cx-26,cy-26,52,52);
+  // edge lines
+  c.strokeStyle="#4d628f"; c.lineWidth=2; c.setLineDash([]);
+  c.strokeRect(1,cy-26,W-2,52); c.strokeRect(cx-26,1,52,H-2);
+  // center dashes
+  c.strokeStyle="#9fb2d8"; c.lineWidth=1.5; c.setLineDash([9,8]); c.beginPath();
+  c.moveTo(0,cy); c.lineTo(cx-30,cy); c.moveTo(cx+30,cy); c.lineTo(W,cy);
+  c.moveTo(cx,0); c.lineTo(cx,cy-30); c.moveTo(cx,cy+30); c.lineTo(cx,H); c.stroke();
   c.setLineDash([]);
-  const carC="#f6e05e";
-  function stack(a,x0,y0,dx,dy){
-    const vs=sim.veh[a].filter(v=>v.q||v.dist<110).sort((p,q2)=>q2.dist-p.dist);
-    let i=0;
-    for(const v of vs){ if(i>=14) break;
-      const px=cx+x0+dx*i*1.15, py=cy+y0+dy*i*1.15;
-      c.fillStyle=v.q?"#f6e05e":"#7fb3ff";
-      c.fillRect(px-7,py-4,14,8); i++; }
-    const extra=sim.q[a]-i;
-    if(extra>0){ c.fillStyle="#93a1c0"; c.font="11px sans-serif";
-      c.fillText("+"+extra, cx+x0+dx*i*1.15-7, cy+y0+dy*i*1.15+4); }
+  // dilemma-zone tint on the green approaches
+  if(!sim.trans){
+    c.fillStyle="rgba(248,113,113,0.13)";
+    const dz=P.DIZ*SC;
+    if(sim.phase==="NS"){
+      c.fillRect(cx-26,cy-STOP-dz,52,dz); c.fillRect(cx-26,cy+STOP,52,dz);
+    }else{
+      c.fillRect(cx+STOP,cy-26,dz,52); c.fillRect(cx-STOP-dz,cy-26,dz,52);
+    }
   }
-  stack("N",10,-30,0,-1); stack("S",-10,30,0,1);
-  stack("E",30,-10,1,0); stack("W",-30,10,-1,0);
-  const nsGreen=!sim.trans&&sim.phase==="NS", ewGreen=!sim.trans&&sim.phase==="EW";
-  const light=!sim.trans?(nsGreen||ewGreen?"#34d399":"#f87171"):"#fbbf24";
-  c.fillStyle=light; c.beginPath(); c.arc(cx,cy,13,0,7); c.fill();
-  c.fillStyle="#06281c"; c.font="bold 11px sans-serif"; c.textAlign="center";
-  c.fillText(sim.trans?"...":sim.phase, cx, cy+4);
+  // approach labels
+  c.fillStyle="#7c8db1"; c.font="bold 13px sans-serif"; c.textAlign="center";
+  c.fillText("N",cx,18); c.fillText("S",cx,H-10);
+  c.fillText("W",16,cy+5); c.fillText("E",W-16,cy+5);
+  // cars, far first
+  const cars=[];
+  for(const a of APP) for(const v of sim.veh[a]) if(v.dist<=MAXD) cars.push(v);
+  cars.sort((p,q)=>q.dist-p.dist);
+  for(const v of cars){
+    const d=Math.max(0,v.dist)*SC+STOP;
+    let x,y,horiz;
+    if(v.a==="N"){ x=cx+12; y=cy-d; horiz=false; }
+    else if(v.a==="S"){ x=cx-12; y=cy+d; horiz=false; }
+    else if(v.a==="E"){ x=cx+d; y=cy-12; horiz=true; }
+    else { x=cx-d; y=cy+12; horiz=true; }
+    if(x<-25||x>W+25||y<-25||y>H+25) continue;
+    c.fillStyle=v.q?"#fbbf24":"#60a5fa";
+    c.strokeStyle="#0b1220"; c.lineWidth=1.5;
+    if(horiz){ c.fillRect(x-11,y-6,22,12); c.strokeRect(x-11,y-6,22,12); }
+    else { c.fillRect(x-6,y-11,12,22); c.strokeRect(x-6,y-11,12,22); }
+    c.fillStyle="rgba(255,255,255,0.85)";
+    if(v.a==="N") c.fillRect(x-4,y+7,8,3);
+    else if(v.a==="S") c.fillRect(x-4,y-10,8,3);
+    else if(v.a==="E") c.fillRect(x-14,y-4,3,8);
+    else c.fillRect(x+11,y-4,3,8);
+  }
+  // signal light
+  const nsG=!sim.trans&&sim.phase==="NS", ewG=!sim.trans&&sim.phase==="EW";
+  const light=!sim.trans?((nsG||ewG)?"#34d399":"#f87171"):"#fbbf24";
+  c.save(); c.shadowColor=light; c.shadowBlur=18;
+  c.fillStyle=light; c.beginPath(); c.arc(cx,cy,16,0,7); c.fill(); c.restore();
+  c.fillStyle="#06281c"; c.font="bold 12px sans-serif"; c.textAlign="center";
+  c.fillText(sim.trans?"WAIT":sim.phase, cx, cy+4.5);
+  // clock
   c.fillStyle="#e8eefc"; c.font="12px sans-serif"; c.textAlign="left";
   const mm=String(Math.floor(sim.t/60)).padStart(2,"0"),
         ss=String(Math.floor(sim.t%60)).padStart(2,"0");
-  c.fillText("t="+mm+":"+ss+"  green "+Math.floor(sim.gEl)+"s", 10, H-10);
+  c.fillText("t="+mm+":"+ss+"   green "+Math.floor(sim.gEl)+"s", 10, H-10);
 }
 function nums(el,sim,good){
   const d=sim.avgDelay();
