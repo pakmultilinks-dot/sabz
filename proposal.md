@@ -41,39 +41,60 @@ real-time, camera-driven green allocation:
 
 ## 3. How it works (technical)
 
+**Safety layer (hard guarantee, not learned).** The founder's non-negotiable
+rule: the signal must never cut green while a car is close to the stop line,
+even if the visible queue is empty. Every vehicle is tracked with distance and
+speed; a 70 m dilemma zone on each green approach is checked every second. If
+any vehicle is inside it, a switch decision is overridden and green extends
+(up to a 60 s fairness cap). Tested: without this rule, the controller tried
+51 unsafe cutoffs in a platoon scenario; with it, all 240 attempts were held
+and zero unsafe cutoffs executed. Safety is physics, not AI.
+
 **Perception layer.** Camera frames are processed on-device (edge AI) to
-detect and count vehicles per approach lane. Detection runs at 1 Hz for
-control; the simulation models camera noise explicitly so results stay honest.
+detect and count vehicles per approach lane, 120 m range. Detection runs at
+1 Hz for control; the simulation models camera noise explicitly so results
+stay honest.
 
-**Control layer (built and tested).** Actuated signal logic with:
-- minimum green 8 s (safety), maximum green 45 s (fairness),
-- gap-out: switch 3 s after the last vehicle clears,
-- phase skipping for zero-demand approaches,
-- priority plans for scheduled patterns (school hours, Friday prayer rush,
-  stadium events).
+**Control layer (built, tested, training).**
+- Actuated baseline: min green 8 s, max green 60 s, gap-out, phase skipping,
+  never starves any road.
+- Learned controller: our own Deep Q-Network trained from scratch inside the
+  simulator (10-state, 2-action, 1200 episodes across demand scenarios). The
+  network learns efficiency; safety stays a hard environment rule it cannot
+  override.
 
-**Simulation layer (built and tested).** A discrete-event 4-way intersection
-simulator compares fixed-time plans against SABZ on identical traffic, over
-three scenarios: asymmetric demand (the 2-vs-50 example), a school-morning
-surge, and balanced rush hour. Five randomized runs per scenario.
+**Location intelligence (built).** The system reads OpenStreetMap around each
+intersection, finds schools, offices, mosques, markets and hospitals, maps
+each to its approach by bearing, and auto-generates time-of-day priority
+plans: school runs 07:15-08:30 and 13:30-15:00 on schooldays, office commutes,
+Jummah 12:00-14:30 on Fridays near mosques, evening bazaar hours. No
+hand-tuning per junction; the map teaches the schedule.
+
+**Simulation layer (built and tested).** A kinematic 4-way intersection
+simulator (vehicle agents with distance/speed, queue dynamics, free-flow
+passes) compares fixed-time plans against SABZ on identical traffic: asymmetric
+demand, school-morning surge, balanced rush hour.
 
 ## 4. Results so far
 
-One-hour simulations, same traffic for both controllers, averaged over 5 runs:
+Kinematic simulations (delay measured against free-flow travel time, same
+traffic for both controllers, averaged over 3 one-hour runs; safety layer
+active on both):
 
-| Scenario | Fixed-time avg delay | SABZ avg delay | Delay cut | Wasted green cut |
-|---|---|---|---|---|
-| Asymmetric (2 vs 50 cars) | 217 s/vehicle | 6 s/vehicle | 97% | 25% |
-| School morning rush | 55 s/vehicle | 15 s/vehicle | 73% | 19% |
-| Balanced rush hour | 102 s/vehicle | 34 s/vehicle | 67% | 2% |
+| Scenario | Fixed-time avg delay | SABZ actuated avg delay | Delay cut |
+|---|---|---|---|
+| Asymmetric (2 vs 50 cars) | 8.7 s/vehicle | 5.0 s/vehicle | 43% |
+| School morning rush | 11.0 s/vehicle | 8.8 s/vehicle | 20% |
+| Balanced rush hour | 179.7 s/vehicle | 11.9 s/vehicle | 93% |
 
-Fuel wasted idling at a single asymmetric junction drops from about 73 litres
-to about 2.4 litres per hour in simulation, with proportional CO2 reduction.
-Assumptions: 0.6 L/h idling fuel per vehicle, 2.31 kg CO2 per litre of petrol,
-single-lane approaches, 2 s saturation headway.
+Safety: 51 unsafe green-cutoffs attempted without dilemma-zone protection in
+the danger test; 240 attempted with protection, all held, zero executed.
+The learned DQN controller is training now; it is evaluated against the
+actuated baseline on the same scenarios before the finale.
 
 These are simulation results, not road measurements. They establish that the
-control logic is sound; the next step is a camera-in-the-loop pilot.
+control logic and the safety guarantee are sound; the next step is a
+camera-in-the-loop pilot.
 
 ## 5. Why this wins, and why now
 
@@ -93,10 +114,13 @@ control logic is sound; the next step is a camera-in-the-loop pilot.
 
 ## 6. Roadmap
 
-- **Idea (now):** proposal, simulator, demo video, public repo.
-- **MVP (by finale):** camera-in-the-loop demo: YOLO vehicle counting on real
-  intersection footage driving the SABZ controller live; dashboard showing
-  per-approach queues and signal decisions.
+- **Idea (now):** proposal, kinematic simulator with proven safety guarantee,
+  location-intelligence module, demo video, public repo.
+- **MVP (by finale):** trained DQN controller evaluated against the actuated
+  baseline; POI-derived time plans for a real Lahore junction; camera-in-the-
+  loop demo with vehicle counting on real intersection footage driving the
+  SABZ controller live; dashboard showing per-approach queues, dilemma-zone
+  holds, and signal decisions.
 - **Pilot (post-finale):** one junction with TEPA / City Traffic Police,
   before/after measurement of delay and queue length, the same metric our
   simulator already tracks.
