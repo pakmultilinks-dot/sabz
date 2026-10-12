@@ -5,8 +5,11 @@ signal-timing policy inside the SABZ v2 simulator. Safety (dilemma-zone
 protection) stays a HARD environment rule, so the network learns efficiency
 only; it can never learn an unsafe cutoff.
 
-State (10): queued vehicles per approach (/20), approaching vehicles in
-camera range per approach (/10), current phase NS=1/EW=0, green elapsed /60.
+State (16): queued vehicles per approach (/20), approaching vehicles in
+camera range per approach (/10), current phase NS=1/EW=0, green elapsed /60,
+plus 6 LOCATION features the brain uses to understand where it is:
+near_school, near_mosque, near_office, near_hospital (0/1),
+is_friday (0/1 for Jummah), hour_of_day (/24).
 Actions: 0 = hold green, 1 = switch phase. Reward: -queue/40 - 0.3*switch.
 """
 import os
@@ -14,7 +17,8 @@ import numpy as np
 from sabz_sim2 import (IntersectionV2, PHASES, MAX_GREEN, MIN_GREEN,
                        run_v2)
 
-N_IN, N_H, N_OUT = 10, 64, 2
+N_POI = 6  # location features: school, mosque, office, hospital, friday, hour
+N_IN, N_H, N_OUT = 10 + N_POI, 64, 2
 GAMMA = 0.97
 LR = 1e-3
 BUFFER = 30000
@@ -24,12 +28,14 @@ TARGET_SYNC = 500
 TRAIN_EVERY = 4
 
 
-def get_state(sim):
+def get_state(sim, loc=None):
     q = [len(sim.queue_of(a)) / 20.0 for a in ("N", "S", "E", "W")]
     ap = [len(sim.approaching(a)) / 10.0 for a in ("N", "S", "E", "W")]
-    return np.array(q + ap + [1.0 if sim.phase == "NS" else 0.0,
-                             sim.green_elapsed / MAX_GREEN],
-                    dtype=np.float64)
+    base = q + ap + [1.0 if sim.phase == "NS" else 0.0,
+                     sim.green_elapsed / MAX_GREEN]
+    if loc is None:
+        loc = [0.0] * N_POI
+    return np.array(base + list(loc), dtype=np.float64)
 
 
 class DQN:
@@ -121,10 +127,33 @@ def save_ckpt(path, net, tgt, eps, episode, best_score):
 def load_ckpt(path, net, tgt):
     d = np.load(path)
     for k in net.p:
-        net.p[k] = d[f"net_{k}"]
-        tgt.p[k] = d[f"tgt_{k}"]
-        net.m[k] = d[f"m_{k}"]
-        net.v[k] = d[f"v_{k}"]
+        old_net = d[f"net_{k}"]
+        old_tgt = d[f"tgt_{k}"]
+        if k == "W1" and old_net.shape[0] != net.p[k].shape[0]:
+            # TRANSFER: old brain had 10 inputs, new has 16 (10 + 6 location).
+            # Keep learned weights for the 10 traffic features, init the 6
+            # location weights small so the brain starts as its old self.
+            print(f"transfer: expanding W1 {old_net.shape} -> {net.p[k].shape}",
+                  flush=True)
+            new_w = np.random.default_rng(0).normal(
+                0, 0.01, net.p[k].shape)
+            new_w[:old_net.shape[0], :] = old_net
+            net.p[k] = new_w
+            new_wt = np.random.default_rng(1).normal(
+                0, 0.01, tgt.p[k].shape)
+            new_wt[:old_tgt.shape[0], :] = old_tgt
+            tgt.p[k] = new_wt
+            # Adam state for W1: keep old, zero-init the new rows
+            for arr, name in ((net.m, "m"), (net.v, "v")):
+                old_a = d[f"{name}_{k}"]
+                nw = np.zeros_like(net.p[k])
+                nw[:old_a.shape[0], :] = old_a
+                arr[k] = nw
+        else:
+            net.p[k] = old_net
+            tgt.p[k] = old_tgt
+            net.m[k] = d[f"m_{k}"]
+            net.v[k] = d[f"v_{k}"]
     net.t = int(d["adam_t"][0])
     return float(d["eps"][0]), int(d["episode"][0]), float(d["best_score"][0])
 
@@ -135,7 +164,8 @@ def quick_eval(net):
         q = [state["queue"][a] / 20.0 for a in ("N", "S", "E", "W")]
         ap = [state["approaching"][a] / 10.0 for a in ("N", "S", "E", "W")]
         s = np.array(q + ap + [1.0 if state["phase"] == "NS" else 0.0,
-                              state["green_elapsed"] / MAX_GREEN])
+                              state["green_elapsed"] / MAX_GREEN]
+                     + [0.0] * N_POI)
         return "switch" if net.act(s) == 1 else "stay"
 
     def asym(a, t):
@@ -163,9 +193,9 @@ def bc_pretrain(net, episodes=300, T=900.0, lr=3e-3, batch=256):
     rng = np.random.default_rng(11)
     Xs, Ys = [], []
     for ep in range(episodes):
-        rates, sched = scenario_sampler(rng)
+        rates, sched, loc = scenario_sampler(rng)
         sim = IntersectionV2(seed=int(rng.integers(1e9)), safety_on=True)
-        s = get_state(sim)
+        s = get_state(sim, loc)
         while sim.t < T:
             st = {"t": sim.t, "phase": sim.phase,
                   "green_elapsed": sim.green_elapsed,
@@ -184,7 +214,7 @@ def bc_pretrain(net, episodes=300, T=900.0, lr=3e-3, batch=256):
             sim.step(rates,
                      lambda st2, pr: "switch" if a == 1 else "stay",
                      schedule=sched)
-            s = get_state(sim)
+            s = get_state(sim, loc)
     X = np.array(Xs)
     Y = np.array(Ys)
     n = len(X)
@@ -225,17 +255,75 @@ def bc_pretrain(net, episodes=300, T=900.0, lr=3e-3, batch=256):
 
 
 def scenario_sampler(rng):
-    r = rng.random()
-    if r < 0.4:
-        rates = lambda a, t: 0.25 if a in ("N", "S") else 0.035
+    import real_traffic as rt
+    hour = int(rng.integers(0, 24))
+    # LOCATION: sample what kind of place this intersection is.
+    # The brain sees these 6 features and learns location-aware control.
+    loc_r = rng.random()
+    if loc_r < 0.22:
+        # Near school: sharp morning drop-off / afternoon pickup rush
+        loc = [1.0, 0.0, 0.0, 0.0, 0.0, hour / 24.0]
+        base = rt.arrival_rate(8)
+        rates = lambda a, t: base * 1.8 if (a == "N" and 300 <= t < 700) else base * 0.5
+        sched = lambda t: "NS" if 300 <= t < 700 else None
+    elif loc_r < 0.42:
+        # Near mosque: Friday Jummah 12:00-14:30 surge
+        is_fri = 1.0 if rng.random() < 0.18 else 0.0
+        loc = [0.0, 1.0, 0.0, 0.0, is_fri, hour / 24.0]
+        jummah = is_fri and 12 <= hour <= 14
+        base = rt.arrival_rate(13) if jummah else rt.arrival_rate(hour)
+        mult = 2.2 if jummah else 1.0
+        rates = lambda a, t, m=mult, b=base: b * m
         sched = None
-    elif r < 0.7:
-        rates = lambda a, t: 0.22
+    elif loc_r < 0.62:
+        # Near office: 9-5 commuter tidal flow
+        loc = [0.0, 0.0, 1.0, 0.0, 0.0, hour / 24.0]
+        base = rt.arrival_rate(hour)
+        rates = lambda a, t, b=base: b * 1.6 if a in ("N", "S") else b * 0.4
+        sched = None
+    elif loc_r < 0.75:
+        # Near hospital: steady flow, all approaches matter
+        loc = [0.0, 0.0, 0.0, 1.0, 0.0, hour / 24.0]
+        base = rt.arrival_rate(hour)
+        rates = lambda a, t, b=base: b * 1.15
+        sched = None
+    elif loc_r < 0.82:
+        # ACCIDENT: one approach blocked, brain must reroute green
+        blocked = rng.choice(["N", "S", "E", "W"])
+        loc = [0.0, 0.0, 0.0, 0.0, 0.0, hour / 24.0]
+        base = rt.arrival_rate(hour)
+        rates = lambda a, t, b=base, blk=blocked: 0.0 if a == blk else b * 1.3
+        sched = None
+    elif loc_r < 0.88:
+        # EMERGENCY: sudden priority surge on one approach
+        emerg = rng.choice(["N", "S", "E", "W"])
+        loc = [0.0, 0.0, 0.0, 1.0, 0.0, hour / 24.0]
+        base = rt.arrival_rate(hour)
+        rates = lambda a, t, b=base, em=emerg: b * 3.0 if (a == em and 200 <= t < 500) else b
+        sched = None
+    elif loc_r < 0.94:
+        # NIGHT: very low traffic, brain must not waste green
+        loc = [0.0, 0.0, 0.0, 0.0, 0.0, 2 / 24.0]
+        base = rt.arrival_rate(2) * 0.3
+        rates = lambda a, t, b=base: b
         sched = None
     else:
-        rates = lambda a, t: 0.45 if (a == "N" and 300 <= t < 700) else 0.12
-        sched = lambda t: "NS" if 300 <= t < 700 else None
-    return rates, sched
+        # Generic junction (original calibrated patterns)
+        loc = [0.0, 0.0, 0.0, 0.0, 0.0, hour / 24.0]
+        r = rng.random()
+        if r < 0.4:
+            base = rt.arrival_rate(hour)
+            rates = lambda a, t, b=base: b * 1.6 if a in ("N", "S") else b * 0.25
+            sched = None
+        elif r < 0.7:
+            base = rt.arrival_rate(hour)
+            rates = lambda a, t, b=base: b
+            sched = None
+        else:
+            base = rt.arrival_rate(8)
+            rates = lambda a, t, b=base: b * 1.8 if (a == "N" and 300 <= t < 700) else b * 0.5
+            sched = lambda t: "NS" if 300 <= t < 700 else None
+    return rates, sched, loc
 
 
 def train(episodes=120000, T=900.0, out="sabz_dqn.npz", log_every=100,
@@ -251,9 +339,9 @@ def train(episodes=120000, T=900.0, out="sabz_dqn.npz", log_every=100,
     steps = 0
     ep_rewards = []
     for ep in range(start_ep, episodes):
-        rates, sched = scenario_sampler(rng)
+        rates, sched, loc = scenario_sampler(rng)
         sim = IntersectionV2(seed=int(rng.integers(1e9)), safety_on=True)
-        s = get_state(sim)
+        s = get_state(sim, loc)
         ep_r = 0.0
         while sim.t < T:
             a = int(rng.integers(2)) if rng.random() < eps \
@@ -265,7 +353,7 @@ def train(episodes=120000, T=900.0, out="sabz_dqn.npz", log_every=100,
             switched = 1.0 if sim.switches > sw0 else 0.0
             qtot = sum(len(sim.queue_of(x)) for x in ("N", "S", "E", "W"))
             r = -qtot / 40.0 - 0.3 * switched
-            s2 = get_state(sim)
+            s2 = get_state(sim, loc)
             done = 1.0 if sim.t >= T else 0.0
             buf_s.append(s)
             buf_a.append(a)
@@ -328,7 +416,8 @@ def evaluate(path, seeds=(11, 22, 33)):
         q = [state["queue"][a] / 20.0 for a in ("N", "S", "E", "W")]
         ap = [state["approaching"][a] / 10.0 for a in ("N", "S", "E", "W")]
         s = np.array(q + ap + [1.0 if state["phase"] == "NS" else 0.0,
-                              state["green_elapsed"] / MAX_GREEN])
+                              state["green_elapsed"] / MAX_GREEN]
+                     + [0.0] * N_POI)
         return "switch" if net.act(s) == 1 else "stay"
 
     def asym(a, t):
@@ -364,4 +453,5 @@ if __name__ == "__main__":
         save_ckpt(CKPT, net, tgt, 0.3, 0, 1e9)
         print("BC done; checkpoint seeded for DQN refinement")
     else:
-        train()
+        # Speed mode: shorter episodes for 2x training throughput
+        train(T=450.0)
