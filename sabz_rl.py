@@ -454,4 +454,4 @@ if __name__ == "__main__":
         print("BC done; checkpoint seeded for DQN refinement")
     else:
         # Speed mode: shorter episodes for 2x training throughput
-        train(T=450.0)
+        train(T=200.0)
