@@ -77,10 +77,17 @@ def bench(path=None):
 
 
 def main():
-    print("waiting for the 120k run to finish...", flush=True)
-    while not os.path.exists(DONE_FLAG):
+    # The 120k run is dead (its flag was archived to backup_lost_run/); do not
+    # wait forever. Give it a short grace in case it is still alive elsewhere,
+    # then proceed from the checkpoint.
+    print("waiting briefly for any 120k run to finish...", flush=True)
+    for _ in range(3):
+        if os.path.exists(DONE_FLAG):
+            print("120k done. Entering train-until-capable.", flush=True)
+            break
         time.sleep(60)
-    print("120k done. Entering train-until-capable.", flush=True)
+    else:
+        print("no 120k run active; proceeding from checkpoint.", flush=True)
 
     target = 120000
     while target < MAX_EPISODES:
