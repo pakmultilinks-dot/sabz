@@ -307,6 +307,19 @@ def scenario_sampler(rng):
         base = rt.arrival_rate(2) * 0.3
         rates = lambda a, t, b=base: b
         sched = None
+    elif loc_r < 0.96:
+        # CRISIS COMPOUND: accident during rush hour, chaos
+        blocked = rng.choice(["N", "S", "E", "W"])
+        loc = [1.0, 0.0, 0.0, 0.0, 0.0, 8 / 24.0]
+        base = rt.arrival_rate(8) * 1.5
+        rates = lambda a, t, b=base, blk=blocked: 0.0 if a == blk else b * (1.5 + 0.5 * np.sin(t / 100))
+        sched = None
+    elif loc_r < 0.98:
+        # STADIUM EVENT: massive surge then sudden drop
+        loc = [0.0, 0.0, 1.0, 0.0, 0.0, 20 / 24.0]
+        base = rt.arrival_rate(20)
+        rates = lambda a, t, b=base: b * 4.0 if 100 <= t < 400 else b * 0.2
+        sched = None
     else:
         # Generic junction (original calibrated patterns)
         loc = [0.0, 0.0, 0.0, 0.0, 0.0, hour / 24.0]
