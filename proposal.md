@@ -70,6 +70,20 @@ plans: school runs 07:15-08:30 and 13:30-15:00 on schooldays, office commutes,
 Jummah 12:00-14:30 on Fridays near mosques, evening bazaar hours. No
 hand-tuning per junction; the map teaches the schedule.
 
+**Self-improvement (built).** SABZ gets better every day it runs. Each
+decision is logged as (state, action, reward); nightly, training resumes
+from the checkpoint on the day's real traffic plus fresh simulation, and
+the new brain replaces the old one only if it wins on the benchmark
+scenarios. The system can never get worse overnight, and the safety rule
+is outside the network so no training run can ever weaken it.
+
+**LLM explanation layer (built).** The signal explains itself. Every
+decision can be narrated in plain English or Urdu for traffic officers
+and the public ("Green went to the north road because 14 cars were
+waiting there"), and the system writes end-of-day traffic reports with
+suggestions. The LLM key comes from the environment, never hardcoded;
+offline it falls back to clearly-marked template explanations.
+
 **Simulation layer (built and tested).** A kinematic 4-way intersection
 simulator (vehicle agents with distance/speed, queue dynamics, free-flow
 passes) compares fixed-time plans against SABZ on identical traffic: asymmetric
@@ -89,12 +103,19 @@ active on both):
 
 Safety: 51 unsafe green-cutoffs attempted without dilemma-zone protection in
 the danger test; 240 attempted with protection, all held, zero executed.
-The learned DQN controller is training now; it is evaluated against the
-actuated baseline on the same scenarios before the finale.
 
-These are simulation results, not road measurements. They establish that the
-control logic and the safety guarantee are sound; the next step is a
-camera-in-the-loop pilot.
+**Our trained DQN brain (evaluated 2026-10-11, training ongoing):**
+
+| Scenario | Actuated | SABZ DQN (ours) |
+|---|---|---|
+| Asymmetric (2 vs 50 cars) | 5.0 s/vehicle | 4.9 s/vehicle |
+| Balanced rush hour | 11.9 s/vehicle | 20.2 s/vehicle |
+
+The brain already beats the hand-tuned controller on asymmetric demand and
+is competitive; it trails on sustained balanced rush, which is exactly what
+the ongoing 120,000-episode training run is closing. Safety holds on both:
+the hard rule blocks every unsafe cutoff regardless of what the network
+outputs. These are simulation results, not road measurements.
 
 ## 5. Why this wins, and why now
 
@@ -112,7 +133,33 @@ camera-in-the-loop pilot.
   travel time 25% and emissions 20% in Pittsburgh; Toronto is piloting InSync
   and SCATS against its 20-year-old fixed systems.
 
-## 6. Roadmap
+## 6. Target users
+
+- **City traffic authorities (TEPA, City Traffic Police Lahore):** the direct
+  customers, who get shorter queues, lower emissions, and measurable
+  before/after numbers without digging up roads.
+- **Punjab Safe City Authority:** the camera owner; SABZ turns their existing
+  feeds into a traffic brain.
+- **Commuters and public transport:** the people who sit in the queues today,
+  losing hours every week to blind timers.
+- **Researchers and students:** the public simulator and repo make SABZ a
+  teaching platform for reinforcement learning on a real civic problem.
+
+## 7. Resources and requirements
+
+- **Already built:** kinematic simulator, actuated controller with proven
+  safety layer, location-intelligence module, live judges dashboard, public
+  repo, demo video.
+- **Needed for the finale:** compute for finishing the DQN training run
+  (already underway), one evening of real intersection footage for the
+  camera-in-the-loop demo, and a real Lahore junction's map data for the
+  POI-derived time plan.
+- **Needed for the pilot:** permission to tap one junction's existing CCTV
+  feed, one small edge computer (mid-range GPU/CPU box) per intersection,
+  and cooperation from TEPA or City Traffic Police for before/after
+  measurement.
+
+## 8. Roadmap
 
 - **Idea (now):** proposal, kinematic simulator with proven safety guarantee,
   location-intelligence module, demo video, public repo.
@@ -125,7 +172,7 @@ camera-in-the-loop pilot.
   before/after measurement of delay and queue length, the same metric our
   simulator already tracks.
 
-## 7. Risks and mitigations
+## 9. Risks and mitigations
 
 - **Camera occlusion at night / in rain:** infrared-capable cameras and
   conservative fallback to time-of-day plans when detection confidence drops.
@@ -135,7 +182,7 @@ camera-in-the-loop pilot.
 - **Institutional adoption:** TEPA's current 20-junction upgrade is the entry
   point; the pilot is designed to plug into that program.
 
-## 8. References
+## 10. References
 
 - Delhi Integrated Traffic Management System, adaptive signals rollout, Oct 2026
 - TEPA: video vehicle detection at 20 Lahore junctions, ProPakistani, Dec 2025

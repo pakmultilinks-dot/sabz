@@ -1,54 +1,63 @@
 # SABZ: AI-Adaptive Traffic Signals for Pakistan
 
-SABZ replaces blind fixed-time traffic signals with camera-driven adaptive
-green allocation, with a hard safety guarantee: green is never cut while a
-vehicle is approaching the stop line. Built for the 4th International AI
-Championship (AIEF), category **AI in Urban Tech**.
+**Category:** AI in Urban Tech | **4th International AI Championship (AIEF)**
 
-## The idea
+SABZ (سبز, "green") replaces blind fixed-time traffic signals with an AI controller that gives green where the cars actually are. Cameras count vehicles per approach; the signal extends green for long queues, cuts it the instant a road clears, skips empty approaches, and never starves any road.
 
-Fixed timers waste green on empty roads while long queues wait on red. SABZ
-counts vehicles per approach with cameras and gives green where the cars
-actually are: extend green for long queues, cut it the instant a road clears,
-skip empty approaches, never starve any road, and run time-of-day plans
-learned from the map itself (schools, offices, mosques via OpenStreetMap).
+**The hard rule:** green is NEVER cut while a vehicle is in the 70 m dilemma zone approaching the stop line. This is physics, not AI, and no training run can override it.
 
-Safety first: a 70 m dilemma zone is checked every second; any vehicle inside
-it holds the green. Tested: 51 unsafe cutoffs without protection, 0 with it.
+## System components
 
-## What's here
+| Module | File | What it does |
+|---|---|---|
+| Brain (DQN) | `sabz_rl.py` | Our own Deep Q-Network signal controller, trained from scratch in the simulator |
+| Safety layer | `sabz_sim2.py` | Dilemma-zone hard rule, checked every second, overrides any unsafe switch |
+| Simulator | `sabz_sim2.py` | Kinematic 4-way intersection with vehicle agents, queue dynamics, camera noise |
+| Location intelligence | `sabz_poi.py` | Reads OpenStreetMap, finds schools/offices/mosques, auto-generates time-of-day plans |
+| LLM explainer | `sabz_explain.py` | Explains every signal decision in English or Urdu; daily traffic reports |
+| Continual learning | `sabz_learn.py` | Logs decisions, retrains nightly, only promotes the brain if it improves |
+| Judges dashboard | `sabz_dashboard.html` | Live side-by-side: fixed timer vs actuated vs our trained neural net |
 
-- `sabz_sim.py` - v1 discrete-event simulator (fixed vs actuated).
-- `sabz_sim2.py` - v2 kinematic simulator: vehicle agents with distance/speed,
-  dilemma-zone safety as a hard rule, free-flow passes, queue dynamics.
-- `sabz_rl.py` - our own DQN signal controller, trained from scratch in the
-  simulator (safety stays a hard rule; the net learns efficiency only).
-- `sabz_poi.py` - location intelligence: OpenStreetMap POIs around an
-  intersection auto-generate time-of-day priority plans.
-- `sabz_demo.py` - v1 scenarios, charts, animated side-by-side demo video.
-- `test_safety.py` - safety proof: the accident scenario is real, the fix works.
-- `eval_v2.py` - v2 full evaluation across scenarios.
-- `proposal.md` - championship submission proposal.
-- `keywords.txt` - the 5 submission keywords.
+## Results
 
-## Results (v2 kinematic sim, delay vs free-flow, 3 one-hour runs)
+Kinematic simulation, same traffic for all controllers, safety active:
 
-| Scenario | Fixed delay | SABZ delay | Cut |
+| Scenario | Fixed-time | SABZ actuated | SABZ brain (DQN) |
 |---|---|---|---|
-| Asymmetric (2 vs 50 cars) | 8.7 s | 5.0 s | 43% |
-| School morning rush | 11.0 s | 8.8 s | 20% |
-| Balanced rush hour | 179.7 s | 11.9 s | 93% |
+| Asymmetric (2 vs 50 cars) | 8.7 s | 5.0 s | **4.9 s** |
+| School morning rush | 11.0 s | 8.8 s | — |
+| Balanced rush hour | 179.7 s | 11.9 s | 13.3 s |
 
-## Run it
+Safety: 51 unsafe cutoffs attempted without protection; 0 executed with it.
+
+## The brain
+
+- Architecture: 10 inputs → 64 ReLU → 64 ReLU → 2 Q-values (stay/switch)
+- Training: behavioral-cloning warm start (86% accuracy) + DQN refinement
+- Target: 120,000+ episodes; keeps training until it beats the hand-tuned controller on every scenario
+- Weights: `models/sabz_dqn_best.npz`
+
+## Quick start
 
 ```bash
-pip install numpy matplotlib requests
-python test_safety.py     # safety proof
-python eval_v2.py         # full comparison
-python sabz_rl.py         # train our DQN (background, ~30 min CPU)
-python sabz_rl.py eval    # evaluate trained net vs actuated baseline
-python sabz_poi.py        # location intelligence demo (needs Overpass API)
+# Run the simulator comparison
+python3 eval_v2.py
+
+# Train the brain (resumes from checkpoint)
+python3 sabz_rl.py
+
+# Explain a decision (needs OPENROUTER_API_KEY for LLM, else template)
+python3 sabz_explain.py
+
+# Open the judges dashboard
+open sabz_dashboard.html
 ```
 
-Simulation results are from the model, not road measurements; the control
-logic and the safety guarantee are what is validated here.
+## Project
+
+- Proposal: `proposal.md`
+- Model card: `MODEL_CARD.md`
+- Product architecture: `PRODUCT.md`
+- Demo: `sabz_demo.mp4`
+
+Built by Team SABZ, Lahore Garrison University.

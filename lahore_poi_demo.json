@@ -1,0 +1,129 @@
+{
+ "junction": [
+  31.5204,
+  74.3587
+ ],
+ "pois": [
+  {
+   "amenity": "place_of_worship",
+   "name": "Main Market Mosque",
+   "lat": 31.5240223,
+   "lon": 74.3450597,
+   "bearing": 287.3
+  },
+  {
+   "amenity": "place_of_worship",
+   "name": "Jamia Masjid Hanfiyah",
+   "lat": 31.5209845,
+   "lon": 74.3502686,
+   "bearing": 274.7
+  },
+  {
+   "amenity": "place_of_worship",
+   "name": "گلشن رسول",
+   "lat": 31.5327506,
+   "lon": 74.3600704,
+   "bearing": 5.4
+  },
+  {
+   "amenity": "place_of_worship",
+   "name": "رحمانیہ",
+   "lat": 31.528302,
+   "lon": 74.3570935,
+   "bearing": 350.2
+  },
+  {
+   "amenity": "place_of_worship",
+   "name": "Ghalib Market",
+   "lat": 31.5125058,
+   "lon": 74.3550126,
+   "bearing": 201.7
+  },
+  {
+   "amenity": "place_of_worship",
+   "name": "Qadriya Rizvia",
+   "lat": 31.509507,
+   "lon": 74.3572141,
+   "bearing": 186.6
+  },
+  {
+   "amenity": "place_of_worship",
+   "name": "عسکری 2",
+   "lat": 31.523096,
+   "lon": 74.363553,
+   "bearing": 56.9
+  }
+ ],
+ "plan": [
+  {
+   "days": "fri",
+   "start": 12.0,
+   "end": 14.5,
+   "phase": "EW",
+   "approach": "W",
+   "reason": "Jummah prayer",
+   "poi": "Main Market Mosque",
+   "amenity": "place_of_worship"
+  },
+  {
+   "days": "fri",
+   "start": 12.0,
+   "end": 14.5,
+   "phase": "EW",
+   "approach": "W",
+   "reason": "Jummah prayer",
+   "poi": "Jamia Masjid Hanfiyah",
+   "amenity": "place_of_worship"
+  },
+  {
+   "days": "fri",
+   "start": 12.0,
+   "end": 14.5,
+   "phase": "NS",
+   "approach": "N",
+   "reason": "Jummah prayer",
+   "poi": "گلشن رسول",
+   "amenity": "place_of_worship"
+  },
+  {
+   "days": "fri",
+   "start": 12.0,
+   "end": 14.5,
+   "phase": "NS",
+   "approach": "N",
+   "reason": "Jummah prayer",
+   "poi": "رحمانیہ",
+   "amenity": "place_of_worship"
+  },
+  {
+   "days": "fri",
+   "start": 12.0,
+   "end": 14.5,
+   "phase": "NS",
+   "approach": "S",
+   "reason": "Jummah prayer",
+   "poi": "Ghalib Market",
+   "amenity": "place_of_worship"
+  },
+  {
+   "days": "fri",
+   "start": 12.0,
+   "end": 14.5,
+   "phase": "NS",
+   "approach": "S",
+   "reason": "Jummah prayer",
+   "poi": "Qadriya Rizvia",
+   "amenity": "place_of_worship"
+  },
+  {
+   "days": "fri",
+   "start": 12.0,
+   "end": 14.5,
+   "phase": "EW",
+   "approach": "E",
+   "reason": "Jummah prayer",
+   "poi": "عسکری 2",
+   "amenity": "place_of_worship"
+  }
+ ]
+}
