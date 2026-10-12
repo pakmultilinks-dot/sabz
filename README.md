@@ -6,6 +6,14 @@ SABZ (سبز, "green") replaces blind fixed-time traffic signals with an AI cont
 
 **The hard rule:** green is NEVER cut while a vehicle is in the 70 m dilemma zone approaching the stop line. This is physics, not AI, and no training run can override it.
 
+## Screenshots
+
+### 3D Live Demo
+![SABZ 3D Demo](screenshot_3d.png)
+
+### Judges Dashboard
+![SABZ Dashboard](screenshot_dashboard.png)
+
 ## System components
 
 | Module | File | What it does |
