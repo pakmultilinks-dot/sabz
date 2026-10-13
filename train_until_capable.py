@@ -26,7 +26,7 @@ import sabz_rl
 from sabz_rl import DQN, load_net, BEST, CKPT, DONE_FLAG, run_v2
 
 BLOCK = 40000
-MAX_EPISODES = 400000
+MAX_EPISODES = 800000
 
 
 def load_best_net():
@@ -48,8 +48,11 @@ def bench(path=None):
     def rl_decide(state, prio):
         q = [state["queue"][a] / 20.0 for a in ("N", "S", "E", "W")]
         ap = [state["approaching"][a] / 10.0 for a in ("N", "S", "E", "W")]
+        # 16-dim brain: 10 traffic features + 6 location features (zeros: the
+        # benchmark scenarios use no per-junction location plan).
         s = np.array(q + ap + [1.0 if state["phase"] == "NS" else 0.0,
-                              state["green_elapsed"] / 60.0])
+                              state["green_elapsed"] / 60.0]
+                     + [0.0] * 6)
         return "switch" if net.act(s) == 1 else "stay"
 
     scenarios = {
