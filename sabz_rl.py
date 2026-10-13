@@ -195,6 +195,7 @@ def bc_pretrain(net, episodes=300, T=900.0, lr=3e-3, batch=256):
     for ep in range(episodes):
         rates, sched, loc = scenario_sampler(rng)
         sim = IntersectionV2(seed=int(rng.integers(1e9)), safety_on=True)
+        sim.use_real_data = True
         s = get_state(sim, loc)
         while sim.t < T:
             st = {"t": sim.t, "phase": sim.phase,
@@ -354,6 +355,7 @@ def train(episodes=120000, T=900.0, out="sabz_dqn.npz", log_every=100,
     for ep in range(start_ep, episodes):
         rates, sched, loc = scenario_sampler(rng)
         sim = IntersectionV2(seed=int(rng.integers(1e9)), safety_on=True)
+        sim.use_real_data = True
         s = get_state(sim, loc)
         ep_r = 0.0
         while sim.t < T:
