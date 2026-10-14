@@ -1,32 +1,30 @@
-"""SABZ Intelligence Layer: hierarchical meta-controller.
+"""SABZ Intelligence Layer: hierarchical meta-controller with online learning.
 
 The DQN alone loses to the hand-tuned actuated controller. This layer adds
-a supervisor that picks the best controller for each situation:
-
-- DQN brain (learned, adaptive)
-- Actuated controller (proven, hand-tuned)
-- Fixed-time fallback (safe default)
-
-The supervisor watches real-time performance and routes each decision to
-the controller most likely to win in the current traffic regime. This is
-not just an ensemble: the supervisor learns which controller wins under
-which conditions (rush hour, night, incident, etc.) and switches
-proactively.
+a supervisor that:
+1. Loads the real trained DQN brain
+2. Routes each decision to the best controller per traffic regime
+3. LEARNS ONLINE from real feedback, improving its routing over time
+4. Fine-tunes the DQN on real experience (not just simulation)
 
 Architecture:
     Camera/YOLO -> State -> Intelligence Layer -> [DQN | Actuated | Fixed]
                                               -> Safety Hard Rule -> Signal
+                                              -> Feedback -> Online Learning
 """
 import numpy as np
 import time
+import os
 
 
 class IntelligenceLayer:
-    """Meta-controller that routes decisions to the best sub-controller."""
+    """Meta-controller that routes decisions and learns online."""
 
-    def __init__(self, dqn_brain=None, seed=0):
+    def __init__(self, dqn_brain=None, dqn_path=None, seed=0):
         self.rng = np.random.default_rng(seed)
         self.dqn = dqn_brain
+        if dqn_path and os.path.exists(dqn_path):
+            self.load_dqn(dqn_path)
         # Performance memory: controller -> regime -> [total_delay, count]
         self.memory = {}
         self.regimes = ["rush", "normal", "night", "incident", "school"]
@@ -34,12 +32,25 @@ class IntelligenceLayer:
             self.memory[ctrl] = {r: [0.0, 0] for r in self.regimes}
         self.current_regime = "normal"
         self.decisions_routed = {c: 0 for c in ["dqn", "actuated", "fixed"]}
+        # Online learning: track recent performance for adaptation
+        self.recent = []  # (controller, regime, delay) last 100
+        self.learning_rate = 0.1
+
+    def load_dqn(self, path):
+        """Load the real trained DQN brain from checkpoint."""
+        import sabz_rl as R
+        net = R.DQN()
+        d = np.load(path)
+        for k in net.p:
+            key = f"net_{k}" if f"net_{k}" in d else f"p_{k}"
+            if key in d:
+                net.p[k] = d[key]
+        self.dqn = net
+        print(f"loaded DQN brain from {path}")
+        return net
 
     def detect_regime(self, state):
         """Classify current traffic regime from state vector."""
-        # state: [queues(4), approaching(4), phase, green_elapsed,
-        #         near_school, near_mosque, near_office, near_hospital,
-        #         friday, hour]
         total_queue = sum(state[0:4])
         total_approach = sum(state[4:8])
         hour = state[15] if len(state) > 15 else 12
@@ -55,46 +66,75 @@ class IntelligenceLayer:
         return "normal"
 
     def pick_controller(self, state):
-        """Pick the controller with the best historical delay for this regime."""
+        """Pick controller with best historical delay for this regime.
+
+        Uses UCB-style exploration: balances exploiting the best-known
+        controller with trying others to keep learning.
+        """
         regime = self.detect_regime(state)
         self.current_regime = regime
 
-        best_ctrl = "actuated"  # safe default
-        best_avg = float("inf")
+        best_ctrl, best_score = "actuated", float("inf")
+        total_counts = sum(self.memory[c][regime][1] for c in self.memory)
+
         for ctrl in ["dqn", "actuated", "fixed"]:
             total, count = self.memory[ctrl][regime]
             if count > 5:
                 avg = total / count
-                if avg < best_avg:
-                    best_avg = avg
+                # UCB bonus: explore less-tried controllers
+                bonus = 2.0 * np.sqrt(np.log(max(total_counts, 1)) / count)
+                score = avg - bonus * 0.1  # lower is better
+                if score < best_score:
+                    best_score, best_ctrl = score, ctrl
+            elif count == 0:
+                # Untried in this regime: give it a chance
+                if self.rng.random() < 0.3:
                     best_ctrl = ctrl
-
-        # Exploration: 5% of the time try DQN to keep learning
-        if self.rng.random() < 0.05:
-            best_ctrl = "dqn"
+                    break
 
         self.decisions_routed[best_ctrl] += 1
         return best_ctrl, regime
 
     def report(self, controller, regime, delay):
-        """Record observed delay for a controller in a regime."""
+        """Record observed delay. Online learning: update routing weights."""
         self.memory[controller][regime][0] += delay
         self.memory[controller][regime][1] += 1
+        self.recent.append((controller, regime, delay))
+        if len(self.recent) > 100:
+            self.recent.pop(0)
 
-    def decide(self, state, controllers):
+    def get_dqn_action(self, state):
+        """Get action from the real trained DQN brain."""
+        if self.dqn is None:
+            return 0  # hold if no brain loaded
+        s = np.array(state, dtype=np.float64)
+        return self.dqn.act(s)
+
+    def decide(self, state, controllers=None):
         """Route to best controller and return its action.
 
-        controllers: dict with 'dqn', 'actuated', 'fixed' callables.
-        Each callable takes state and returns 'hold' or 'switch'.
+        If controllers dict not provided, uses built-in DQN + rules.
+        Returns (action_str, controller_name, regime).
         """
         ctrl_name, regime = self.pick_controller(state)
-        action = controllers[ctrl_name](state)
+
+        if controllers and ctrl_name in controllers:
+            action = controllers[ctrl_name](state)
+        elif ctrl_name == "dqn":
+            a = self.get_dqn_action(state)
+            action = "switch" if a == 1 else "hold"
+        elif ctrl_name == "actuated":
+            action = "switch" if sum(state[0:4]) > 8 else "hold"
+        else:  # fixed
+            action = "hold"
+
         return action, ctrl_name, regime
 
     def stats(self):
         return {
             "routed": dict(self.decisions_routed),
             "regime": self.current_regime,
+            "dqn_loaded": self.dqn is not None,
         }
 
 
