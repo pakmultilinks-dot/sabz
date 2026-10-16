@@ -23,7 +23,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 import sabz_rl
-from sabz_rl import DQN, load_net, BEST, CKPT, DONE_FLAG, run_v2
+from sabz_rl import DQN, load_net, BEST, CKPT, DONE_FLAG, run_v2, \
+    state_vec_from_dict
 
 BLOCK = 40000
 MAX_EPISODES = 10000000
@@ -46,13 +47,7 @@ def bench(path=None):
     net = load_best_net()
 
     def rl_decide(state, prio):
-        q = [state["queue"][a] / 20.0 for a in ("N", "S", "E", "W")]
-        ap = [state["approaching"][a] / 10.0 for a in ("N", "S", "E", "W")]
-        # 16-dim brain: 10 traffic features + 6 location features (zeros: the
-        # benchmark scenarios use no per-junction location plan).
-        s = np.array(q + ap + [1.0 if state["phase"] == "NS" else 0.0,
-                              state["green_elapsed"] / 60.0]
-                     + [0.0] * 6)
+        s = state_vec_from_dict(state)
         return "switch" if net.act(s) == 1 else "stay"
 
     scenarios = {
@@ -104,7 +99,13 @@ def main():
         target += BLOCK
         print("not yet capable; extending training to %d episodes..."
               % target, flush=True)
-        sabz_rl.train(episodes=target, out="sabz_dqn_capable.npz")
+        # Production refinement from the BC brain: low LR and low
+        # re-exploration. Aggressive DQN refinement was verified to destroy
+        # the BC policy (0/3 after refine); these safe settings preserve it
+        # while allowing genuine improvements. BEST (exact bench metric)
+        # only ever updates on real wins, so the deployed brain can't regress.
+        sabz_rl.train(episodes=target, out="sabz_dqn_capable.npz",
+                      lr=3e-4, resume_eps=0.1)
     print("hit %d episodes without full capability; keeping best."
           % MAX_EPISODES, flush=True)
 

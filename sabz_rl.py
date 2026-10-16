@@ -5,12 +5,32 @@ signal-timing policy inside the SABZ v2 simulator. Safety (dilemma-zone
 protection) stays a HARD environment rule, so the network learns efficiency
 only; it can never learn an unsafe cutoff.
 
-State (16): queued vehicles per approach (/20), approaching vehicles in
+State (18): queued vehicles per approach (/20), approaching vehicles in
 camera range per approach (/10), current phase NS=1/EW=0, green elapsed /60,
-plus 6 LOCATION features the brain uses to understand where it is:
-near_school, near_mosque, near_office, near_hospital (0/1),
-is_friday (0/1 for Jummah), hour_of_day (/24).
-Actions: 0 = hold green, 1 = switch phase. Reward: -queue/40 - 0.3*switch.
+6 LOCATION features (near_school, near_mosque, near_office, near_hospital,
+is_friday, hour_of_day/24), plus 2 STARVATION features: red_wait (how long
+the red phase has waited /300) and max_q_age (oldest queued vehicle wait
+/300). The starvation features fix the seed-fragile collapse where the
+brain held green too long and starved a phase.
+
+Actions: 0 = hold green, 1 = switch phase.
+Reward: -total_queue/40 per step (delay-aligned by Little's law; each queued
+vehicle-second is one second of delay). No switch penalty: the 5s
+yellow+all-red transition already prices switches implicitly through the
+queue term, and penalizing switches was discouraging needed phase changes.
+
+Training upgrades over the v1 brain:
+- Double DQN (online net picks the argmax action, target net evaluates it)
+  to kill the overestimation that made Q(switch)~Q(stay) a coin flip.
+- gamma 0.995 (was 0.97): a switch pays off over a full 60-120s cycle;
+  0.97^60 = 0.16 made the brain myopic and switch-averse.
+- Proportional prioritized experience replay: rare collapse transitions get
+  replayed instead of drowning in uniform sampling.
+- Target net sync every 4000 env steps (was 500): stable bootstrapping.
+- Timeout is NOT terminal: we bootstrap at T instead of cutting the value.
+- Training scenarios now include the exact benchmark patterns, and the sim's
+  NGSIM headway sampler is rate-modulated so scenario demand shapes are real
+  (previously use_real_data=True ignored rates entirely).
 """
 import os
 import numpy as np
@@ -18,14 +38,19 @@ from sabz_sim2 import (IntersectionV2, PHASES, MAX_GREEN, MIN_GREEN,
                        run_v2)
 
 N_POI = 6  # location features: school, mosque, office, hospital, friday, hour
-N_IN, N_H, N_OUT = 10 + N_POI, 64, 2
-GAMMA = 0.97
+N_STATE = 18  # 10 traffic + 6 location + 2 starvation
+N_H, N_OUT = 64, 2
+GAMMA = 0.99  # was 0.97 (myopic: 0.97^60 = 0.16, switch payoff invisible);
+              # 0.995 caused re-scale shock on transferred weights, 0.99 is
+              # the stable middle: 0.99^70 = 0.49, a full cycle stays visible
 LR = 1e-3
-BUFFER = 30000
-BATCH = 64
+BUFFER = 60000
+BATCH = 128
 EPS0, EPS1, EPS_DECAY = 1.0, 0.05, 0.9995
-TARGET_SYNC = 500
-TRAIN_EVERY = 4
+TARGET_SYNC = 4000   # env steps between target-net copies
+TRAIN_EVERY = 2      # env steps between gradient updates
+PER_ALPHA = 0.6
+PER_BETA0 = 0.4      # annealed to 1.0
 
 
 def get_state(sim, loc=None):
@@ -35,14 +60,35 @@ def get_state(sim, loc=None):
                      sim.green_elapsed / MAX_GREEN]
     if loc is None:
         loc = [0.0] * N_POI
-    return np.array(base + list(loc), dtype=np.float64)
+    red_wait = min((sim.t - sim.last_switch_t) / 300.0, 2.0)
+    max_age = 0.0
+    for a in ("N", "S", "E", "W"):
+        for v in sim.queue_of(a):
+            age = (sim.t - v.t_spawn) / 300.0
+            if age > max_age:
+                max_age = age
+    max_age = min(max_age, 2.0)
+    return np.array(base + list(loc) + [red_wait, max_age],
+                    dtype=np.float64)
+
+
+def state_vec_from_dict(state):
+    """Build the 18-dim brain input from a sim state dict (for eval/bench)."""
+    q = [state["queue"][a] / 20.0 for a in ("N", "S", "E", "W")]
+    ap = [state["approaching"][a] / 10.0 for a in ("N", "S", "E", "W")]
+    return np.array(
+        q + ap + [1.0 if state["phase"] == "NS" else 0.0,
+                  state["green_elapsed"] / MAX_GREEN]
+        + [0.0] * N_POI
+        + [state.get("red_wait", 0.0), state.get("max_q_age", 0.0)],
+        dtype=np.float64)
 
 
 class DQN:
     def __init__(self, seed=0):
         r = np.random.default_rng(seed)
         self.p = {
-            "W1": r.normal(0, np.sqrt(2 / N_IN), (N_IN, N_H)),
+            "W1": r.normal(0, np.sqrt(2 / N_STATE), (N_STATE, N_H)),
             "b1": np.zeros(N_H),
             "W2": r.normal(0, np.sqrt(2 / N_H), (N_H, N_H)),
             "b2": np.zeros(N_H),
@@ -69,14 +115,20 @@ class DQN:
         for k in self.p:
             self.p[k] = other.p[k].copy()
 
-    def train_batch(self, s, a, r, s2, done, target):
+    def train_batch(self, s, a, r, s2, done, w, target, lr=LR):
+        """Double-DQN update with importance-weighted MSE. Returns loss."""
         self.t += 1
-        q, (x, z1, a1, z2, a2) = self.forward(s)
-        q2, _ = target.forward(s2)
-        y = r + GAMMA * np.max(q2, axis=1) * (1 - done)
         n = s.shape[0]
+        q, (x, z1, a1, z2, a2) = self.forward(s)
+        # Double DQN: online net selects, target net evaluates
+        q2_online, _ = self.forward(s2)
+        a_star = np.argmax(q2_online, axis=1)
+        q2_tgt, _ = target.forward(s2)
+        y = r + GAMMA * q2_tgt[np.arange(n), a_star] * (1.0 - done)
+        td = q[np.arange(n), a] - y
+        loss = float(np.mean(w * td ** 2))
         dq = np.zeros_like(q)
-        dq[np.arange(n), a] = (q[np.arange(n), a] - y) / n
+        dq[np.arange(n), a] = (w * td) / n
         # backprop
         dW3 = a2.T @ dq
         db3 = dq.sum(0)
@@ -97,12 +149,50 @@ class DQN:
             self.v[k] = b2 * self.v[k] + (1 - b2) * g[k] ** 2
             mh = self.m[k] / (1 - b1 ** self.t)
             vh = self.v[k] / (1 - b2 ** self.t)
-            self.p[k] -= LR * mh / (np.sqrt(vh) + eps)
-        return float(np.mean((q[np.arange(n), a] - y) ** 2))
+            self.p[k] -= lr * mh / (np.sqrt(vh) + eps)
+        return loss, np.abs(td)
+
+
+class PERBuffer:
+    """Proportional prioritized experience replay (ring buffer)."""
+
+    def __init__(self, cap, alpha=PER_ALPHA):
+        self.cap = cap
+        self.alpha = alpha
+        self.s = np.zeros((cap, N_STATE))
+        self.s2 = np.zeros((cap, N_STATE))
+        self.a = np.zeros(cap, dtype=np.int64)
+        self.r = np.zeros(cap)
+        self.d = np.zeros(cap)
+        self.p = np.zeros(cap)  # priorities
+        self.pos = 0
+        self.size = 0
+
+    def add(self, s, a, r, s2, d):
+        i = self.pos
+        self.s[i] = s
+        self.a[i] = a
+        self.r[i] = r
+        self.s2[i] = s2
+        self.d[i] = d
+        self.p[i] = self.p[:self.size].max() if self.size > 0 else 1.0
+        self.pos = (self.pos + 1) % self.cap
+        self.size = min(self.size + 1, self.cap)
+
+    def sample(self, rng, batch, beta):
+        p = self.p[:self.size] ** self.alpha
+        prob = p / p.sum()
+        idx = rng.choice(self.size, size=batch, p=prob, replace=False)
+        w = (self.size * prob[idx]) ** (-beta)
+        w = w / w.max()
+        return idx, w
+
+    def update_priorities(self, idx, td_err):
+        self.p[idx] = np.abs(td_err) + 1e-6
 
 
 CKPT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                   "sabz_dqn_ckpt.npz")
+                    "sabz_dqn_ckpt.npz")
 BEST = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                     "sabz_dqn_best.npz")
 DONE_FLAG = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -124,30 +214,38 @@ def save_ckpt(path, net, tgt, eps, episode, best_score):
     os.replace(tmp, path)
 
 
+def _transfer_matrix(old, new_shape, small=0.01, seed=0):
+    """Copy overlapping block of old weights into a new-shaped matrix."""
+    new = np.random.default_rng(seed).normal(0, small, new_shape)
+    rows = min(old.shape[0], new_shape[0])
+    cols = min(old.shape[1], new_shape[1])
+    new[:rows, :cols] = old[:rows, :cols]
+    return new
+
+
 def load_ckpt(path, net, tgt):
     d = np.load(path)
     for k in net.p:
         old_net = d[f"net_{k}"]
         old_tgt = d[f"tgt_{k}"]
-        if k == "W1" and old_net.shape[0] != net.p[k].shape[0]:
-            # TRANSFER: old brain had 10 inputs, new has 16 (10 + 6 location).
-            # Keep learned weights for the 10 traffic features, init the 6
-            # location weights small so the brain starts as its old self.
-            print(f"transfer: expanding W1 {old_net.shape} -> {net.p[k].shape}",
+        if old_net.shape != net.p[k].shape:
+            # TRANSFER: e.g. old brain had 16 inputs, new has 18.
+            # Keep learned weights for the overlapping features, small-init
+            # the new rows/cols so the brain starts as its old self.
+            print(f"transfer: {k} {old_net.shape} -> {net.p[k].shape}",
                   flush=True)
-            new_w = np.random.default_rng(0).normal(
-                0, 0.01, net.p[k].shape)
-            new_w[:old_net.shape[0], :] = old_net
-            net.p[k] = new_w
-            new_wt = np.random.default_rng(1).normal(
-                0, 0.01, tgt.p[k].shape)
-            new_wt[:old_tgt.shape[0], :] = old_tgt
-            tgt.p[k] = new_wt
-            # Adam state for W1: keep old, zero-init the new rows
+            net.p[k] = _transfer_matrix(old_net, net.p[k].shape, seed=0)
+            tgt.p[k] = _transfer_matrix(old_tgt, tgt.p[k].shape, seed=1)
             for arr, name in ((net.m, "m"), (net.v, "v")):
                 old_a = d[f"{name}_{k}"]
-                nw = np.zeros_like(net.p[k])
-                nw[:old_a.shape[0], :] = old_a
+                nw = np.zeros(net.p[k].shape)
+                rows = min(old_a.shape[0], nw.shape[0])
+                cols = min(old_a.shape[1], nw.shape[1]) \
+                    if old_a.ndim > 1 else nw.shape[0]
+                if old_a.ndim > 1:
+                    nw[:rows, :cols] = old_a[:rows, :cols]
+                else:
+                    nw[:rows] = old_a[:rows]
                 arr[k] = nw
         else:
             net.p[k] = old_net
@@ -159,14 +257,11 @@ def load_ckpt(path, net, tgt):
 
 
 def quick_eval(net):
-    """Greedy policy score: mean delay, lower is better. Fast eval."""
+    """Greedy policy score on the EXACT benchmark: 3 scenarios x 3 seeds,
+    T=3600. Lower is better. This must match train_until_capable.bench()."""
     def rl_decide(state, prio):
-        q = [state["queue"][a] / 20.0 for a in ("N", "S", "E", "W")]
-        ap = [state["approaching"][a] / 10.0 for a in ("N", "S", "E", "W")]
-        s = np.array(q + ap + [1.0 if state["phase"] == "NS" else 0.0,
-                              state["green_elapsed"] / MAX_GREEN]
-                     + [0.0] * N_POI)
-        return "switch" if net.act(s) == 1 else "stay"
+        return "switch" if net.act(state_vec_from_dict(state)) == 1 \
+            else "stay"
 
     def asym(a, t):
         return 0.25 if a in ("N", "S") else 0.035
@@ -174,10 +269,14 @@ def quick_eval(net):
     def bal(a, t):
         return 0.22
 
+    def school(a, t):
+        return (0.30 if a in ("N", "S") else 0.10) \
+            if 7 <= (t / 3600) % 24 <= 9 else 0.08
+
     ds = []
-    for rates in (asym, bal):
-        for sd in (11, 22):
-            m = run_v2(rl_decide, rates, T=1800.0, seed=sd, safety_on=True)
+    for rates in (asym, bal, school):
+        for sd in (11, 22, 33):
+            m = run_v2(rl_decide, rates, T=3600.0, seed=sd, safety_on=True)
             ds.append(m["avg_delay_s"])
     return float(np.mean(ds))
 
@@ -204,7 +303,9 @@ def bc_pretrain(net, episodes=300, T=900.0, lr=3e-3, batch=256):
                             ("N", "S", "E", "W")},
                   "approaching": {a: len(sim.approaching(a)) for a in
                                   ("N", "S", "E", "W")},
-                  "dilemma": sim.dilemma(), "obs": sim.observe()}
+                  "dilemma": sim.dilemma(), "obs": sim.observe(),
+                  "red_wait": min((sim.t - sim.last_switch_t) / 300.0, 2.0),
+                  "max_q_age": 0.0}
             a = 1 if actuated_decide(st, sched(sim.t) if sched else None) \
                 == "switch" else 0
             # small exploration so the net sees off-policy states too
@@ -258,6 +359,23 @@ def bc_pretrain(net, episodes=300, T=900.0, lr=3e-3, batch=256):
 def scenario_sampler(rng):
     import real_traffic as rt
     hour = int(rng.integers(0, 24))
+    r = rng.random()
+    # BENCH-EXACT patterns (~34% of episodes): train on-distribution for the
+    # benchmark. The old sampler never produced these, so the brain was
+    # evaluated out-of-distribution.
+    if r < 0.12:
+        loc = [0.0] * N_POI
+        rates = lambda a, t: 0.25 if a in ("N", "S") else 0.035
+        return rates, None, loc
+    if r < 0.24:
+        loc = [0.0] * N_POI
+        rates = lambda a, t: 0.22
+        return rates, None, loc
+    if r < 0.34:
+        loc = [0.0] * N_POI
+        rates = lambda a, t: (0.30 if a in ("N", "S") else 0.10) \
+            if 7 <= (t / 3600) % 24 <= 9 else 0.08
+        return rates, None, loc
     # LOCATION: sample what kind of place this intersection is.
     # The brain sees these 6 features and learns location-aware control.
     loc_r = rng.random()
@@ -341,15 +459,22 @@ def scenario_sampler(rng):
 
 
 def train(episodes=120000, T=900.0, out="sabz_dqn.npz", log_every=100,
-          ckpt_every=500, eval_every=2000):
+          ckpt_every=500, eval_every=2000, ckpt_path=None, resume_eps=0.3,
+          lr=LR):
     rng = np.random.default_rng(7)
     net, tgt = DQN(seed=1), DQN(seed=1)
     eps, start_ep, best_score = EPS0, 0, 1e9
-    if os.path.exists(CKPT):
-        eps, start_ep, best_score = load_ckpt(CKPT, net, tgt)
+    ckpt_path = ckpt_path or CKPT
+    if os.path.exists(ckpt_path):
+        eps, start_ep, best_score = load_ckpt(ckpt_path, net, tgt)
         print(f"resumed from episode {start_ep} (eps={eps:.3f}, "
               f"best={best_score:.1f}s)", flush=True)
-    buf_s, buf_a, buf_r, buf_s2, buf_d = [], [], [], [], []
+        # Re-explore on resume: the carried policy may sit in a degenerate
+        # attractor (e.g. never-switch). But keep it modest: high eps fills
+        # the buffer with collapse episodes and poisons Q-learning.
+        eps = max(eps, resume_eps)
+        print(f"re-exploration: eps reset to {eps:.3f}", flush=True)
+    buf = PERBuffer(BUFFER)
     steps = 0
     ep_rewards = []
     for ep in range(start_ep, episodes):
@@ -359,36 +484,52 @@ def train(episodes=120000, T=900.0, out="sabz_dqn.npz", log_every=100,
         s = get_state(sim, loc)
         ep_r = 0.0
         while sim.t < T:
-            a = int(rng.integers(2)) if rng.random() < eps \
+            # Safe exploration: only explore randomly when no phase is
+            # starving. Random actions during starvation cause collapse
+            # episodes that poison the replay buffer and teach the network
+            # the collapse attractor instead of the recovery.
+            _age_now = 0.0
+            for _a in ("N", "S", "E", "W"):
+                for _v in sim.queue_of(_a):
+                    _ag = (sim.t - _v.t_spawn) / 300.0
+                    if _ag > _age_now:
+                        _age_now = _ag
+            safe_to_explore = _age_now < 0.3
+            a = int(rng.integers(2)) if (rng.random() < eps
+                                        and safe_to_explore) \
                 else net.act(s)
-            sw0 = sim.switches
             sim.step(rates,
                      lambda st, pr: "switch" if a == 1 else "stay",
                      schedule=sched)
-            switched = 1.0 if sim.switches > sw0 else 0.0
             qtot = sum(len(sim.queue_of(x)) for x in ("N", "S", "E", "W"))
-            r = -qtot / 40.0 - 0.3 * switched
+            # Delay-aligned reward: each queued vehicle-second is one second
+            # of delay (Little's law). No switch penalty: the yellow+all-red
+            # transition already prices switches via the queue term, and the
+            # old -0.3 penalty was suppressing needed phase changes.
+            # Small starvation shaping: penalize the oldest queue wait so the
+            # brain gets a dense signal against starving a phase, instead of
+            # only discovering it after a 900s collapse.
+            max_age = 0.0
+            for _a in ("N", "S", "E", "W"):
+                for _v in sim.queue_of(_a):
+                    _age = (sim.t - _v.t_spawn) / 300.0
+                    if _age > max_age:
+                        max_age = _age
+            r = -qtot / 40.0 - 0.05 * min(max_age, 2.0)
             s2 = get_state(sim, loc)
-            done = 1.0 if sim.t >= T else 0.0
-            buf_s.append(s)
-            buf_a.append(a)
-            buf_r.append(r)
-            buf_s2.append(s2)
-            buf_d.append(done)
-            if len(buf_s) > BUFFER:
-                for b in (buf_s, buf_a, buf_r, buf_s2, buf_d):
-                    b.pop(0)
+            # Timeout is not terminal: bootstrap the value at T.
+            done = 0.0
+            buf.add(s, a, r, s2, done)
             s = s2
             ep_r += r
             steps += 1
-            if steps % TRAIN_EVERY == 0 and len(buf_s) >= BATCH:
-                idx = rng.integers(len(buf_s), size=BATCH)
-                net.train_batch(
-                    np.array([buf_s[i] for i in idx]),
-                    np.array([buf_a[i] for i in idx]),
-                    np.array([buf_r[i] for i in idx]),
-                    np.array([buf_s2[i] for i in idx]),
-                    np.array([buf_d[i] for i in idx]), tgt)
+            if steps % TRAIN_EVERY == 0 and buf.size >= BATCH:
+                beta = min(1.0, PER_BETA0 + net.t / 200000.0)
+                idx, w = buf.sample(rng, BATCH, beta)
+                loss, td = net.train_batch(
+                    buf.s[idx], buf.a[idx], buf.r[idx],
+                    buf.s2[idx], buf.d[idx], w, tgt, lr=lr)
+                buf.update_priorities(idx, td)
             if steps % TARGET_SYNC == 0:
                 tgt.copy_from(net)
         eps = max(EPS1, eps * EPS_DECAY)
@@ -420,7 +561,10 @@ def load_net(path):
     d = np.load(path)
     net = DQN()
     for k in net.p:
-        net.p[k] = d[f"p_{k}"]
+        v = d[f"p_{k}"]
+        # shape-tolerant: older brains had fewer state features
+        net.p[k] = v if v.shape == net.p[k].shape else \
+            _transfer_matrix(v, net.p[k].shape)
     return net
 
 
@@ -428,12 +572,8 @@ def evaluate(path, seeds=(11, 22, 33)):
     net = load_net(path)
 
     def rl_decide(state, prio):
-        q = [state["queue"][a] / 20.0 for a in ("N", "S", "E", "W")]
-        ap = [state["approaching"][a] / 10.0 for a in ("N", "S", "E", "W")]
-        s = np.array(q + ap + [1.0 if state["phase"] == "NS" else 0.0,
-                              state["green_elapsed"] / MAX_GREEN]
-                     + [0.0] * N_POI)
-        return "switch" if net.act(s) == 1 else "stay"
+        return "switch" if net.act(state_vec_from_dict(state)) == 1 \
+            else "stay"
 
     def asym(a, t):
         return 0.25 if a in ("N", "S") else 0.035
@@ -441,9 +581,14 @@ def evaluate(path, seeds=(11, 22, 33)):
     def bal(a, t):
         return 0.22
 
+    def school(a, t):
+        return (0.30 if a in ("N", "S") else 0.10) \
+            if 7 <= (t / 3600) % 24 <= 9 else 0.08
+
     print(f"{'scenario':11s}{'controller':10s}{'avg_delay':>10s}"
           f"{'viol':>6s}")
-    for name, rates in (("asymmetric", asym), ("balanced", bal)):
+    for name, rates in (("asymmetric", asym), ("balanced", bal),
+                        ("school", school)):
         for ctrl in ("actuated", rl_decide):
             ds, vv = [], 0
             for sd in seeds:

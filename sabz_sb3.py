@@ -14,14 +14,14 @@ from sabz_rl import scenario_sampler, N_POI
 
 
 class SabzEnv(gym.Env):
-    """Gymnasium wrapper: 16-dim location-aware state, 2 actions."""
+    """Gymnasium wrapper: 18-dim location-aware state, 2 actions."""
     metadata = {"render_modes": []}
 
     def __init__(self, T=450.0):
         super().__init__()
         self.T = T
         self.observation_space = spaces.Box(
-            low=0, high=2, shape=(10 + N_POI,), dtype=np.float64)
+            low=0, high=2, shape=(18,), dtype=np.float64)
         self.action_space = spaces.Discrete(2)
         self._rng = np.random.default_rng()
 
@@ -39,14 +39,12 @@ class SabzEnv(gym.Env):
         return get_state(self.sim, self.loc).astype(np.float64)
 
     def step(self, action):
-        sw0 = self.sim.switches
         self.sim.step(
             self.rates,
             lambda st, pr: "switch" if action == 1 else "stay",
             schedule=self.sched)
-        switched = 1.0 if self.sim.switches > sw0 else 0.0
         qtot = sum(len(self.sim.queue_of(x)) for x in ("N", "S", "E", "W"))
-        reward = -qtot / 40.0 - 0.3 * switched
+        reward = -qtot / 40.0
         terminated = self.sim.t >= self.T
         return self._get_state(), reward, terminated, False, {}
 
@@ -56,7 +54,7 @@ def train_sb3(total_timesteps=500000, out="sabz_ppo.zip"):
     env = SabzEnv(T=450.0)
     model = PPO("MlpPolicy", env, verbose=1,
                 n_steps=2048, batch_size=64,
-                learning_rate=3e-4, gamma=0.97)
+                learning_rate=3e-4, gamma=0.995)
     model.learn(total_timesteps=total_timesteps)
     model.save(out)
     print(f"SB3 PPO saved to {out}")

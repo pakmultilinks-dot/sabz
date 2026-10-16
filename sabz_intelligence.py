@@ -44,7 +44,10 @@ class IntelligenceLayer:
         for k in net.p:
             key = f"net_{k}" if f"net_{k}" in d else f"p_{k}"
             if key in d:
-                net.p[k] = d[key]
+                v = d[key]
+                # shape-tolerant: older brains had fewer state features
+                net.p[k] = v if v.shape == net.p[k].shape else \
+                    R._transfer_matrix(v, net.p[k].shape)
         self.dqn = net
         print(f"loaded DQN brain from {path}")
         return net
@@ -172,12 +175,13 @@ class SignalIntegration:
         return action
 
     def _counts_to_state(self, counts):
-        """Convert camera counts to 16-feature state vector."""
+        """Convert camera counts to 18-feature state vector."""
         # Simplified: real version pulls from sabz_sim2.get_state
         q = [float(counts.get(a, 0)) for a in ["N", "S", "E", "W"]]
         app = [0.0, 0.0, 0.0, 0.0]  # approaching estimated from queue delta
         hour = time.localtime().tm_hour + time.localtime().tm_min / 60.0
-        return q + app + [0, 0, 0, 0, 0, 0, 0, hour]
+        # 18-dim: q4 + ap4 + phase + green_el + loc6 + red_wait + max_q_age
+        return q + app + [0, 0, 0, 0, 0, 0, 0, hour] + [0, 0]
 
     def _get_controllers(self):
         """Return controller callables. DQN loaded from best checkpoint."""

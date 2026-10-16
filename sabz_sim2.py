@@ -32,6 +32,11 @@ try:
 except Exception:
     REAL_HEADWAYS = {}
 
+# Effective mean gap (s) of the NGSIM log-uniform sampler below (~8.4s for the
+# main lanes). Used to rescale sampled headways so the *mean* arrival rate
+# matches the scenario's rates(a, t) while keeping the real burstiness shape.
+NGSIM_MEAN_GAP = 8.5
+
 APPROACHES = ["N", "S", "E", "W"]
 PHASES = {"NS": ["N", "S"], "EW": ["E", "W"]}
 OTHER = {"NS": "EW", "EW": "NS"}
@@ -81,6 +86,9 @@ class IntersectionV2:
         # real-data mode: arrivals follow measured NGSIM headways
         self.use_real_data = False
         self.next_gap = {a: 5.0 for a in APPROACHES}
+        # timestamp of the last completed phase switch (for starvation
+        # features: how long the red phase has been waiting)
+        self.last_switch_t = 0.0
         self.delay_sum = 0.0
         self.served = 0
         self.total = 0
@@ -121,8 +129,15 @@ class IntersectionV2:
         # 1. spawn (real NGSIM headways when enabled, else Poisson)
         for a in APPROACHES:
             if getattr(self, 'use_real_data', False) and REAL_HEADWAYS:
-                # sample next arrival from real measured NGSIM headway distribution
-                if self.t - self.last_arrival[a] >= self.next_gap[a]:
+                # sample next arrival from real measured NGSIM headway
+                # distribution, RESCALED so the mean rate matches the
+                # scenario's rates(a, t). Previously the scenario rates were
+                # ignored entirely here, so training never saw true
+                # asymmetric/balanced/school demand shapes.
+                r = max(rates(a, self.t), 0.0)
+                if r < 1e-3:
+                    self.next_gap[a] = 1e9
+                elif self.t - self.last_arrival[a] >= self.next_gap[a]:
                     sp = max(SPEED_MIN, self.rng.normal(SPEED_MEAN, SPEED_STD))
                     self.veh[a].append(Vehicle(
                         a, SPAWN_DIST + self.rng.uniform(0, 20), sp, self.t))
@@ -134,7 +149,7 @@ class IntersectionV2:
                     # sample via inverse transform on stored quantiles (approx lognormal)
                     u = self.rng.random()
                     gap = hw['median'] * (hw['p90']/hw['median']) ** (2*u - 1)
-                    self.next_gap[a] = max(1.0, gap)
+                    self.next_gap[a] = max(0.5, gap / (r * NGSIM_MEAN_GAP))
             else:
                 n = self.rng.poisson(rates(a, self.t) * DT)
                 for _ in range(n):
@@ -198,10 +213,21 @@ class IntersectionV2:
             qlen = {a: len(self.queue_of(a)) for a in APPROACHES}
             appr = {a: len(self.approaching(a)) for a in APPROACHES}
             in_dilemma = self.dilemma()
+            # starvation signals for the controller / brain
+            red_wait = min((self.t - self.last_switch_t) / 300.0, 2.0)
+            max_q_age = 0.0
+            for a in APPROACHES:
+                for v in self.veh[a]:
+                    if v.queued:
+                        age = (self.t - v.t_spawn) / 300.0
+                        if age > max_q_age:
+                            max_q_age = age
+            max_q_age = min(max_q_age, 2.0)
             state = {"t": self.t, "phase": self.phase,
                      "green_elapsed": self.green_elapsed,
                      "queue": qlen, "approaching": appr,
-                     "dilemma": in_dilemma, "obs": self.observe()}
+                     "dilemma": in_dilemma, "obs": self.observe(),
+                     "red_wait": red_wait, "max_q_age": max_q_age}
             prio = schedule(self.t) if schedule else None
             want = decide(state, prio)
             if want == "switch" and in_dilemma:
@@ -226,6 +252,7 @@ class IntersectionV2:
                 self.next_phase = None
                 self.transitioning = False
                 self.green_elapsed = 0.0
+                self.last_switch_t = self.t
 
         qtot = sum(len(self.queue_of(a)) for a in APPROACHES)
         self.max_queue = max(self.max_queue, qtot)
