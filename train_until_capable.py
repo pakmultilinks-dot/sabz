@@ -26,7 +26,7 @@ import sabz_rl
 from sabz_rl import DQN, load_net, BEST, CKPT, DONE_FLAG, run_v2
 
 BLOCK = 40000
-MAX_EPISODES = 1000000
+MAX_EPISODES = 10000000
 
 
 def load_best_net():
