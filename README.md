@@ -14,6 +14,17 @@ SABZ trains on measured traffic data:
 - **Live camera footage:** YOLOv8 runs on real intersection video, detecting actual vehicles frame by frame with cross-frame tracking to avoid double-counting.
 - **Simulator:** kinematic 4-way intersection used for controlled benchmarking, now calibrated with real measured arrival distributions.
 
+## Accident prevention
+
+SABZ actively prevents the deadliest intersection crashes, not just optimizes flow:
+
+- **Red-light runner detection:** physics-based prediction using vehicle speed and distance. When a car cannot stop in time and will enter on red, the system extends all-red clearance to let it pass safely, preventing T-bone crashes.
+- **Adaptive yellow timing:** yellow duration scales with the 85th-percentile approach speed, eliminating the dilemma zone where 85% of drivers don't know whether to stop or go.
+- **Rear-end prevention:** detects when a following vehicle cannot stop behind a braking leader and extends green to let both clear.
+- **Dilemma-zone hard rule:** green is NEVER cut while a vehicle is inside 70 m. This is enforced outside the neural network and cannot be overridden.
+
+Research basis: red light running causes ~900 deaths/year in the US; someone runs a red every 20 minutes at urban intersections (FHWA, IIHS).
+
 ## Screenshots
 
 ### Judges Dashboard
@@ -28,6 +39,7 @@ SABZ trains on measured traffic data:
 | Live video | `sabz_live.py` | End-to-end live pipeline: camera feed to YOLO detection to tracked counts to signal decision |
 | Camera system | `sabz_camera.py` | YOLOv8 vehicle detection on live video streams with cross-frame tracking |
 | Security layer | `sabz_security.py` | Input validation, timing bounds, dilemma-zone enforcement, fail-safe fallback, audit logging, watchdog |
+| Accident prevention | `sabz_safety.py` | Red-light runner detection, adaptive all-red extension, dynamic yellow timing, rear-end risk detection |
 | Integration API | `sabz_api.py` | REST service (port 8099): any camera and any signal hardware plug in through HTTP |
 | Safety layer | `sabz_sim2.py` | Dilemma-zone hard rule, checked every second, overrides any unsafe switch |
 | Simulator | `sabz_sim2.py` | Kinematic 4-way intersection, calibrated with real measured NGSIM arrival distributions |
