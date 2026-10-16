@@ -6,6 +6,7 @@ No simulation. No historical data. Live video in, signal decisions out.
 Pipeline:
     Live video -> YOLO detect -> track -> count per approach
     -> Intelligence Layer (DQN + actuated + fixed) -> Safety -> Decision
+    -> Accident Prevention (runner detection, adaptive timing)
 
 Usage:
     python3 sabz_live.py <video_source>
@@ -18,18 +19,27 @@ import sys
 
 from sabz_intelligence import IntelligenceLayer
 
+try:
+    from sabz_safety import AccidentPrevention
+    _SAFETY_OK = True
+except ImportError:
+    _SAFETY_OK = False
+
 
 class SabzLive:
-    """Full live pipeline: camera -> brain -> decision."""
+    """Full live pipeline: camera -> brain -> accident prevention -> decision."""
 
     def __init__(self, dqn_path="sabz_dqn_capable.npz"):
         # Intelligence layer with real trained brain
         self.brain = IntelligenceLayer(dqn_path=dqn_path)
+        # Accident prevention
+        self.safety = AccidentPrevention() if _SAFETY_OK else None
         # Camera (imported lazily so module loads without ultralytics)
         self.camera = None
         self.phase = "NS"
         self.green_elapsed = 0.0
         self.decisions = []
+        self.yellow_remaining = 3.0
 
     def _get_camera(self):
         if self.camera is None:
@@ -56,15 +66,26 @@ class SabzLive:
                   friday, hour])
         return state
 
-    def on_frame_counts(self, counts):
-        """Called with live counts each second. Returns decision."""
+    def on_frame_counts(self, counts, vehicles=None):
+        """Called with live counts each second. Returns decision.
+
+        vehicles: optional list of (approach, speed_m_s, dist_m) for
+        accident prevention. If provided, runner detection is active.
+        """
         state = self.counts_to_state(counts)
         action, ctrl, regime = self.brain.decide(state)
+
+        # Accident prevention: check for red-light runners
+        extra_all_red = 0.0
+        if self.safety and vehicles:
+            extra_all_red = self.safety.check_all_red_extension(
+                vehicles, self.yellow_remaining)
 
         # Update signal phase tracking
         if action == "switch":
             self.phase = "EW" if self.phase == "NS" else "NS"
             self.green_elapsed = 0.0
+            self.yellow_remaining = 3.0
         else:
             self.green_elapsed += 1.0
 
@@ -74,6 +95,8 @@ class SabzLive:
             "regime": regime,
             "phase": self.phase,
             "counts": dict(counts),
+            "extra_all_red": round(extra_all_red, 1),
+            "safety_stats": self.safety.stats() if self.safety else {},
             "ts": time.time(),
         }
         self.decisions.append(result)
