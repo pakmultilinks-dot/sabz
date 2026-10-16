@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SABZ 3D - AI-Adaptive Traffic Signals</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   html, body { width:100%; height:100%; overflow:hidden; background:#07090d;
@@ -25,9 +25,13 @@
   .stat { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);
     border-radius:10px; padding:9px 12px; }
   .stat .k { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:#8b95ad; }
-  .stat .v { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:600;
+  .stat .v { font-family:'JetBrains Mono','Space Grotesk',monospace; font-size:20px; font-weight:700;
     color:#fff; margin-top:2px; }
   .stat .v.green { color:#4ade80; }
+  .live-dot { display:inline-block; width:8px; height:8px; border-radius:50%;
+    background:#4ade80; margin-right:6px; animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; box-shadow:0 0 8px #4ade80; }
+    50% { opacity:0.4; box-shadow:none; } }
   .vsbar { margin-top:12px; padding:10px 12px; border-radius:10px;
     background:linear-gradient(135deg, rgba(74,222,128,.14), rgba(74,222,128,.04));
     border:1px solid rgba(74,222,128,.25); font-size:12px; }
@@ -90,14 +94,19 @@
 
 <div id="hud-left" class="glass">
   <div class="brand">
-    <svg width="40" height="40" viewBox="0 0 48 48" fill="none">
-      <path d="M24 3 42 13.5v21L24 45 6 34.5v-21L24 3z" stroke="#4ade80" stroke-width="2.5" fill="rgba(74,222,128,.08)"/>
-      <path d="M15 24h9l-2-4h7l-2 4h6" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="24" cy="31" r="2.4" fill="#4ade80"/>
+    <svg width="44" height="44" viewBox="0 0 256 256" fill="none">
+      <rect x="8" y="8" width="240" height="240" rx="56" fill="#0B1220" stroke="#2A3A5F" stroke-width="4"/>
+      <circle cx="128" cy="160" r="46" fill="#00E676" opacity="0.25"/>
+      <rect x="96" y="34" width="64" height="168" rx="32" fill="#070C18" stroke="#3B4A6B" stroke-width="4"/>
+      <circle cx="128" cy="74" r="15" fill="#F87171" opacity="0.16"/>
+      <circle cx="128" cy="117" r="15" fill="#FBBF24" opacity="0.16"/>
+      <circle cx="128" cy="160" r="27" fill="none" stroke="#00E676" stroke-width="4" opacity="0.45"/>
+      <circle cx="128" cy="160" r="37" fill="none" stroke="#00E676" stroke-width="3" opacity="0.2"/>
+      <circle cx="128" cy="160" r="15" fill="#00E676"/>
     </svg>
     <div><h1>SABZ</h1><small>AI-ADAPTIVE SIGNALS</small></div>
   </div>
-  <p class="tagline">Live neural traffic control. Green follows real demand, never a blind timer.</p>
+  <p class="tagline"><span class="live-dot"></span>LIVE neural traffic control. Green follows real demand, never a blind timer.</p>
   <div class="stats">
     <div class="stat"><div class="k">Avg delay / car</div><div class="v green" id="st-delay">0.0 s</div></div>
     <div class="stat"><div class="k">Vehicles served</div><div class="v" id="st-served">0</div></div>
@@ -303,6 +312,31 @@ const walkMat = new THREE.MeshStandardMaterial({ color:0x3a3e46, roughness:0.95 
   w.position.set(sx * 14.5, 0.15, sz * 14.5);
   w.receiveShadow = true; w.castShadow = true; scene.add(w);
 });
+/* curbs along road edges */
+const curbMat = new THREE.MeshStandardMaterial({ color:0x4a4e57, roughness:0.9 });
+[-3.75, 3.75].forEach(x => {
+  [[-46.5], [46.5]].forEach(([z]) => {
+    const c = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.35, 78), curbMat);
+    c.position.set(x, 0.17, z); c.castShadow = true; c.receiveShadow = true; scene.add(c);
+  });
+});
+[-46.5, 46.5].forEach(x => {
+  [-3.75, 3.75].forEach(z => {
+    const c = new THREE.Mesh(new THREE.BoxGeometry(78, 0.35, 0.4), curbMat);
+    c.position.set(x, 0.17, z); c.castShadow = true; c.receiveShadow = true; scene.add(c);
+  });
+});
+/* road reflector studs along lane dividers */
+const studMat = new THREE.MeshStandardMaterial({ color:0x222222, emissive:0xffd166, emissiveIntensity:0.9, roughness:0.4 });
+const studGeo = new THREE.BoxGeometry(0.18, 0.06, 0.18);
+for (let i = 0; i < 10; i++) {
+  const z0 = -72 + i * 16;
+  if (Math.abs(z0) < 14) continue;
+  [[0, z0], [z0, 0]].forEach(([x, z]) => {
+    const s = new THREE.Mesh(studGeo, studMat);
+    s.position.set(x, 0.05, z); scene.add(s);
+  });
+}
 
 /* ================= BUILDINGS ================= */
 function buildingTexture(litRatio) {
@@ -421,6 +455,7 @@ const tireMat = new THREE.MeshStandardMaterial({ color:0x0b0b0c, roughness:0.9 }
 const rimMat = new THREE.MeshStandardMaterial({ color:0x9aa2ad, roughness:0.35, metalness:0.85 });
 const headMat = new THREE.MeshStandardMaterial({ color:0x111111, emissive:0xcfe8ff, emissiveIntensity:2.6 });
 const tailMatBase = new THREE.MeshStandardMaterial({ color:0x220000, emissive:0xff1a1a, emissiveIntensity:0.7 });
+const darkTrimMat = new THREE.MeshStandardMaterial({ color:0x151515, roughness:0.5, metalness:0.4 });
 const bodyMats = CAR_COLORS.map(c => new THREE.MeshStandardMaterial({
   color:c, roughness:0.32, metalness:0.75 }));
 const coneGeo = new THREE.ConeGeometry(1.15, 7, 12, 1, true);
@@ -429,19 +464,39 @@ const coneMat = new THREE.MeshBasicMaterial({ color:0xbfe0ff, transparent:true, 
 
 function buildCar(colorIdx) {
   const g = new THREE.Group();
-  const body = new THREE.Mesh(bodyGeo, bodyMats[colorIdx % bodyMats.length]);
+  const paint = bodyMats[colorIdx % bodyMats.length];
+  const body = new THREE.Mesh(bodyGeo, paint);
   body.position.y = 0.72; body.castShadow = true; g.add(body);
-  const hood = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.3, 1.1), body.material);
+  const hood = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.3, 1.1), paint);
   hood.position.set(0, 0.62, 1.85); hood.castShadow = true; g.add(hood);
+  const trunk = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.34, 0.85), paint);
+  trunk.position.set(0, 0.66, -1.95); trunk.castShadow = true; g.add(trunk);
   const cabin = new THREE.Mesh(cabinGeo, glassMat);
   cabin.position.set(0, 1.32, -0.25); cabin.castShadow = true; g.add(cabin);
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(1.66, 0.08, 1.5), paint);
+  roof.position.set(0, 1.66, -0.25); roof.castShadow = true; g.add(roof);
+  /* bumpers */
+  const bumpF = new THREE.Mesh(new THREE.BoxGeometry(1.86, 0.34, 0.22), darkTrimMat);
+  bumpF.position.set(0, 0.55, 2.26); bumpF.castShadow = true; g.add(bumpF);
+  const bumpR = new THREE.Mesh(new THREE.BoxGeometry(1.86, 0.34, 0.22), darkTrimMat);
+  bumpR.position.set(0, 0.55, -2.26); bumpR.castShadow = true; g.add(bumpR);
+  /* side mirrors */
+  [-0.98, 0.98].forEach(x => {
+    const mir = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.12, 0.22), paint);
+    mir.position.set(x, 1.18, 0.55); g.add(mir);
+  });
+  /* windshield + rear glass highlight strips */
+  const shieldF = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.5, 0.04), glassMat);
+  shieldF.position.set(0, 1.28, 0.92); shieldF.rotation.x = -0.28; g.add(shieldF);
   const wheels = [];
   [[-0.85, 1.45], [0.85, 1.45], [-0.85, -1.45], [0.85, -1.45]].forEach(([x, z]) => {
     const w = new THREE.Group();
     const tire = new THREE.Mesh(wheelGeo, tireMat); tire.rotation.z = Math.PI/2;
     tire.castShadow = true; w.add(tire);
-    const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.3, 10), rimMat);
+    const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.3, 10), rimMat);
     rim.rotation.z = Math.PI/2; w.add(rim);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.32, 8), darkTrimMat);
+    hub.rotation.z = Math.PI/2; w.add(hub);
     w.position.set(x, 0.36, z); g.add(w); wheels.push(w);
   });
   /* headlights */
