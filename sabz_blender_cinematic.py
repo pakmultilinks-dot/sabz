@@ -323,7 +323,7 @@ def make_car(paint, idx):
 
 # ---------------- traffic choreography ----------------
 # path model: straight lines with bezier turns; car faces direction of travel
-SPAWN = 70.0
+SPAWN = 48.0
 SPEED = 11.0            # m/s
 
 def approach_spec(appr):
@@ -534,53 +534,60 @@ world = bpy.context.scene.world
 world.use_nodes = True
 bg = world.node_tree.nodes['Background']
 bg.inputs['Color'].default_value = (0.012, 0.016, 0.030, 1.0)
-bg.inputs['Strength'].default_value = 0.5
+bg.inputs['Strength'].default_value = 1.2
 
 bpy.ops.object.light_add(type='SUN', location=(-60, -45, 42))
 sun = bpy.context.active_object
-sun.data.energy = 0.35
+sun.data.energy = 1.2
 sun.data.color = (0.55, 0.65, 0.95)
 
 # cool moonlight fill
 bpy.ops.object.light_add(type='SUN', location=(50, 30, 60))
 moon = bpy.context.active_object
-moon.data.energy = 0.25
+moon.data.energy = 0.8
 moon.data.color = (0.5, 0.65, 1.0)
 
 # ------------------------------------------------------------------ camera
-bpy.ops.object.camera_add(location=(26, -34, 7),
-                          rotation=(math.radians(78), 0, math.radians(28)))
+from mathutils import Vector
+
+def look_at(obj, target):
+    direction = Vector(target) - Vector(obj.location)
+    rot_quat = direction.to_track_quat('-Z', 'Y')
+    obj.rotation_euler = rot_quat.to_euler()
+
+bpy.ops.object.camera_add(location=(20, -28, 6))
 cam = bpy.context.active_object
 cam.name = 'CineCam'
 bpy.context.scene.camera = cam
 cam.data.lens = 32
+look_at(cam, (0, 0, 2))
 
-def cam_key(frame, loc, rot_deg):
+def cam_key(frame, loc, tgt):
     cam.location = loc
-    cam.rotation_euler = tuple(math.radians(a) for a in rot_deg)
+    look_at(cam, tgt)
     cam.keyframe_insert(data_path='location', frame=frame)
     cam.keyframe_insert(data_path='rotation_euler', frame=frame)
     for fc in cam.animation_data.action.fcurves:
         for kp in fc.keyframe_points:
             kp.interpolation = 'BEZIER'
 
-# cinematic sweep: low street-level -> rising aerial orbit
-cam_key(1, (26, -34, 7), (78, 0, 28))
-cam_key(40, (10, -30, 12), (72, 0, 12))
-cam_key(80, (-18, -20, 22), (64, 0, -28))
-cam_key(120, (-30, 8, 34), (58, 0, -62))
+# cinematic sweep: low street-level -> rising aerial orbit (clear of buildings)
+cam_key(1, (20, -28, 6), (0, 0, 2))
+cam_key(40, (14, -24, 10), (0, 0, 2))
+cam_key(80, (-16, -18, 18), (0, 0, 2))
+cam_key(120, (-24, 6, 28), (0, 0, 1))
 
-# still cameras
+# still cameras (positions verified clear of buildings)
 still_cams = []
-for i, (loc, rot) in enumerate([
-        ((30, -38, 16), (66, 0, 32)),
-        ((-26, 30, 5), (80, 0, -148)),
-        ((0, -2, 55), (12, 0, 0))]):
-    bpy.ops.object.camera_add(location=loc,
-                              rotation=tuple(math.radians(a) for a in rot))
+for i, (loc, tgt) in enumerate([
+        ((24, -30, 12), (0, 0, 2)),
+        ((-22, 26, 5), (0, 0, 2)),
+        ((0, -2, 48), (0, 0, 0))]):
+    bpy.ops.object.camera_add(location=loc)
     c = bpy.context.active_object
     c.name = 'Still%d' % (i + 1)
     c.data.lens = 28 if i < 2 else 24
+    look_at(c, tgt)
     still_cams.append(c)
 
 # ------------------------------------------------------------------ render
