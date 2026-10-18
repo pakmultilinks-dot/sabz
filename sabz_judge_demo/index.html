@@ -3,669 +3,525 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SABZ - Live AI Traffic Demo</title>
+<title>SABZ - Adaptive Traffic AI</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
-  :root{
-    --sabz:#00E676; --bg:#05070c; --panel:rgba(10,15,22,.78);
-    --line:rgba(0,230,118,.16); --txt:#eaf0f6; --mut:#8b95a7;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);
-    font-family:'Space Grotesk',system-ui,sans-serif;color:var(--txt);
-    -webkit-font-smoothing:antialiased}
-  #glF,#glS{position:fixed;top:0;bottom:0;height:100%;display:block}
-  #glF{left:0} #glS{right:0}
-  .hud{position:fixed;z-index:10;pointer-events:none}
-  .hud .card{pointer-events:auto}
+:root{
+  --sabz:#00E676; --sabz-dim:rgba(0,230,118,.14);
+  --bg:#0a0e14; --bg2:#0d1219;
+  --panel:#11161f; --panel2:#151b26;
+  --line:rgba(255,255,255,.08); --line2:rgba(0,230,118,.25);
+  --txt:#f0f4f8; --mut:#8a94a6; --mut2:#5a6373;
+  --amber:#ffb020; --red:#ff4d5e;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--txt);
+  font-family:'Space Grotesk',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+body{display:flex;flex-direction:column}
 
-  /* top bar */
-  #topbar{top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;
-    padding:14px 22px;background:linear-gradient(180deg,rgba(3,5,9,.85),transparent)}
-  .logo{display:flex;align-items:center;gap:12px}
-  .logo .mark{width:40px;height:40px;border-radius:12px;background:radial-gradient(circle at 35% 30%,#0a2a18,#04120a);
-    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
-    box-shadow:0 0 24px rgba(0,230,118,.35)}
-  .logo .mark svg{width:24px;height:24px}
-  .logo h1{font-size:22px;font-weight:700;letter-spacing:.14em}
-  .logo h1 span{color:var(--sabz);text-shadow:0 0 18px rgba(0,230,118,.8)}
-  .logo small{display:block;font-size:9px;letter-spacing:.32em;color:var(--mut);font-weight:500}
-  #clockbox{text-align:center}
-  #scenarioName{font-size:13px;letter-spacing:.28em;color:var(--mut);font-weight:600}
-  #simclock{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.06em}
-  #livepill{display:inline-flex;align-items:center;gap:7px;margin-top:4px;font-size:10px;letter-spacing:.24em;
-    color:var(--sabz);border:1px solid var(--line);border-radius:20px;padding:4px 12px;background:rgba(0,230,118,.06)}
-  #livepill .dot{width:7px;height:7px;border-radius:50%;background:var(--sabz);box-shadow:0 0 10px var(--sabz);animation:blink 1.4s infinite}
-  @keyframes blink{50%{opacity:.35}}
-  #topctl{display:flex;gap:8px;align-items:center}
+/* ===== HEADER ===== */
+header{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;border-bottom:1px solid var(--line);background:var(--bg2);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .mark{width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,#0d2b1a,#061510);
+  border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 28px rgba(0,230,118,.25)}
+.brand h1{font-size:24px;font-weight:700;letter-spacing:.12em;line-height:1}
+.brand h1 em{font-style:normal;color:var(--sabz);text-shadow:0 0 20px rgba(0,230,118,.6)}
+.brand small{display:block;font-size:9px;letter-spacing:.34em;color:var(--mut);font-weight:500;margin-top:3px}
+.hdr-mid{text-align:center}
+.hdr-mid .scen{font-size:11px;letter-spacing:.3em;color:var(--mut);font-weight:600}
+.hdr-mid .clock{font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.04em;margin:2px 0}
+.live{display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.22em;
+  color:var(--sabz);border:1px solid var(--line2);border-radius:20px;
+  padding:5px 14px;background:var(--sabz-dim);font-weight:600}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--sabz);
+  box-shadow:0 0 10px var(--sabz);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.3}}
+.hdr-right{display:flex;gap:8px}
+.modebtn{font-family:inherit;font-size:11px;font-weight:700;letter-spacing:.2em;
+  padding:10px 20px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel);color:var(--mut);cursor:pointer;transition:all .2s}
+.modebtn:hover{border-color:var(--line2);color:var(--txt)}
+.modebtn.on{background:var(--sabz-dim);border-color:var(--sabz);color:var(--sabz);
+  box-shadow:0 0 18px rgba(0,230,118,.2)}
 
-  /* side labels */
-  .sidelabel{top:86px;transform:translateX(-50%);text-align:center;width:44%}
-  #labFixed{left:25%} #labSabz{left:75%}
-  .sidelabel .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.3em;padding:7px 18px;
-    border-radius:8px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(10px)}
-  #labSabz .tag{color:var(--sabz);box-shadow:0 0 22px rgba(0,230,118,.18)}
-  #labFixed .tag{color:#c7cfdb}
-  .sidelabel .delay{margin-top:8px;font-size:15px;font-weight:600;letter-spacing:.08em}
-  .sidelabel .delay b{font-size:26px;font-variant-numeric:tabular-nums}
-  #labSabz .delay b{color:var(--sabz);text-shadow:0 0 16px rgba(0,230,118,.7)}
-  .sidelabel .delta{font-size:11px;color:var(--mut);letter-spacing:.14em;margin-top:2px;min-height:16px}
-  #deltaWin{color:var(--sabz)}
+/* ===== MAIN ===== */
+main{flex:1;display:flex;min-height:0}
+#views{flex:1;display:flex;gap:16px;padding:16px;min-width:0;position:relative}
+.view{flex:1;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;min-width:0;position:relative}
+.view.sabz{border-color:var(--line2);box-shadow:0 0 40px rgba(0,230,118,.07)}
+.view-hd{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid var(--line);flex-shrink:0}
+.view-hd .t{font-size:12px;font-weight:700;letter-spacing:.26em}
+.view.sabz .view-hd .t{color:var(--sabz)}
+.view-hd .d{font-size:13px;color:var(--mut);letter-spacing:.06em}
+.view-hd .d b{font-size:24px;color:var(--txt);font-variant-numeric:tabular-nums}
+.view.sabz .view-hd .d b{color:var(--sabz);text-shadow:0 0 14px rgba(0,230,118,.5)}
+.view canvas{flex:1;width:100%;min-height:0;display:block}
+.vs-badge{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:5;
+  padding:8px 20px;border-radius:20px;background:var(--bg2);
+  border:2px solid var(--line2);font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--sabz);
+  box-shadow:0 0 30px rgba(0,230,118,.3)}
+#views.single .view.fixed{display:none}
+#views.singleFixed .view.sabz{display:none}
+#views.single .vs-badge,#views.singleFixed .vs-badge{display:none}
 
-  /* brain panel */
-  #brain{right:18px;top:170px;width:308px;background:var(--panel);border:1px solid var(--line);
-    border-radius:16px;padding:18px;backdrop-filter:blur(14px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
-  #brain h2{font-size:11px;letter-spacing:.3em;color:var(--sabz);display:flex;align-items:center;gap:8px;margin-bottom:14px}
-  #brain h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--sabz);box-shadow:0 0 12px var(--sabz);animation:blink 1.2s infinite}
-  .qrow{margin-bottom:10px}
-  .qrow .qh{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.18em;color:var(--mut);margin-bottom:5px}
-  .qrow .qh .qv{color:var(--txt);font-variant-numeric:tabular-nums}
-  .qbar{height:10px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden}
-  .qbar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#00894a,var(--sabz));
-    box-shadow:0 0 12px rgba(0,230,118,.6);transition:width .5s ease}
-  #decision{margin:14px 0;padding:12px;border-radius:12px;text-align:center;
-    border:1px solid var(--line);background:rgba(0,230,118,.05)}
-  #decision .d1{font-size:17px;font-weight:700;letter-spacing:.2em;color:var(--sabz)}
-  #decision .d2{font-size:10px;letter-spacing:.2em;color:var(--mut);margin-top:5px}
-  #decision.switch .d1{color:#ffb020;text-shadow:0 0 14px rgba(255,176,32,.6)}
-  .kv{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-top:1px solid rgba(255,255,255,.06)}
-  .kv span:first-child{color:var(--mut);letter-spacing:.12em;font-size:10px}
-  .kv span:last-child{font-weight:600;font-variant-numeric:tabular-nums}
-  #phasebar{height:8px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:6px}
-  #phasebar i{display:block;height:100%;background:var(--sabz);box-shadow:0 0 10px rgba(0,230,118,.6)}
-  .q4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
-  .q4 div{background:rgba(255,255,255,.04);border-radius:8px;padding:7px 4px;text-align:center}
-  .q4 .qn{font-size:9px;color:var(--mut);letter-spacing:.2em}
-  .q4 .qc{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+/* ===== SIDEBAR ===== */
+aside{width:330px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--line);
+  padding:16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h3{font-size:10px;letter-spacing:.28em;color:var(--mut);font-weight:700;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px}
+.card h3 i{width:7px;height:7px;border-radius:50%;background:var(--sabz);
+  box-shadow:0 0 10px var(--sabz);animation:blink 1.2s infinite}
+#brainCard{border-color:var(--line2)}
+#brainCard h3{color:var(--sabz)}
+.qrow{margin-bottom:10px}
+.qrow .qh{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.14em;
+  color:var(--mut);margin-bottom:5px;font-weight:600}
+.qrow .qh .qv{color:var(--txt);font-variant-numeric:tabular-nums;font-weight:700}
+.qbar{height:12px;border-radius:7px;background:rgba(255,255,255,.06);overflow:hidden;position:relative}
+.qbar i{display:block;height:100%;border-radius:7px;transition:width .4s ease;min-width:2px}
+.qbar .neg{background:linear-gradient(90deg,#7a2a35,#ff4d5e)}
+.qbar .pos{background:linear-gradient(90deg,#00894a,var(--sabz));box-shadow:0 0 12px rgba(0,230,118,.5)}
+#decision{margin:12px 0;padding:14px;border-radius:12px;text-align:center;
+  border:1px solid var(--line2);background:var(--sabz-dim)}
+#decision .d1{font-size:18px;font-weight:700;letter-spacing:.18em;color:var(--sabz)}
+#decision .d2{font-size:10px;letter-spacing:.18em;color:var(--mut);margin-top:6px}
+#decision.switch .d1{color:var(--amber);text-shadow:0 0 14px rgba(255,176,32,.5)}
+#decision.switch{border-color:rgba(255,176,32,.35);background:rgba(255,176,32,.06)}
+#decision.blocked .d1{color:var(--red)}
+#decision.blocked{border-color:rgba(255,77,94,.35);background:rgba(255,77,94,.06)}
+.kv{display:flex;justify-content:space-between;align-items:center;font-size:12px;
+  padding:7px 0;border-top:1px solid var(--line)}
+.kv span:first-child{color:var(--mut);letter-spacing:.1em;font-size:10px;font-weight:600}
+.kv span:last-child{font-weight:700;font-variant-numeric:tabular-nums}
+.q4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.q4 div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+  padding:10px 4px;text-align:center}
+.q4 .qn{font-size:9px;color:var(--mut);letter-spacing:.2em;font-weight:700}
+.q4 .qc{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
+.q4 .hot{border-color:var(--line2)}
+.q4 .hot .qc{color:var(--sabz)}
 
-  /* chart */
-  #chartwrap{left:18px;bottom:86px;width:420px;background:var(--panel);border:1px solid var(--line);
-    border-radius:16px;padding:14px 16px 10px;backdrop-filter:blur(14px)}
-  #chartwrap h3{font-size:10px;letter-spacing:.3em;color:var(--mut);margin-bottom:8px}
-  #chart{width:100%;height:120px;display:block}
-  .legend{display:flex;gap:16px;font-size:10px;letter-spacing:.14em;color:var(--mut);margin-top:6px}
-  .legend i{display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+/* chart */
+#chartCard canvas{width:100%;height:130px;display:block}
+.legend{display:flex;gap:16px;margin-top:8px;font-size:10px;letter-spacing:.14em;color:var(--mut)}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
 
-  /* bottom controls */
-  #controls{bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;
-    background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px 14px;backdrop-filter:blur(14px)}
-  .btn{pointer-events:auto;cursor:pointer;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);
-    color:var(--txt);font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.14em;
-    padding:9px 15px;border-radius:10px;transition:all .2s}
-  .btn:hover{border-color:var(--sabz);color:var(--sabz)}
-  .btn.on{background:rgba(0,230,118,.14);border-color:var(--sabz);color:var(--sabz);
-    box-shadow:0 0 14px rgba(0,230,118,.25)}
-  .sep{width:1px;height:26px;background:rgba(255,255,255,.1)}
-
-  /* intro */
-  #intro{position:fixed;inset:0;z-index:50;background:#030509;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;gap:18px;transition:opacity 1.1s ease;cursor:pointer}
-  #intro.hide{opacity:0;pointer-events:none}
-  #intro .big{font-size:92px;font-weight:700;letter-spacing:.18em;color:var(--sabz);
-    text-shadow:0 0 60px rgba(0,230,118,.55)}
-  #intro .sub{font-size:13px;letter-spacing:.5em;color:var(--mut)}
-  #intro .live{font-size:11px;letter-spacing:.3em;color:var(--txt);border:1px solid var(--line);
-    padding:10px 26px;border-radius:30px;background:rgba(0,230,118,.06)}
-  #intro .bar{width:280px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-  #intro .bar i{display:block;height:100%;width:40%;background:var(--sabz);border-radius:2px;animation:load 1.2s infinite ease-in-out}
-  @keyframes load{0%{margin-left:-40%}100%{margin-left:100%}}
-  #err{position:fixed;inset:auto 0 0 0;z-index:60;background:#3a0d0d;color:#ffb3b3;font-size:12px;
-    padding:10px 18px;display:none;letter-spacing:.06em}
-  @media (max-width:1100px){ #brain{display:none} #chartwrap{width:320px} }
+/* ===== FOOTER CONTROLS ===== */
+footer{display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:12px 20px;border-top:1px solid var(--line);background:var(--bg2);flex-shrink:0;flex-wrap:wrap}
+.seg{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:5px}
+.ctl{font-family:inherit;font-size:10px;font-weight:700;letter-spacing:.16em;
+  padding:9px 16px;border-radius:8px;border:1px solid transparent;
+  background:transparent;color:var(--mut);cursor:pointer;transition:all .15s;white-space:nowrap}
+.ctl:hover{color:var(--txt);background:rgba(255,255,255,.04)}
+.ctl.on{background:var(--sabz-dim);border-color:var(--sabz);color:var(--sabz)}
+.ctl.warn.on{background:rgba(255,176,32,.1);border-color:var(--amber);color:var(--amber)}
+.fdiv{width:1px;height:26px;background:var(--line);margin:0 4px}
+#saveTag{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--sabz);
+  padding:9px 6px;min-width:170px;text-align:center;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
-<canvas id="glF"></canvas>
-<canvas id="glS"></canvas>
 
-<div class="hud" id="topbar">
-  <div class="logo">
+<header>
+  <div class="brand">
     <div class="mark">
-      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5.5" r="2.6" fill="#ff3b30"/><circle cx="12" cy="12" r="2.6" fill="#ffb020" opacity=".35"/><circle cx="12" cy="18.5" r="2.6" fill="#00E676"/><circle cx="12" cy="18.5" r="4.4" stroke="#00E676" stroke-width="1" opacity=".6"/></svg>
+      <svg viewBox="0 0 24 24" width="26" height="26"><rect x="9" y="2" width="6" height="20" rx="3" fill="#0a1f14" stroke="#00E676" stroke-width="1.4"/><circle cx="12" cy="6.5" r="2" fill="#ff4d5e" opacity=".9"/><circle cx="12" cy="12" r="2" fill="#ffb020" opacity=".35"/><circle cx="12" cy="17.5" r="2.4" fill="#00E676"><animate attributeName="opacity" values="1;.55;1" dur="1.6s" repeatCount="indefinite"/></circle></svg>
     </div>
-    <h1><span>SABZ</span><small>ADAPTIVE TRAFFIC AI</small></h1>
+    <div><h1>SAB<em>Z</em></h1><small>ADAPTIVE TRAFFIC AI</small></div>
   </div>
-  <div id="clockbox">
-    <div id="scenarioName">NORMAL TRAFFIC</div>
-    <div id="simclock">00:00</div>
-    <div id="livepill"><span class="dot"></span>LIVE SIMULATION</div>
+  <div class="hdr-mid">
+    <div class="scen" id="scenLabel">NORMAL TRAFFIC</div>
+    <div class="clock" id="clock">00:00</div>
+    <div><span class="live"><i></i>LIVE SIMULATION</span></div>
   </div>
-  <div id="topctl">
-    <button class="btn on" data-mode="vs">VS</button>
-    <button class="btn" data-mode="sabz">SABZ</button>
-    <button class="btn" data-mode="fixed">FIXED</button>
+  <div class="hdr-right">
+    <button class="modebtn on" data-vm="vs">VS</button>
+    <button class="modebtn" data-vm="sabz">SABZ</button>
+    <button class="modebtn" data-vm="fixed">FIXED</button>
   </div>
-</div>
+</header>
 
-<div class="hud sidelabel" id="labFixed">
-  <div class="tag">FIXED TIMING</div>
-  <div class="delay"><b id="dFixed">0.0</b> s avg delay</div>
-  <div class="delta" id="deltaFixed"></div>
-</div>
-<div class="hud sidelabel" id="labSabz">
-  <div class="tag">SABZ AI &middot; DQN BRAIN</div>
-  <div class="delay"><b id="dSabz">0.0</b> s avg delay</div>
-  <div class="delta" id="deltaWin"></div>
-</div>
-
-<div class="hud card" id="brain">
-  <h2><span class="dot"></span>SABZ BRAIN &middot; LIVE</h2>
-  <div class="qrow">
-    <div class="qh"><span>Q ( HOLD GREEN )</span><span class="qv" id="qStayV">0.000</span></div>
-    <div class="qbar"><i id="qStay" style="width:50%"></i></div>
+<main>
+  <div id="views">
+    <div class="view fixed" id="viewFixed">
+      <div class="view-hd">
+        <span class="t">FIXED TIMING</span>
+        <span class="d"><b id="dFixed">0.0</b>s avg delay</span>
+      </div>
+      <canvas id="cvFixed"></canvas>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="view sabz" id="viewSabz">
+      <div class="view-hd">
+        <span class="t">SABZ AI &middot; DQN BRAIN</span>
+        <span class="d"><b id="dSabz">0.0</b>s avg delay</span>
+      </div>
+      <canvas id="cvSabz"></canvas>
+    </div>
   </div>
-  <div class="qrow">
-    <div class="qh"><span>Q ( SWITCH PHASE )</span><span class="qv" id="qSwitchV">0.000</span></div>
-    <div class="qbar"><i id="qSwitch" style="width:50%"></i></div>
+
+  <aside>
+    <div class="card" id="brainCard">
+      <h3><i></i>SABZ BRAIN &middot; LIVE</h3>
+      <div class="qrow">
+        <div class="qh"><span>Q &middot; HOLD GREEN</span><span class="qv" id="qvHold">0.000</span></div>
+        <div class="qbar"><i id="qbHold" class="pos" style="width:50%"></i></div>
+      </div>
+      <div class="qrow">
+        <div class="qh"><span>Q &middot; SWITCH PHASE</span><span class="qv" id="qvSwitch">0.000</span></div>
+        <div class="qbar"><i id="qbSwitch" class="pos" style="width:50%"></i></div>
+      </div>
+      <div id="decision"><div class="d1" id="decMain">HOLD GREEN</div><div class="d2" id="decSub">BRAIN ACTIVE</div></div>
+      <div class="kv"><span>PHASE</span><span id="kvPhase">NS</span></div>
+      <div class="kv"><span>GREEN ELAPSED</span><span id="kvGreen">0s</span></div>
+      <div class="kv"><span>THROUGHPUT</span><span id="kvTput">0 veh/h</span></div>
+      <div class="kv"><span>SERVED</span><span id="kvServed">0</span></div>
+      <div class="kv"><span>SWITCHES</span><span id="kvSw">0</span></div>
+      <div class="kv"><span>SAFETY HOLDS</span><span id="kvSafe" style="color:var(--sabz)">0</span></div>
+      <div class="q4">
+        <div id="qN"><div class="qn">NORTH</div><div class="qc">0</div></div>
+        <div id="qS"><div class="qn">SOUTH</div><div class="qc">0</div></div>
+        <div id="qE"><div class="qn">EAST</div><div class="qc">0</div></div>
+        <div id="qW"><div class="qn">WEST</div><div class="qc">0</div></div>
+      </div>
+    </div>
+
+    <div class="card" id="chartCard">
+      <h3>AVG DELAY &middot; LIVE RACE</h3>
+      <canvas id="cvChart" width="298" height="130"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--sabz)"></i>SABZ AI</span>
+        <span><i style="background:#8a94a6"></i>FIXED</span>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  <div class="seg" id="segScen">
+    <button class="ctl on" data-scen="normal">NORMAL</button>
+    <button class="ctl" data-scen="rush">RUSH HOUR</button>
+    <button class="ctl" data-scen="asymmetric">ASYMMETRIC</button>
+    <button class="ctl" data-scen="school">SCHOOL ZONE</button>
   </div>
-  <div id="decision"><div class="d1" id="decMain">HOLD GREEN</div><div class="d2" id="decSub">BRAIN DECISION</div></div>
-  <div class="kv"><span>PHASE</span><span id="kvPhase">NS</span></div>
-  <div class="kv"><span>GREEN ELAPSED</span><span id="kvGreen">0s</span></div>
-  <div id="phasebar"><i id="phasefill" style="width:0%"></i></div>
-  <div class="kv" style="margin-top:6px"><span>THROUGHPUT</span><span id="kvTput">0 veh/h</span></div>
-  <div class="kv"><span>SERVED</span><span id="kvServed">0</span></div>
-  <div class="kv"><span>PHASE SWITCHES</span><span id="kvSwitch">0</span></div>
-  <div class="kv"><span>SAFETY HOLDS</span><span id="kvSafe" style="color:var(--sabz)">0</span></div>
-  <div class="q4">
-    <div><div class="qn">N</div><div class="qc" id="qN">0</div></div>
-    <div><div class="qn">S</div><div class="qc" id="qS">0</div></div>
-    <div><div class="qn">E</div><div class="qc" id="qE">0</div></div>
-    <div><div class="qn">W</div><div class="qc" id="qW">0</div></div>
+  <div class="fdiv"></div>
+  <div class="seg" id="segSpeed">
+    <button class="ctl on" data-speed="1">1x</button>
+    <button class="ctl" data-speed="2">2x</button>
+    <button class="ctl" data-speed="4">4x</button>
   </div>
-</div>
+  <div class="fdiv"></div>
+  <button class="ctl warn" id="btnPause" style="border:1px solid var(--line)">PAUSE</button>
+  <button class="ctl" id="btnReset" style="border:1px solid var(--line)">RESET</button>
+  <div class="fdiv"></div>
+  <div id="saveTag"></div>
+</footer>
 
-<div class="hud card" id="chartwrap">
-  <h3>AVG DELAY &middot; LIVE RACE</h3>
-  <canvas id="chart" width="388" height="120"></canvas>
-  <div class="legend">
-    <span><i style="background:#00E676"></i>SABZ AI</span>
-    <span><i style="background:#8b95a7"></i>FIXED TIMING</span>
-  </div>
-</div>
+<script>
+const $=id=>document.getElementById(id);
+const views=$('views'), cvF=$('cvFixed'), cvS=$('cvSabz'), cvC=$('cvChart');
+const ctxF=cvF.getContext('2d'), ctxS=cvS.getContext('2d'), ctxC=cvC.getContext('2d');
 
-<div class="hud card" id="controls">
-  <button class="btn on" data-sc="normal">NORMAL</button>
-  <button class="btn" data-sc="rush_hour">RUSH HOUR</button>
-  <button class="btn" data-sc="asymmetric">ASYMMETRIC</button>
-  <button class="btn" data-sc="school_zone">SCHOOL ZONE</button>
-  <div class="sep"></div>
-  <button class="btn on" data-sp="1">1x</button>
-  <button class="btn" data-sp="2">2x</button>
-  <button class="btn" data-sp="4">4x</button>
-  <div class="sep"></div>
-  <button class="btn" id="btnPause">PAUSE</button>
-  <button class="btn" id="btnReset">RESET</button>
-</div>
+let S=null, paused=false, speed=1, histS=[], histF=[];
+const SABZ='#00E676', MUT='#8a94a6';
 
-<div id="intro">
-  <div class="big">SABZ</div>
-  <div class="sub">ADAPTIVE TRAFFIC INTELLIGENCE</div>
-  <div class="live">LIVE DEMONSTRATION &middot; REAL DQN BRAIN</div>
-  <div class="bar"><i></i></div>
-  <div class="sub" style="font-size:10px">CLICK TO ENTER</div>
-</div>
-<div id="err"></div>
-
-<script type="importmap">
-{"imports":{"three":"./lib/three.module.js","three/addons/":"./lib/addons/"}}
-</script>
-<script type="module">
-import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-
-const $ = id => document.getElementById(id);
-const errBox = $('err');
-function showErr(m){ errBox.style.display='block'; errBox.textContent='Demo backend: '+m; }
-
-/* ---------------- per-view renderer ---------------- */
-function makeView(canvasId, camPos){
-  const canvas = $(canvasId);
-  const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.35;
-  const W = makeWorld(camPos);
-  const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(W.scene, W.camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(800, 600), 0.85, 0.5, 0.62));
-  composer.addPass(new OutputPass());
-  return Object.assign(W, {renderer, composer, canvas});
+/* ---------- API ---------- */
+async function api(p,m,b){
+  const r=await fetch('/api/'+p,{method:m||'GET',
+    headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});
+  return r.json();
 }
-/* NOTE: makeView invocations are below, after materials/worlds are defined */
-
-function layoutViews(){
-  const f = $('glF'), s = $('glS');
-  if (viewMode === 'vs'){ f.style.display=''; s.style.display=''; f.style.width='50%'; s.style.width='50%'; }
-  else if (viewMode === 'sabz'){ f.style.display='none'; s.style.display=''; s.style.width='100%'; }
-  else { s.style.display='none'; f.style.display=''; f.style.width='100%'; }
-  for (const V of [Vfixed, Vsabz]){
-    if (V.canvas.style.display === 'none') continue;
-    const w = V.canvas.clientWidth || innerWidth/2, h = innerHeight;
-    V.renderer.setSize(w, h, false);
-    V.composer.setSize(w, h);
-    V.camera.aspect = w/h; V.camera.updateProjectionMatrix();
-  }
+async function step(){ if(paused) return;
+  try{ S=await api('step','POST',{speed}); render(); }catch(e){}
 }
+async function setScen(s){ S=await api('scenario','POST',{scenario:s}); histS=[];histF=[]; render(); }
+async function setSpeed(v){ speed=v; await api('speed','POST',{speed:v}); }
+async function reset(){ S=await api('reset','POST',{}); histS=[];histF=[]; render(); }
 
-/* ---------------- shared car assets ---------------- */
-const bodyG = new THREE.BoxGeometry(1.8, 0.62, 4.3);
-const cabinG = new THREE.BoxGeometry(1.55, 0.55, 2.0);
-const wheelG = new THREE.CylinderGeometry(0.34, 0.34, 0.3, 12);
-const headG = new THREE.SphereGeometry(0.13, 10, 10);
-const tailG = new THREE.BoxGeometry(0.34, 0.15, 0.1);
-const beamG = new THREE.ConeGeometry(1.5, 7.5, 12, 1, true);
-const glassMat = new THREE.MeshStandardMaterial({color:0x0d1420, roughness:0.15, metalness:0.9});
-const wheelMat = new THREE.MeshStandardMaterial({color:0x070708, roughness:0.9});
-const headMat = new THREE.MeshBasicMaterial({color:0xfff4cf});
-const tailMat = new THREE.MeshBasicMaterial({color:0xff2418});
-const beamMat = new THREE.MeshBasicMaterial({color:0xffe9b0, transparent:true, opacity:0.032,
-  blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide});
-const CAR_COLORS = [0xd8a013,0xc23b2e,0x2e6fc2,0xcfd3d8,0x23272f,0x2e9e6b,0x7a3ec2,0xb8b0a0];
-const bodyMats = CAR_COLORS.map(c => new THREE.MeshStandardMaterial(
-  {color:c, roughness:0.35, metalness:0.6, emissive:c, emissiveIntensity:0.22}));
+/* ---------- 2D INTERSECTION RENDERER ---------- */
+const CAR_COLORS=['#e74c3c','#3498db','#f1c40f','#9b59b6','#1abc9c','#e67e22','#ecf0f1','#2ecc71'];
+function carColor(vid){ return CAR_COLORS[vid%CAR_COLORS.length]; }
 
-function makeCar(){
-  const g = new THREE.Group();
-  const bm = bodyMats[(Math.random()*bodyMats.length)|0];
-  const body = new THREE.Mesh(bodyG, bm); body.position.y = 0.62; g.add(body);
-  const cab = new THREE.Mesh(cabinG, glassMat); cab.position.set(0, 1.18, -0.3); g.add(cab);
-  for (const [x,z] of [[-0.85,1.35],[0.85,1.35],[-0.85,-1.35],[0.85,-1.35]]){
-    const w = new THREE.Mesh(wheelG, wheelMat);
-    w.rotation.z = Math.PI/2; w.position.set(x, 0.34, z); g.add(w);
-  }
-  for (const x of [-0.58, 0.58]){
-    const h = new THREE.Mesh(headG, headMat); h.position.set(x, 0.62, 2.16); g.add(h);
-    const t = new THREE.Mesh(tailG, tailMat); t.position.set(x, 0.72, -2.16); g.add(t);
-  }
-  const beam = new THREE.Mesh(beamG, beamMat);
-  beam.rotation.x = -Math.PI/2; beam.position.set(0, 0.5, 5.9); g.add(beam);
-  return g;
-}
+function drawIntersection(ctx,W,H,st,isSabz){
+  ctx.clearRect(0,0,W,H);
+  // background
+  const g=ctx.createRadialGradient(W/2,H/2,40,W/2,H/2,Math.max(W,H)*.75);
+  g.addColorStop(0,'#10151d'); g.addColorStop(1,'#0a0e14');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
-/* ---------------- world ---------------- */
-const APPROACH = {
-  N:{lane:'x', fixed:-1.75, dir: 1, axis:'z', rot: 0},
-  S:{lane:'x', fixed: 1.75, dir:-1, axis:'z', rot: Math.PI},
-  E:{lane:'z', fixed:-1.75, dir:-1, axis:'x', rot:-Math.PI/2},
-  W:{lane:'z', fixed: 1.75, dir: 1, axis:'x', rot: Math.PI/2},
-};
-const HEAD = {N:[0,0,1], S:[0,0,-1], E:[-1,0,0], W:[1,0,0]};
-
-function approachPos(a, d){
-  const A = APPROACH[a];
-  if (A.axis === 'z') return {x:A.fixed, z:-A.dir*d, rot:A.rot};
-  return {x:A.dir*d, z:A.fixed, rot:A.rot};
-}
-
-const roadMat = new THREE.MeshStandardMaterial({color:0x12161e, roughness:0.32, metalness:0.55});
-const groundMat = new THREE.MeshStandardMaterial({color:0x070a10, roughness:0.95});
-const lineW = new THREE.MeshBasicMaterial({color:0xcfd6de, transparent:true, opacity:0.75});
-const lineY = new THREE.MeshBasicMaterial({color:0xc79a2e, transparent:true, opacity:0.8});
-
-function flat(geo, mat, x, y, z, ry=0){
-  const m = new THREE.Mesh(geo, mat);
-  m.rotation.x = -Math.PI/2; m.rotation.z = ry; m.position.set(x, y, z);
-  return m;
-}
-
-function makeWorld(camPos){
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x05070c);
-  scene.fog = new THREE.Fog(0x05070c, 70, 175);
-  const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 500);
-  camera.position.set(...camPos); camera.lookAt(0, 0, 0);
-
-  scene.add(new THREE.HemisphereLight(0x4a5a7a, 0x05070c, 0.95));
-  const dl = new THREE.DirectionalLight(0x9ab0d8, 0.7);
-  dl.position.set(30, 55, 25); scene.add(dl);
-
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(420, 420), groundMat);
-  ground.rotation.x = -Math.PI/2; scene.add(ground);
+  const cx=W/2, cy=H/2;
+  const roadW=Math.min(W,H)*0.30;         // road width
+  const laneW=roadW/4;
+  const armL=Math.max(W,H);               // arm length
 
   // roads
-  const r1 = new THREE.Mesh(new THREE.PlaneGeometry(15, 300), roadMat);
-  r1.rotation.x = -Math.PI/2; r1.position.y = 0.02; scene.add(r1);
-  const r2 = r1.clone(); r2.rotation.z = Math.PI/2; scene.add(r2);
+  ctx.fillStyle='#1a212b';
+  ctx.fillRect(0,cy-roadW/2,W,roadW);      // EW road
+  ctx.fillRect(cx-roadW/2,0,roadW,H);     // NS road
+  // intersection box
+  ctx.fillStyle='#202834';
+  ctx.fillRect(cx-roadW/2,cy-roadW/2,roadW,roadW);
 
-  // center dashes + edge lines
-  const dashG = new THREE.PlaneGeometry(0.28, 3.2);
-  for (let z = -140; z <= 140; z += 8){
-    if (Math.abs(z) < 12) continue;
-    scene.add(flat(dashG, lineY, 0, 0.05, z));
-    scene.add(flat(dashG, lineY, 0, 0.05, z));
-  }
-  for (let x = -140; x <= 140; x += 8){
-    if (Math.abs(x) < 12) continue;
-    scene.add(flat(dashG, lineY, x, 0.05, 0));
-  }
-  const laneG = new THREE.PlaneGeometry(0.22, 3.2);
-  for (let z = -140; z <= 140; z += 9){
-    if (Math.abs(z) < 11) continue;
-    scene.add(flat(laneG, lineW, -3.5, 0.05, z));
-    scene.add(flat(laneG, lineW, 3.5, 0.05, z));
-  }
-  for (let x = -140; x <= 140; x += 9){
-    if (Math.abs(x) < 11) continue;
-    scene.add(flat(laneG, lineW, x, 0.05, -3.5));
-    scene.add(flat(laneG, lineW, x, 0.05, 3.5));
-  }
-  // crosswalks
-  const cwG = new THREE.PlaneGeometry(1.1, 2.6);
-  for (const [cx, cz, horiz] of [[0,-10.5,0],[0,10.5,0],[-10.5,0,1],[10.5,0,1]]){
-    for (let i = -3; i <= 3; i++){
-      const m = flat(cwG, lineW, horiz ? cx : i*1.9, 0.05, horiz ? i*1.9 : cz);
-      if (horiz) m.rotation.z = Math.PI/2;
-      scene.add(m);
-    }
-  }
+  // lane markings
+  ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=2; ctx.setLineDash([14,12]);
+  // EW center
+  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(cx-roadW/2-8,cy); ctx.moveTo(cx+roadW/2+8,cy); ctx.lineTo(W,cy); ctx.stroke();
+  // NS center
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,cy-roadW/2-8); ctx.moveTo(cx,cy+roadW/2+8); ctx.lineTo(cx,H); ctx.stroke();
+  // lane dividers
+  ctx.strokeStyle='rgba(255,255,255,.16)'; ctx.setLineDash([8,10]); ctx.lineWidth=1.5;
+  [-laneW,laneW].forEach(o=>{
+    ctx.beginPath(); ctx.moveTo(0,cy+o); ctx.lineTo(cx-roadW/2-8,cy+o); ctx.moveTo(cx+roadW/2+8,cy+o); ctx.lineTo(W,cy+o); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx+o,0); ctx.lineTo(cx+o,cy-roadW/2-8); ctx.moveTo(cx+o,cy+roadW/2+8); ctx.lineTo(cx+o,H); ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
   // stop lines
-  const stG = new THREE.PlaneGeometry(3.4, 0.55);
-  scene.add(flat(stG, lineW, -1.75, 0.05, -8.2));
-  scene.add(flat(stG, lineW, 1.75, 0.05, 8.2));
-  const stG2 = new THREE.PlaneGeometry(0.55, 3.4);
-  scene.add(flat(stG2, lineW, 8.2, 0.05, -1.75));
-  scene.add(flat(stG2, lineW, -8.2, 0.05, 1.75));
+  ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.lineWidth=3;
+  const sl=roadW/2+10;
+  ctx.beginPath(); ctx.moveTo(cx-sl,cy-roadW/4-6); ctx.lineTo(cx-sl,cy-6); ctx.stroke();       // W approach
+  ctx.beginPath(); ctx.moveTo(cx+sl,cy+6); ctx.lineTo(cx+sl,cy+roadW/4+6); ctx.stroke();       // E approach
+  ctx.beginPath(); ctx.moveTo(cx-6,cy-sl); ctx.lineTo(cx-roadW/4-6,cy-sl); ctx.stroke();       // N approach
+  ctx.beginPath(); ctx.moveTo(cx+6,cy+sl); ctx.lineTo(cx+roadW/4+6,cy+sl); ctx.stroke();       // S approach
 
-  // street lamps + light pools
-  const poolG = new THREE.CircleGeometry(5.5, 24);
-  const poolM = new THREE.MeshBasicMaterial({color:0xbfd4ff, transparent:true, opacity:0.032,
-    blending:THREE.AdditiveBlending, depthWrite:false});
-  const poleM = new THREE.MeshStandardMaterial({color:0x1a2029, roughness:0.6, metalness:0.7});
-  const lampHeadM = new THREE.MeshBasicMaterial({color:0xd8e6ff});
-  for (const [x, z] of [[-13,-13],[13,-13],[-13,13],[13,13]]){
-    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 7.5, 8), poleM);
-    p.position.set(x, 3.75, z); scene.add(p);
-    const h = new THREE.Mesh(new THREE.SphereGeometry(0.32, 10, 10), lampHeadM);
-    h.position.set(x, 7.5, z); scene.add(h);
-    scene.add(flat(poolG, poolM, x, 0.06, z));
+  // crosswalks
+  ctx.fillStyle='rgba(255,255,255,.20)';
+  const cw=10, gap=9;
+  for(let i=0;i<6;i++){
+    const o=-((6*gap)/2)+i*gap+2;
+    ctx.fillRect(cx-roadW/2+6, cy-roadW/2-24+o*0+ (i*(4+gap*0)), 0,0); // placeholder
+  }
+  // simpler crosswalks: stripes across each approach
+  ctx.fillStyle='rgba(255,255,255,.22)';
+  for(let i=-2;i<=2;i++){
+    const off=i*16;
+    ctx.fillRect(cx+off-4, cy-roadW/2-20, 8, 12);   // N
+    ctx.fillRect(cx+off-4, cy+roadW/2+8, 8, 12);    // S
+    ctx.fillRect(cx-roadW/2-20, cy+off-4, 12, 8);   // W
+    ctx.fillRect(cx+roadW/2+8, cy+off-4, 12, 8);    // E
   }
 
-  // buildings (dark masses with a few lit windows)
-  const bMat = new THREE.MeshStandardMaterial({color:0x0a0e16, roughness:0.85});
-  const winM = new THREE.MeshBasicMaterial({color:0x274a6b});
-  const winM2 = new THREE.MeshBasicMaterial({color:0x8a6a2a});
-  let bi = 0;
-  for (const [x, z, w, h, dpt] of [[-42,-42,16,24,14],[42,-44,18,30,16],[-44,42,15,20,15],[44,42,17,26,14]]){
-    const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, dpt), bMat);
-    b.position.set(x, h/2, z); scene.add(b);
-    for (let wy = 4; wy < h - 2; wy += 4){
-      for (let wx = -w/2 + 2; wx < w/2 - 1; wx += 3.4){
-        if ((bi + wx * 7 + wy * 13) % 5 < 2){
-          const win = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.8), ((bi+wx)|0) % 3 ? winM : winM2);
-          win.position.set(x + wx, wy, z + (z > 0 ? -dpt/2 - 0.05 : dpt/2 + 0.05));
-          if (z < 0) win.rotation.y = Math.PI;
-          scene.add(win);
-        }
-      }
-    }
-    bi++;
-  }
+  if(!st) return;
+  const pxPerM=(roadW/2)/55;   // 55m from center to stop line area
 
-  // traffic signal poles, one per approach
-  const signals = {};
-  const headBoxM = new THREE.MeshStandardMaterial({color:0x14171c, roughness:0.5, metalness:0.6});
-  const lampGeo = new THREE.CircleGeometry(0.15, 16);
-  const polePos = {N:[-5.4,-8.6], S:[5.4,8.6], E:[8.6,-5.4], W:[-8.6,5.4]};
-  const faceRy = {N:Math.PI, S:0, E:Math.PI/2, W:-Math.PI/2};
-  for (const a of ['N','S','E','W']){
-    const [px, pz] = polePos[a];
-    const grp = new THREE.Group();
-    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 5.4, 8), poleM);
-    pole.position.y = 2.7; grp.add(pole);
-    const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.25, 0.4), headBoxM);
-    head.position.y = 5.6; grp.add(head);
-    const lamps = {};
-    const cols = {red:0xff2a20, yellow:0xffb020, green:0x00E676};
-    const ys = {red:6.05, yellow:5.6, green:5.15};
-    for (const c of ['red','yellow','green']){
-      const lm = new THREE.MeshBasicMaterial({color:cols[c]});
-      lm.color.multiplyScalar(0.12);
-      const lamp = new THREE.Mesh(lampGeo, lm);
-      lamp.position.set(0, ys[c], 0.21);
-      head.add(lamp); lamps[c] = lm;
-    }
-    head.rotation.y = faceRy[a];
-    grp.position.set(px, 0, pz);
-    scene.add(grp);
-    signals[a] = lamps;
-  }
+  // signal heads (lights are per-approach: {N,S,E,W} -> color)
+  const L=st.lights||{};
+  drawSignal(ctx, cx-roadW/2-16, cy-roadW/2-16, L.N||'red');
+  drawSignal(ctx, cx+roadW/2+16, cy+roadW/2+16, L.S||'red');
+  drawSignal(ctx, cx+roadW/2+16, cy-roadW/2-16, L.E||'red');
+  drawSignal(ctx, cx-roadW/2-16, cy+roadW/2+16, L.W||'red');
 
-  return {scene, camera, cars:new Map(), exiting:[], signals,
-          camBase:new THREE.Vector3(...camPos)};
-}
+  // cars: st.cars = {N:[{d,s,q,vid}], S:[], E:[], W:[]}  d = distance from stop line (m)
+  const cars=st.cars||{};
+  ['N','S','E','W'].forEach(dir=>{
+    (cars[dir]||[]).forEach(c=>{
+      const col=carColor(c.vid||0);
+      const dm=Math.max(0,c.d||0);
+      const off=sl+dm*pxPerM;
+      let x,y,ang;
+      const jitter=((c.vid||0)%3-1)*laneW*0.28;
+      if(dir==='N'){ x=cx-laneW/2+jitter*0; y=cy-off; ang=Math.PI; x=cx-laneW*0.5; }
+      if(dir==='S'){ x=cx+laneW*0.5; y=cy+off; ang=0; }
+      if(dir==='E'){ x=cx+off; y=cy-laneW*0.5; ang=Math.PI/2; }
+      if(dir==='W'){ x=cx-off; y=cy+laneW*0.5; ang=-Math.PI/2; }
+      // lane offset so two lanes visible
+      if(dir==='N') x=cx-laneW*0.5+(((c.vid||0)%2)*laneW*0.9);
+      if(dir==='S') x=cx+laneW*0.5-(((c.vid||0)%2)*laneW*0.9);
+      if(dir==='E') y=cy-laneW*0.5+(((c.vid||0)%2)*laneW*0.9);
+      if(dir==='W') y=cy+laneW*0.5-(((c.vid||0)%2)*laneW*0.9);
+      drawCar(ctx,x,y,ang,col,c.q);
+    });
+  });
 
-function setLamp(W, a, color){
-  const L = W.signals[a];
-  const on = {red:0xff2a20, yellow:0xffb020, green:0x00E676};
-  for (const c of ['red','yellow','green']){
-    L[c].color.setHex(on[c]);
-    L[c].color.multiplyScalar(c === color ? 2.2 : 0.1);
+  // accent ring for SABZ
+  if(isSabz){
+    ctx.strokeStyle='rgba(0,230,118,.25)'; ctx.lineWidth=2;
+    ctx.strokeRect(4,4,W-8,H-8);
   }
 }
 
-/* (worlds are created inside makeView) */
-const Vfixed = makeView('glF', [30, 22, 38]);
-const Vsabz  = makeView('glS', [-32, 20, 36]);
-
-/* ---------------- sync backend state -> scene ---------------- */
-function syncSide(W, data){
-  for (const a of ['N','S','E','W']) setLamp(W, a, data.lights[a]);
-  const seen = new Set();
-  for (const a of ['N','S','E','W']){
-    let nA = 0;
-    for (const c of data.cars[a]){
-      if (c.d > 130) continue;
-      seen.add(c.vid);
-      let e = W.cars.get(c.vid);
-      const p = approachPos(a, c.d);
-      if (!e){
-        if (nA >= 14) continue;
-        const mesh = makeCar();
-        mesh.position.set(p.x, 0, p.z);
-        mesh.rotation.y = p.rot;
-        W.scene.add(mesh);
-        e = {mesh, tx:p.x, tz:p.z, rot:p.rot, lastD:c.d, lastS:c.s, q:c.q, a};
-        W.cars.set(c.vid, e);
-      } else {
-        e.tx = p.x; e.tz = p.z; e.lastD = c.d; e.lastS = c.s; e.q = c.q; e.a = a;
-      }
-      nA++;
-    }
-  }
-  for (const [vid, e] of W.cars){
-    if (!seen.has(vid)){
-      if (!e.q && e.lastD < 14){
-        W.exiting.push({mesh:e.mesh, a:e.a, sp:Math.max(e.lastS, 9),
-                        x:e.mesh.position.x, z:e.mesh.position.z});
-      } else W.scene.remove(e.mesh);
-      W.cars.delete(vid);
-    }
-  }
+function drawCar(ctx,x,y,ang,color,queued){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(ang);
+  const L=34,Wd=17;
+  // shadow
+  ctx.fillStyle='rgba(0,0,0,.4)';
+  rr(ctx,-L/2+1,-Wd/2+2,L,Wd,4); ctx.fill();
+  // body
+  const bg=ctx.createLinearGradient(0,-Wd/2,0,Wd/2);
+  bg.addColorStop(0,shade(color,28)); bg.addColorStop(.5,color); bg.addColorStop(1,shade(color,-28));
+  ctx.fillStyle=bg;
+  rr(ctx,-L/2,-Wd/2,L,Wd,4); ctx.fill();
+  // windshield + roof
+  ctx.fillStyle='rgba(10,16,24,.85)';
+  rr(ctx,-2,-Wd/2+2.5,9,Wd-5,2.5); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.14)';
+  rr(ctx,-1,-Wd/2+3.5,3,Wd-7,1.5); ctx.fill();
+  // headlights
+  ctx.fillStyle='#fff8d6';
+  ctx.shadowColor='#ffeebb'; ctx.shadowBlur=queued?4:10;
+  ctx.beginPath(); ctx.arc(L/2-1,-Wd/2+3,2.2,0,7); ctx.arc(L/2-1,Wd/2-3,2.2,0,7); ctx.fill();
+  ctx.shadowBlur=0;
+  // taillights
+  ctx.fillStyle=queued?'#ff4d5e':'rgba(255,77,94,.5)';
+  if(queued){ ctx.shadowColor='#ff4d5e'; ctx.shadowBlur=8; }
+  ctx.fillRect(-L/2,-Wd/2+2,2.5,3); ctx.fillRect(-L/2,Wd/2-5,2.5,3);
+  ctx.shadowBlur=0;
+  ctx.restore();
+}
+function rr(ctx,x,y,w,h,r){ ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function shade(hex,amt){
+  const n=parseInt(hex.slice(1),16);
+  let r=(n>>16)+amt, g=((n>>8)&255)+amt, b=(n&255)+amt;
+  r=Math.max(0,Math.min(255,r)); g=Math.max(0,Math.min(255,g)); b=Math.max(0,Math.min(255,b));
+  return '#'+((r<<16)|(g<<8)|b).toString(16).padStart(6,'0');
 }
 
-/* ---------------- HUD ---------------- */
-const histS = [], histF = [], HISTN = 240;
-const chart = $('chart'), cx = chart.getContext('2d');
-
-function fmtT(t){
-  const m = String(Math.floor(t/60)).padStart(2,'0');
-  const s = String(Math.floor(t%60)).padStart(2,'0');
-  return m+':'+s;
+function drawSignal(ctx,x,y,color){
+  // pole
+  ctx.fillStyle='#2a3340'; ctx.fillRect(x-2,y-14,4,28);
+  // head
+  ctx.fillStyle='#0c1016'; rr(ctx,x-8,y-22,16,44,5); ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.14)'; ctx.lineWidth=1; rr(ctx,x-8,y-22,16,44,5); ctx.stroke();
+  const cols={red:'#ff4d5e',yellow:'#ffb020',green:'#00E676'};
+  ['red','yellow','green'].forEach((c,i)=>{
+    const yy=y-14+i*14, on=color===c;
+    ctx.fillStyle=on?cols[c]:'rgba(255,255,255,.10)';
+    if(on){ ctx.shadowColor=cols[c]; ctx.shadowBlur=14; }
+    ctx.beginPath(); ctx.arc(x,yy,5.5,0,7); ctx.fill();
+    ctx.shadowBlur=0;
+  });
 }
 
-function updateHUD(st){
-  $('simclock').textContent = fmtT(st.sabz.t);
-  $('scenarioName').textContent = st.scenario_label.toUpperCase();
-  $('dFixed').textContent = st.fixed.avg_delay.toFixed(1);
-  $('dSabz').textContent = st.sabz.avg_delay.toFixed(1);
-  const dS = st.sabz.avg_delay, dF = st.fixed.avg_delay;
-  if (dF > 0.5 && st.sabz.total > 5){
-    const save = dF - dS, pct = Math.round(save/dF*100);
-    $('deltaWin').textContent = save >= 0
-      ? 'SABZ SAVES ' + save.toFixed(1) + 's/veh (' + pct + '%)'
-      : 'FIXED LEADS BY ' + (-save).toFixed(1) + 's/veh';
-    $('deltaWin').style.color = save >= 0 ? '#00E676' : '#8b95a7';
-  }
-  // brain panel
-  const b = st.sabz.brain;
-  if (b){
-    $('qStayV').textContent = b.q_stay.toFixed(3);
-    $('qSwitchV').textContent = b.q_switch.toFixed(3);
-    const e0 = Math.exp(b.q_stay/2), e1 = Math.exp(b.q_switch/2);
-    const ps = e0/(e0+e1)*100;
-    $('qStay').style.width = ps.toFixed(1)+'%';
-    $('qSwitch').style.width = (100-ps).toFixed(1)+'%';
-    $('qStay').style.opacity = b.action === 0 ? 1 : 0.45;
-    $('qSwitch').style.opacity = b.action === 1 ? 1 : 0.45;
-    const dec = $('decision');
-    if (b.action === 1){ dec.classList.add('switch'); $('decMain').textContent = 'SWITCH PHASE'; }
-    else { dec.classList.remove('switch'); $('decMain').textContent = 'HOLD GREEN'; }
-    $('decSub').textContent = b.safety_hold ? 'BLOCKED: CAR IN DILEMMA ZONE'
-      : b.executed ? 'DECISION EXECUTED'
-      : b.min_green_lock ? 'LOCKED: MIN GREEN' : 'DECIDED: HOLD';
-  }
-  $('kvPhase').textContent = st.sabz.phase + (st.sabz.transitioning ? ' (YELLOW)' : '');
-  $('kvGreen').textContent = st.sabz.green_elapsed.toFixed(0) + 's';
-  $('phasefill').style.width = Math.min(100, st.sabz.green_elapsed/60*100) + '%';
-  const tp = st.sabz.t > 1 ? Math.round(st.sabz.served / st.sabz.t * 3600) : 0;
-  $('kvTput').textContent = tp + ' veh/h';
-  $('kvServed').textContent = st.sabz.served;
-  $('kvSwitch').textContent = st.sabz.switches;
-  $('kvSafe').textContent = st.sabz.safety_holds;
-  $('qN').textContent = st.sabz.queues.N; $('qS').textContent = st.sabz.queues.S;
-  $('qE').textContent = st.sabz.queues.E; $('qW').textContent = st.sabz.queues.W;
-  // chart
-  histS.push(dS); histF.push(dF);
-  if (histS.length > HISTN){ histS.shift(); histF.shift(); }
+/* ---------- CHART ---------- */
+function drawChart(){
+  const W=cvC.width,H=cvC.height;
+  ctxC.clearRect(0,0,W,H);
+  ctxC.strokeStyle='rgba(255,255,255,.07)'; ctxC.lineWidth=1;
+  for(let i=1;i<4;i++){ ctxC.beginPath(); ctxC.moveTo(0,H*i/4); ctxC.lineTo(W,H*i/4); ctxC.stroke(); }
+  const n=Math.max(histS.length,10);
+  const mx=Math.max(12,...histS,...histF);
+  const line=(arr,col)=>{
+    if(arr.length<2) return;
+    ctxC.strokeStyle=col; ctxC.lineWidth=2.5; ctxC.beginPath();
+    arr.forEach((v,i)=>{
+      const x=W-(arr.length-1-i)*(W/(n-1)), y=H-6-(v/mx)*(H-16);
+      i?ctxC.lineTo(x,y):ctxC.moveTo(x,y);
+    });
+    ctxC.stroke();
+    const lx=W, ly=H-6-(arr[arr.length-1]/mx)*(H-16);
+    ctxC.fillStyle=col; ctxC.beginPath(); ctxC.arc(lx-3,ly,4,0,7); ctxC.fill();
+  };
+  line(histF,'#8a94a6'); line(histS,SABZ);
+}
+
+/* ---------- RENDER ---------- */
+function fmtT(s){ s=Math.floor(s); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
+function render(){
+  if(!S) return;
+  const f=S.fixed||{}, z=S.sabz||{};
+  $('dFixed').textContent=(f.avg_delay||0).toFixed(1);
+  $('dSabz').textContent=(z.avg_delay||0).toFixed(1);
+  $('clock').textContent=fmtT(z.t||0);
+  $('scenLabel').textContent=(S.scenario_label||S.scenario||'').toUpperCase();
+
+  const save=(f.avg_delay||0)-(z.avg_delay||0);
+  const tag=$('saveTag');
+  if((f.served||0)>3 && save>0.05){
+    const pct=Math.round(save/(f.avg_delay||1)*100);
+    tag.textContent='SABZ SAVES '+save.toFixed(1)+'s/veh ('+pct+'%)';
+    tag.style.color=SABZ;
+  } else if((f.served||0)>3){ tag.textContent='TRACKING...'; tag.style.color=MUT; }
+  else { tag.textContent='WARMING UP...'; tag.style.color=MUT; }
+
+  // canvases
+  [ [cvF,ctxF,f,false], [cvS,ctxS,z,true] ].forEach(([cv,ctx,st,sabz])=>{
+    const r=cv.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+    const W=Math.max(50,r.width*dpr), H=Math.max(50,r.height*dpr);
+    if(cv.width!==W||cv.height!==H){ cv.width=W; cv.height=H; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    drawIntersection(ctx,r.width,r.height,st,sabz);
+  });
+
+  // brain
+  const b=z.brain||{};
+  const qh=b.q_stay??b.q_hold??0, qs=b.q_switch??0;
+  $('qvHold').textContent=qh.toFixed(3);
+  $('qvSwitch').textContent=qs.toFixed(3);
+  const m=Math.max(Math.abs(qh),Math.abs(qs),0.001);
+  const bh=$('qbHold'), bs=$('qbSwitch');
+  bh.style.width=(Math.abs(qh)/m*100)+'%'; bs.style.width=(Math.abs(qs)/m*100)+'%';
+  bh.className=qh<0?'neg':'pos'; bs.className=qs<0?'neg':'pos';
+  const dec=$('decision'), dm=$('decMain'), ds=$('decSub');
+  const act=(b.action_name||'').toLowerCase();
+  if(b.safety_hold){ dec.className='blocked'; dm.textContent='SAFETY HOLD';
+    ds.textContent='CAR IN DILEMMA ZONE - GREEN HELD'; }
+  else if(b.min_green_lock){ dec.className=''; dm.textContent='HOLD GREEN';
+    ds.textContent='LOCKED: MIN GREEN'; }
+  else if(act.includes('switch')){ dec.className='switch'; dm.textContent='SWITCH PHASE';
+    ds.textContent='BRAIN DECIDED: SWITCH'; }
+  else { dec.className=''; dm.textContent='HOLD GREEN'; ds.textContent='BRAIN DECIDED: HOLD'; }
+
+  $('kvPhase').textContent=(z.phase||'-')+(z.transitioning?' (YELLOW)':'');
+  $('kvGreen').textContent=(z.green_elapsed||0)+'s';
+  const tput=z.t>1?Math.round((z.served||0)/z.t*3600):0;
+  $('kvTput').textContent=tput+' veh/h';
+  $('kvServed').textContent=z.served||0;
+  $('kvSw').textContent=z.switches||0;
+  $('kvSafe').textContent=z.safety_holds||0;
+  const q=z.queues||{};
+  ['N','S','E','W'].forEach(d=>{
+    const el=$('q'+d); el.querySelector('.qc').textContent=q[d]||0;
+    el.classList.toggle('hot',(q[d]||0)>=3);
+  });
+
+  histS.push(z.avg_delay||0); histF.push(f.avg_delay||0);
+  if(histS.length>120){ histS.shift(); histF.shift(); }
   drawChart();
 }
 
-function drawChart(){
-  const W = chart.width, H = chart.height;
-  cx.clearRect(0, 0, W, H);
-  const all = histS.concat(histF);
-  if (!all.length) return;
-  const mx = Math.max(5, ...all) * 1.15;
-  const X = i => i/(HISTN-1)*W;
-  const Y = v => H - 8 - (v/mx)*(H-18);
-  cx.strokeStyle = 'rgba(255,255,255,.08)'; cx.lineWidth = 1;
-  for (const g of [0.25, 0.5, 0.75]){
-    cx.beginPath(); cx.moveTo(0, H*g); cx.lineTo(W, H*g); cx.stroke();
-  }
-  const line = (arr, col) => {
-    cx.strokeStyle = col; cx.lineWidth = 2.5;
-    cx.shadowColor = col; cx.shadowBlur = 8;
-    cx.beginPath();
-    arr.forEach((v, i) => { const x = X(i + HISTN - arr.length), y = Y(v); i ? cx.lineTo(x, y) : cx.moveTo(x, y); });
-    cx.stroke(); cx.shadowBlur = 0;
-  };
-  line(histF, '#8b95a7'); line(histS, '#00E676');
-}
-
-/* ---------------- render loop ---------------- */
-let viewMode = 'vs';
-let lastT = performance.now();
-function render(){
-  requestAnimationFrame(render);
-  const now = performance.now();
-  const dt = Math.min(0.05, (now - lastT)/1000); lastT = now;
-  const t = now/1000;
-  const views = viewMode === 'vs' ? [Vfixed, Vsabz]
-    : viewMode === 'sabz' ? [Vsabz] : [Vfixed];
-  for (const V of views){
-    if (V.canvas.style.display === 'none') continue;
-    V.camera.position.x = V.camBase.x + Math.sin(t*0.06)*2.5;
-    V.camera.position.z = V.camBase.z + Math.cos(t*0.045)*2.5;
-    V.camera.lookAt(0, 1, 0);
-    const k = Math.min(1, dt*4 + 0.08);
-    for (const e of V.cars.values()){
-      e.mesh.position.x += (e.tx - e.mesh.position.x) * k;
-      e.mesh.position.z += (e.tz - e.mesh.position.z) * k;
-    }
-    for (let i = V.exiting.length - 1; i >= 0; i--){
-      const ex = V.exiting[i], hv = HEAD[ex.a];
-      ex.x += hv[0]*ex.sp*dt; ex.z += hv[2]*ex.sp*dt;
-      ex.mesh.position.x = ex.x; ex.mesh.position.z = ex.z;
-      if (Math.abs(ex.x) > 100 || Math.abs(ex.z) > 100){
-        V.scene.remove(ex.mesh); V.exiting.splice(i, 1);
-      }
-    }
-    V.composer.render();
-  }
-}
-
-/* ---------------- controls + tick ---------------- */
-let paused = false, speed = 1, reqCount = 0;
-async function post(path, body){
-  reqCount++;
-  try {
-    const r = await fetch(path, {method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(body || {})});
-    if (!r.ok) throw new Error(path + ' -> ' + r.status);
-    return r.json();
-  } finally { reqCount--; }
-}
-function clearWorlds(){
-  for (const W of [Vfixed, Vsabz]){
-    for (const e of W.cars.values()) W.scene.remove(e.mesh);
-    for (const ex of W.exiting) W.scene.remove(ex.mesh);
-    W.cars.clear(); W.exiting.length = 0;
-  }
-  histS.length = 0; histF.length = 0;
-}
-async function tick(){
-  if (!paused && reqCount === 0){
-    try {
-      const st = await post('/api/step', {n: speed});
-      updateHUD(st);
-      syncSide(Vfixed, st.fixed);
-      syncSide(Vsabz, st.sabz);
-    } catch(e){ showErr(e.message + ' - is server.py running on :8099?'); }
-  }
-  setTimeout(tick, 1000);
-}
-document.querySelectorAll('[data-mode]').forEach(b => b.onclick = async () => {
-  document.querySelectorAll('[data-mode]').forEach(x => x.classList.remove('on'));
+/* ---------- CONTROLS ---------- */
+document.querySelectorAll('.modebtn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.modebtn').forEach(x=>x.classList.remove('on'));
   b.classList.add('on');
-  viewMode = b.dataset.mode;
-  layoutViews();
-  $('labFixed').style.display = viewMode === 'sabz' ? 'none' : '';
-  $('labSabz').style.display = viewMode === 'fixed' ? 'none' : '';
-  $('labFixed').style.left = viewMode === 'vs' ? '25%' : '50%';
-  $('labSabz').style.left = viewMode === 'vs' ? '75%' : '50%';
-  try { await post('/api/mode', {mode: viewMode}); } catch(e){}
+  const v=b.dataset.vm;
+  views.classList.toggle('single',v==='sabz');
+  views.classList.toggle('singleFixed',v==='fixed');
 });
-document.querySelectorAll('[data-sc]').forEach(b => b.onclick = async () => {
-  document.querySelectorAll('[data-sc]').forEach(x => x.classList.remove('on'));
-  b.classList.add('on');
-  try { const r = await post('/api/scenario', {scenario: b.dataset.sc}); clearWorlds(); }
-  catch(e){ showErr(e.message); }
+document.querySelectorAll('#segScen .ctl').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#segScen .ctl').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); setScen(b.dataset.scen);
 });
-document.querySelectorAll('[data-sp]').forEach(b => b.onclick = async () => {
-  document.querySelectorAll('[data-sp]').forEach(x => x.classList.remove('on'));
-  b.classList.add('on');
-  speed = parseInt(b.dataset.sp);
-  try { await post('/api/speed', {speed}); } catch(e){}
+document.querySelectorAll('#segSpeed .ctl').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#segSpeed .ctl').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); setSpeed(+b.dataset.speed);
 });
-$('btnPause').onclick = () => {
-  paused = !paused;
-  $('btnPause').textContent = paused ? 'RESUME' : 'PAUSE';
-  $('btnPause').classList.toggle('on', paused);
-};
-$('btnReset').onclick = async () => {
-  try { await post('/api/reset', {}); clearWorlds(); } catch(e){ showErr(e.message); }
-};
-$('intro').onclick = () => $('intro').classList.add('hide');
-setTimeout(() => $('intro').classList.add('hide'), 6000);
+$('btnPause').onclick=()=>{ paused=!paused;
+  $('btnPause').textContent=paused?'RESUME':'PAUSE';
+  $('btnPause').classList.toggle('on',paused); };
+$('btnReset').onclick=reset;
+window.addEventListener('resize',render);
 
-function resize(){ layoutViews(); }
-addEventListener('resize', resize);
-layoutViews();
-render();
-tick();
+/* ---------- LOOP ---------- */
+(async function init(){
+  try{ S=await api('state'); render(); }catch(e){
+    document.body.innerHTML='<div style="display:flex;height:100%;align-items:center;justify-content:center;font-size:15px;color:#8a94a6;letter-spacing:.1em">Could not reach the demo server. Run <b>&nbsp;python server.py&nbsp;</b> first.</div>';
+    return;
+  }
+  setInterval(step, 1000);
+  // poll faster than sim when speed>1
+  setInterval(()=>{ if(!paused&&speed>1) step(); }, 500);
+  setInterval(()=>{ if(!paused&&speed>2) step(); }, 250);
+})();
 </script>
 </body>
 </html>
