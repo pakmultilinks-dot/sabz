@@ -7,3 +7,4 @@ __pycache__/
 *.log
 *.npz
 *.tmp.npz
+film_frames/
