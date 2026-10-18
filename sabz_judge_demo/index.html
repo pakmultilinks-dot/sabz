@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SABZ - Live AI Traffic Demo</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  :root{
+    --sabz:#00E676; --bg:#05070c; --panel:rgba(10,15,22,.78);
+    --line:rgba(0,230,118,.16); --txt:#eaf0f6; --mut:#8b95a7;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);
+    font-family:'Space Grotesk',system-ui,sans-serif;color:var(--txt);
+    -webkit-font-smoothing:antialiased}
+  #glF,#glS{position:fixed;top:0;bottom:0;height:100%;display:block}
+  #glF{left:0} #glS{right:0}
+  .hud{position:fixed;z-index:10;pointer-events:none}
+  .hud .card{pointer-events:auto}
+
+  /* top bar */
+  #topbar{top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;background:linear-gradient(180deg,rgba(3,5,9,.85),transparent)}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .mark{width:40px;height:40px;border-radius:12px;background:radial-gradient(circle at 35% 30%,#0a2a18,#04120a);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 24px rgba(0,230,118,.35)}
+  .logo .mark svg{width:24px;height:24px}
+  .logo h1{font-size:22px;font-weight:700;letter-spacing:.14em}
+  .logo h1 span{color:var(--sabz);text-shadow:0 0 18px rgba(0,230,118,.8)}
+  .logo small{display:block;font-size:9px;letter-spacing:.32em;color:var(--mut);font-weight:500}
+  #clockbox{text-align:center}
+  #scenarioName{font-size:13px;letter-spacing:.28em;color:var(--mut);font-weight:600}
+  #simclock{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.06em}
+  #livepill{display:inline-flex;align-items:center;gap:7px;margin-top:4px;font-size:10px;letter-spacing:.24em;
+    color:var(--sabz);border:1px solid var(--line);border-radius:20px;padding:4px 12px;background:rgba(0,230,118,.06)}
+  #livepill .dot{width:7px;height:7px;border-radius:50%;background:var(--sabz);box-shadow:0 0 10px var(--sabz);animation:blink 1.4s infinite}
+  @keyframes blink{50%{opacity:.35}}
+  #topctl{display:flex;gap:8px;align-items:center}
+
+  /* side labels */
+  .sidelabel{top:86px;transform:translateX(-50%);text-align:center;width:44%}
+  #labFixed{left:25%} #labSabz{left:75%}
+  .sidelabel .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.3em;padding:7px 18px;
+    border-radius:8px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(10px)}
+  #labSabz .tag{color:var(--sabz);box-shadow:0 0 22px rgba(0,230,118,.18)}
+  #labFixed .tag{color:#c7cfdb}
+  .sidelabel .delay{margin-top:8px;font-size:15px;font-weight:600;letter-spacing:.08em}
+  .sidelabel .delay b{font-size:26px;font-variant-numeric:tabular-nums}
+  #labSabz .delay b{color:var(--sabz);text-shadow:0 0 16px rgba(0,230,118,.7)}
+  .sidelabel .delta{font-size:11px;color:var(--mut);letter-spacing:.14em;margin-top:2px;min-height:16px}
+  #deltaWin{color:var(--sabz)}
+
+  /* brain panel */
+  #brain{right:18px;top:170px;width:308px;background:var(--panel);border:1px solid var(--line);
+    border-radius:16px;padding:18px;backdrop-filter:blur(14px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+  #brain h2{font-size:11px;letter-spacing:.3em;color:var(--sabz);display:flex;align-items:center;gap:8px;margin-bottom:14px}
+  #brain h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--sabz);box-shadow:0 0 12px var(--sabz);animation:blink 1.2s infinite}
+  .qrow{margin-bottom:10px}
+  .qrow .qh{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.18em;color:var(--mut);margin-bottom:5px}
+  .qrow .qh .qv{color:var(--txt);font-variant-numeric:tabular-nums}
+  .qbar{height:10px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden}
+  .qbar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#00894a,var(--sabz));
+    box-shadow:0 0 12px rgba(0,230,118,.6);transition:width .5s ease}
+  #decision{margin:14px 0;padding:12px;border-radius:12px;text-align:center;
+    border:1px solid var(--line);background:rgba(0,230,118,.05)}
+  #decision .d1{font-size:17px;font-weight:700;letter-spacing:.2em;color:var(--sabz)}
+  #decision .d2{font-size:10px;letter-spacing:.2em;color:var(--mut);margin-top:5px}
+  #decision.switch .d1{color:#ffb020;text-shadow:0 0 14px rgba(255,176,32,.6)}
+  .kv{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-top:1px solid rgba(255,255,255,.06)}
+  .kv span:first-child{color:var(--mut);letter-spacing:.12em;font-size:10px}
+  .kv span:last-child{font-weight:600;font-variant-numeric:tabular-nums}
+  #phasebar{height:8px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:6px}
+  #phasebar i{display:block;height:100%;background:var(--sabz);box-shadow:0 0 10px rgba(0,230,118,.6)}
+  .q4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+  .q4 div{background:rgba(255,255,255,.04);border-radius:8px;padding:7px 4px;text-align:center}
+  .q4 .qn{font-size:9px;color:var(--mut);letter-spacing:.2em}
+  .q4 .qc{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+
+  /* chart */
+  #chartwrap{left:18px;bottom:86px;width:420px;background:var(--panel);border:1px solid var(--line);
+    border-radius:16px;padding:14px 16px 10px;backdrop-filter:blur(14px)}
+  #chartwrap h3{font-size:10px;letter-spacing:.3em;color:var(--mut);margin-bottom:8px}
+  #chart{width:100%;height:120px;display:block}
+  .legend{display:flex;gap:16px;font-size:10px;letter-spacing:.14em;color:var(--mut);margin-top:6px}
+  .legend i{display:inline-block;width:18px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+  /* bottom controls */
+  #controls{bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px 14px;backdrop-filter:blur(14px)}
+  .btn{pointer-events:auto;cursor:pointer;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);
+    color:var(--txt);font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.14em;
+    padding:9px 15px;border-radius:10px;transition:all .2s}
+  .btn:hover{border-color:var(--sabz);color:var(--sabz)}
+  .btn.on{background:rgba(0,230,118,.14);border-color:var(--sabz);color:var(--sabz);
+    box-shadow:0 0 14px rgba(0,230,118,.25)}
+  .sep{width:1px;height:26px;background:rgba(255,255,255,.1)}
+
+  /* intro */
+  #intro{position:fixed;inset:0;z-index:50;background:#030509;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:18px;transition:opacity 1.1s ease;cursor:pointer}
+  #intro.hide{opacity:0;pointer-events:none}
+  #intro .big{font-size:92px;font-weight:700;letter-spacing:.18em;color:var(--sabz);
+    text-shadow:0 0 60px rgba(0,230,118,.55)}
+  #intro .sub{font-size:13px;letter-spacing:.5em;color:var(--mut)}
+  #intro .live{font-size:11px;letter-spacing:.3em;color:var(--txt);border:1px solid var(--line);
+    padding:10px 26px;border-radius:30px;background:rgba(0,230,118,.06)}
+  #intro .bar{width:280px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+  #intro .bar i{display:block;height:100%;width:40%;background:var(--sabz);border-radius:2px;animation:load 1.2s infinite ease-in-out}
+  @keyframes load{0%{margin-left:-40%}100%{margin-left:100%}}
+  #err{position:fixed;inset:auto 0 0 0;z-index:60;background:#3a0d0d;color:#ffb3b3;font-size:12px;
+    padding:10px 18px;display:none;letter-spacing:.06em}
+  @media (max-width:1100px){ #brain{display:none} #chartwrap{width:320px} }
+</style>
+</head>
+<body>
+<canvas id="glF"></canvas>
+<canvas id="glS"></canvas>
+
+<div class="hud" id="topbar">
+  <div class="logo">
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5.5" r="2.6" fill="#ff3b30"/><circle cx="12" cy="12" r="2.6" fill="#ffb020" opacity=".35"/><circle cx="12" cy="18.5" r="2.6" fill="#00E676"/><circle cx="12" cy="18.5" r="4.4" stroke="#00E676" stroke-width="1" opacity=".6"/></svg>
+    </div>
+    <h1><span>SABZ</span><small>ADAPTIVE TRAFFIC AI</small></h1>
+  </div>
+  <div id="clockbox">
+    <div id="scenarioName">NORMAL TRAFFIC</div>
+    <div id="simclock">00:00</div>
+    <div id="livepill"><span class="dot"></span>LIVE SIMULATION</div>
+  </div>
+  <div id="topctl">
+    <button class="btn on" data-mode="vs">VS</button>
+    <button class="btn" data-mode="sabz">SABZ</button>
+    <button class="btn" data-mode="fixed">FIXED</button>
+  </div>
+</div>
+
+<div class="hud sidelabel" id="labFixed">
+  <div class="tag">FIXED TIMING</div>
+  <div class="delay"><b id="dFixed">0.0</b> s avg delay</div>
+  <div class="delta" id="deltaFixed"></div>
+</div>
+<div class="hud sidelabel" id="labSabz">
+  <div class="tag">SABZ AI &middot; DQN BRAIN</div>
+  <div class="delay"><b id="dSabz">0.0</b> s avg delay</div>
+  <div class="delta" id="deltaWin"></div>
+</div>
+
+<div class="hud card" id="brain">
+  <h2><span class="dot"></span>SABZ BRAIN &middot; LIVE</h2>
+  <div class="qrow">
+    <div class="qh"><span>Q ( HOLD GREEN )</span><span class="qv" id="qStayV">0.000</span></div>
+    <div class="qbar"><i id="qStay" style="width:50%"></i></div>
+  </div>
+  <div class="qrow">
+    <div class="qh"><span>Q ( SWITCH PHASE )</span><span class="qv" id="qSwitchV">0.000</span></div>
+    <div class="qbar"><i id="qSwitch" style="width:50%"></i></div>
+  </div>
+  <div id="decision"><div class="d1" id="decMain">HOLD GREEN</div><div class="d2" id="decSub">BRAIN DECISION</div></div>
+  <div class="kv"><span>PHASE</span><span id="kvPhase">NS</span></div>
+  <div class="kv"><span>GREEN ELAPSED</span><span id="kvGreen">0s</span></div>
+  <div id="phasebar"><i id="phasefill" style="width:0%"></i></div>
+  <div class="kv" style="margin-top:6px"><span>THROUGHPUT</span><span id="kvTput">0 veh/h</span></div>
+  <div class="kv"><span>SERVED</span><span id="kvServed">0</span></div>
+  <div class="kv"><span>PHASE SWITCHES</span><span id="kvSwitch">0</span></div>
+  <div class="kv"><span>SAFETY HOLDS</span><span id="kvSafe" style="color:var(--sabz)">0</span></div>
+  <div class="q4">
+    <div><div class="qn">N</div><div class="qc" id="qN">0</div></div>
+    <div><div class="qn">S</div><div class="qc" id="qS">0</div></div>
+    <div><div class="qn">E</div><div class="qc" id="qE">0</div></div>
+    <div><div class="qn">W</div><div class="qc" id="qW">0</div></div>
+  </div>
+</div>
+
+<div class="hud card" id="chartwrap">
+  <h3>AVG DELAY &middot; LIVE RACE</h3>
+  <canvas id="chart" width="388" height="120"></canvas>
+  <div class="legend">
+    <span><i style="background:#00E676"></i>SABZ AI</span>
+    <span><i style="background:#8b95a7"></i>FIXED TIMING</span>
+  </div>
+</div>
+
+<div class="hud card" id="controls">
+  <button class="btn on" data-sc="normal">NORMAL</button>
+  <button class="btn" data-sc="rush_hour">RUSH HOUR</button>
+  <button class="btn" data-sc="asymmetric">ASYMMETRIC</button>
+  <button class="btn" data-sc="school_zone">SCHOOL ZONE</button>
+  <div class="sep"></div>
+  <button class="btn on" data-sp="1">1x</button>
+  <button class="btn" data-sp="2">2x</button>
+  <button class="btn" data-sp="4">4x</button>
+  <div class="sep"></div>
+  <button class="btn" id="btnPause">PAUSE</button>
+  <button class="btn" id="btnReset">RESET</button>
+</div>
+
+<div id="intro">
+  <div class="big">SABZ</div>
+  <div class="sub">ADAPTIVE TRAFFIC INTELLIGENCE</div>
+  <div class="live">LIVE DEMONSTRATION &middot; REAL DQN BRAIN</div>
+  <div class="bar"><i></i></div>
+  <div class="sub" style="font-size:10px">CLICK TO ENTER</div>
+</div>
+<div id="err"></div>
+
+<script type="importmap">
+{"imports":{"three":"./lib/three.module.js","three/addons/":"./lib/addons/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+const $ = id => document.getElementById(id);
+const errBox = $('err');
+function showErr(m){ errBox.style.display='block'; errBox.textContent='Demo backend: '+m; }
+
+/* ---------------- per-view renderer ---------------- */
+function makeView(canvasId, camPos){
+  const canvas = $(canvasId);
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.35;
+  const W = makeWorld(camPos);
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(W.scene, W.camera));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(800, 600), 0.85, 0.5, 0.62));
+  composer.addPass(new OutputPass());
+  return Object.assign(W, {renderer, composer, canvas});
+}
+/* NOTE: makeView invocations are below, after materials/worlds are defined */
+
+function layoutViews(){
+  const f = $('glF'), s = $('glS');
+  if (viewMode === 'vs'){ f.style.display=''; s.style.display=''; f.style.width='50%'; s.style.width='50%'; }
+  else if (viewMode === 'sabz'){ f.style.display='none'; s.style.display=''; s.style.width='100%'; }
+  else { s.style.display='none'; f.style.display=''; f.style.width='100%'; }
+  for (const V of [Vfixed, Vsabz]){
+    if (V.canvas.style.display === 'none') continue;
+    const w = V.canvas.clientWidth || innerWidth/2, h = innerHeight;
+    V.renderer.setSize(w, h, false);
+    V.composer.setSize(w, h);
+    V.camera.aspect = w/h; V.camera.updateProjectionMatrix();
+  }
+}
+
+/* ---------------- shared car assets ---------------- */
+const bodyG = new THREE.BoxGeometry(1.8, 0.62, 4.3);
+const cabinG = new THREE.BoxGeometry(1.55, 0.55, 2.0);
+const wheelG = new THREE.CylinderGeometry(0.34, 0.34, 0.3, 12);
+const headG = new THREE.SphereGeometry(0.13, 10, 10);
+const tailG = new THREE.BoxGeometry(0.34, 0.15, 0.1);
+const beamG = new THREE.ConeGeometry(1.5, 7.5, 12, 1, true);
+const glassMat = new THREE.MeshStandardMaterial({color:0x0d1420, roughness:0.15, metalness:0.9});
+const wheelMat = new THREE.MeshStandardMaterial({color:0x070708, roughness:0.9});
+const headMat = new THREE.MeshBasicMaterial({color:0xfff4cf});
+const tailMat = new THREE.MeshBasicMaterial({color:0xff2418});
+const beamMat = new THREE.MeshBasicMaterial({color:0xffe9b0, transparent:true, opacity:0.032,
+  blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide});
+const CAR_COLORS = [0xd8a013,0xc23b2e,0x2e6fc2,0xcfd3d8,0x23272f,0x2e9e6b,0x7a3ec2,0xb8b0a0];
+const bodyMats = CAR_COLORS.map(c => new THREE.MeshStandardMaterial(
+  {color:c, roughness:0.35, metalness:0.6, emissive:c, emissiveIntensity:0.22}));
+
+function makeCar(){
+  const g = new THREE.Group();
+  const bm = bodyMats[(Math.random()*bodyMats.length)|0];
+  const body = new THREE.Mesh(bodyG, bm); body.position.y = 0.62; g.add(body);
+  const cab = new THREE.Mesh(cabinG, glassMat); cab.position.set(0, 1.18, -0.3); g.add(cab);
+  for (const [x,z] of [[-0.85,1.35],[0.85,1.35],[-0.85,-1.35],[0.85,-1.35]]){
+    const w = new THREE.Mesh(wheelG, wheelMat);
+    w.rotation.z = Math.PI/2; w.position.set(x, 0.34, z); g.add(w);
+  }
+  for (const x of [-0.58, 0.58]){
+    const h = new THREE.Mesh(headG, headMat); h.position.set(x, 0.62, 2.16); g.add(h);
+    const t = new THREE.Mesh(tailG, tailMat); t.position.set(x, 0.72, -2.16); g.add(t);
+  }
+  const beam = new THREE.Mesh(beamG, beamMat);
+  beam.rotation.x = -Math.PI/2; beam.position.set(0, 0.5, 5.9); g.add(beam);
+  return g;
+}
+
+/* ---------------- world ---------------- */
+const APPROACH = {
+  N:{lane:'x', fixed:-1.75, dir: 1, axis:'z', rot: 0},
+  S:{lane:'x', fixed: 1.75, dir:-1, axis:'z', rot: Math.PI},
+  E:{lane:'z', fixed:-1.75, dir:-1, axis:'x', rot:-Math.PI/2},
+  W:{lane:'z', fixed: 1.75, dir: 1, axis:'x', rot: Math.PI/2},
+};
+const HEAD = {N:[0,0,1], S:[0,0,-1], E:[-1,0,0], W:[1,0,0]};
+
+function approachPos(a, d){
+  const A = APPROACH[a];
+  if (A.axis === 'z') return {x:A.fixed, z:-A.dir*d, rot:A.rot};
+  return {x:A.dir*d, z:A.fixed, rot:A.rot};
+}
+
+const roadMat = new THREE.MeshStandardMaterial({color:0x12161e, roughness:0.32, metalness:0.55});
+const groundMat = new THREE.MeshStandardMaterial({color:0x070a10, roughness:0.95});
+const lineW = new THREE.MeshBasicMaterial({color:0xcfd6de, transparent:true, opacity:0.75});
+const lineY = new THREE.MeshBasicMaterial({color:0xc79a2e, transparent:true, opacity:0.8});
+
+function flat(geo, mat, x, y, z, ry=0){
+  const m = new THREE.Mesh(geo, mat);
+  m.rotation.x = -Math.PI/2; m.rotation.z = ry; m.position.set(x, y, z);
+  return m;
+}
+
+function makeWorld(camPos){
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x05070c);
+  scene.fog = new THREE.Fog(0x05070c, 70, 175);
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.5, 500);
+  camera.position.set(...camPos); camera.lookAt(0, 0, 0);
+
+  scene.add(new THREE.HemisphereLight(0x4a5a7a, 0x05070c, 0.95));
+  const dl = new THREE.DirectionalLight(0x9ab0d8, 0.7);
+  dl.position.set(30, 55, 25); scene.add(dl);
+
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(420, 420), groundMat);
+  ground.rotation.x = -Math.PI/2; scene.add(ground);
+
+  // roads
+  const r1 = new THREE.Mesh(new THREE.PlaneGeometry(15, 300), roadMat);
+  r1.rotation.x = -Math.PI/2; r1.position.y = 0.02; scene.add(r1);
+  const r2 = r1.clone(); r2.rotation.z = Math.PI/2; scene.add(r2);
+
+  // center dashes + edge lines
+  const dashG = new THREE.PlaneGeometry(0.28, 3.2);
+  for (let z = -140; z <= 140; z += 8){
+    if (Math.abs(z) < 12) continue;
+    scene.add(flat(dashG, lineY, 0, 0.05, z));
+    scene.add(flat(dashG, lineY, 0, 0.05, z));
+  }
+  for (let x = -140; x <= 140; x += 8){
+    if (Math.abs(x) < 12) continue;
+    scene.add(flat(dashG, lineY, x, 0.05, 0));
+  }
+  const laneG = new THREE.PlaneGeometry(0.22, 3.2);
+  for (let z = -140; z <= 140; z += 9){
+    if (Math.abs(z) < 11) continue;
+    scene.add(flat(laneG, lineW, -3.5, 0.05, z));
+    scene.add(flat(laneG, lineW, 3.5, 0.05, z));
+  }
+  for (let x = -140; x <= 140; x += 9){
+    if (Math.abs(x) < 11) continue;
+    scene.add(flat(laneG, lineW, x, 0.05, -3.5));
+    scene.add(flat(laneG, lineW, x, 0.05, 3.5));
+  }
+  // crosswalks
+  const cwG = new THREE.PlaneGeometry(1.1, 2.6);
+  for (const [cx, cz, horiz] of [[0,-10.5,0],[0,10.5,0],[-10.5,0,1],[10.5,0,1]]){
+    for (let i = -3; i <= 3; i++){
+      const m = flat(cwG, lineW, horiz ? cx : i*1.9, 0.05, horiz ? i*1.9 : cz);
+      if (horiz) m.rotation.z = Math.PI/2;
+      scene.add(m);
+    }
+  }
+  // stop lines
+  const stG = new THREE.PlaneGeometry(3.4, 0.55);
+  scene.add(flat(stG, lineW, -1.75, 0.05, -8.2));
+  scene.add(flat(stG, lineW, 1.75, 0.05, 8.2));
+  const stG2 = new THREE.PlaneGeometry(0.55, 3.4);
+  scene.add(flat(stG2, lineW, 8.2, 0.05, -1.75));
+  scene.add(flat(stG2, lineW, -8.2, 0.05, 1.75));
+
+  // street lamps + light pools
+  const poolG = new THREE.CircleGeometry(5.5, 24);
+  const poolM = new THREE.MeshBasicMaterial({color:0xbfd4ff, transparent:true, opacity:0.032,
+    blending:THREE.AdditiveBlending, depthWrite:false});
+  const poleM = new THREE.MeshStandardMaterial({color:0x1a2029, roughness:0.6, metalness:0.7});
+  const lampHeadM = new THREE.MeshBasicMaterial({color:0xd8e6ff});
+  for (const [x, z] of [[-13,-13],[13,-13],[-13,13],[13,13]]){
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 7.5, 8), poleM);
+    p.position.set(x, 3.75, z); scene.add(p);
+    const h = new THREE.Mesh(new THREE.SphereGeometry(0.32, 10, 10), lampHeadM);
+    h.position.set(x, 7.5, z); scene.add(h);
+    scene.add(flat(poolG, poolM, x, 0.06, z));
+  }
+
+  // buildings (dark masses with a few lit windows)
+  const bMat = new THREE.MeshStandardMaterial({color:0x0a0e16, roughness:0.85});
+  const winM = new THREE.MeshBasicMaterial({color:0x274a6b});
+  const winM2 = new THREE.MeshBasicMaterial({color:0x8a6a2a});
+  let bi = 0;
+  for (const [x, z, w, h, dpt] of [[-42,-42,16,24,14],[42,-44,18,30,16],[-44,42,15,20,15],[44,42,17,26,14]]){
+    const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, dpt), bMat);
+    b.position.set(x, h/2, z); scene.add(b);
+    for (let wy = 4; wy < h - 2; wy += 4){
+      for (let wx = -w/2 + 2; wx < w/2 - 1; wx += 3.4){
+        if ((bi + wx * 7 + wy * 13) % 5 < 2){
+          const win = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.8), ((bi+wx)|0) % 3 ? winM : winM2);
+          win.position.set(x + wx, wy, z + (z > 0 ? -dpt/2 - 0.05 : dpt/2 + 0.05));
+          if (z < 0) win.rotation.y = Math.PI;
+          scene.add(win);
+        }
+      }
+    }
+    bi++;
+  }
+
+  // traffic signal poles, one per approach
+  const signals = {};
+  const headBoxM = new THREE.MeshStandardMaterial({color:0x14171c, roughness:0.5, metalness:0.6});
+  const lampGeo = new THREE.CircleGeometry(0.15, 16);
+  const polePos = {N:[-5.4,-8.6], S:[5.4,8.6], E:[8.6,-5.4], W:[-8.6,5.4]};
+  const faceRy = {N:Math.PI, S:0, E:Math.PI/2, W:-Math.PI/2};
+  for (const a of ['N','S','E','W']){
+    const [px, pz] = polePos[a];
+    const grp = new THREE.Group();
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.14, 5.4, 8), poleM);
+    pole.position.y = 2.7; grp.add(pole);
+    const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.25, 0.4), headBoxM);
+    head.position.y = 5.6; grp.add(head);
+    const lamps = {};
+    const cols = {red:0xff2a20, yellow:0xffb020, green:0x00E676};
+    const ys = {red:6.05, yellow:5.6, green:5.15};
+    for (const c of ['red','yellow','green']){
+      const lm = new THREE.MeshBasicMaterial({color:cols[c]});
+      lm.color.multiplyScalar(0.12);
+      const lamp = new THREE.Mesh(lampGeo, lm);
+      lamp.position.set(0, ys[c], 0.21);
+      head.add(lamp); lamps[c] = lm;
+    }
+    head.rotation.y = faceRy[a];
+    grp.position.set(px, 0, pz);
+    scene.add(grp);
+    signals[a] = lamps;
+  }
+
+  return {scene, camera, cars:new Map(), exiting:[], signals,
+          camBase:new THREE.Vector3(...camPos)};
+}
+
+function setLamp(W, a, color){
+  const L = W.signals[a];
+  const on = {red:0xff2a20, yellow:0xffb020, green:0x00E676};
+  for (const c of ['red','yellow','green']){
+    L[c].color.setHex(on[c]);
+    L[c].color.multiplyScalar(c === color ? 2.2 : 0.1);
+  }
+}
+
+/* (worlds are created inside makeView) */
+const Vfixed = makeView('glF', [30, 22, 38]);
+const Vsabz  = makeView('glS', [-32, 20, 36]);
+
+/* ---------------- sync backend state -> scene ---------------- */
+function syncSide(W, data){
+  for (const a of ['N','S','E','W']) setLamp(W, a, data.lights[a]);
+  const seen = new Set();
+  for (const a of ['N','S','E','W']){
+    let nA = 0;
+    for (const c of data.cars[a]){
+      if (c.d > 130) continue;
+      seen.add(c.vid);
+      let e = W.cars.get(c.vid);
+      const p = approachPos(a, c.d);
+      if (!e){
+        if (nA >= 14) continue;
+        const mesh = makeCar();
+        mesh.position.set(p.x, 0, p.z);
+        mesh.rotation.y = p.rot;
+        W.scene.add(mesh);
+        e = {mesh, tx:p.x, tz:p.z, rot:p.rot, lastD:c.d, lastS:c.s, q:c.q, a};
+        W.cars.set(c.vid, e);
+      } else {
+        e.tx = p.x; e.tz = p.z; e.lastD = c.d; e.lastS = c.s; e.q = c.q; e.a = a;
+      }
+      nA++;
+    }
+  }
+  for (const [vid, e] of W.cars){
+    if (!seen.has(vid)){
+      if (!e.q && e.lastD < 14){
+        W.exiting.push({mesh:e.mesh, a:e.a, sp:Math.max(e.lastS, 9),
+                        x:e.mesh.position.x, z:e.mesh.position.z});
+      } else W.scene.remove(e.mesh);
+      W.cars.delete(vid);
+    }
+  }
+}
+
+/* ---------------- HUD ---------------- */
+const histS = [], histF = [], HISTN = 240;
+const chart = $('chart'), cx = chart.getContext('2d');
+
+function fmtT(t){
+  const m = String(Math.floor(t/60)).padStart(2,'0');
+  const s = String(Math.floor(t%60)).padStart(2,'0');
+  return m+':'+s;
+}
+
+function updateHUD(st){
+  $('simclock').textContent = fmtT(st.sabz.t);
+  $('scenarioName').textContent = st.scenario_label.toUpperCase();
+  $('dFixed').textContent = st.fixed.avg_delay.toFixed(1);
+  $('dSabz').textContent = st.sabz.avg_delay.toFixed(1);
+  const dS = st.sabz.avg_delay, dF = st.fixed.avg_delay;
+  if (dF > 0.5 && st.sabz.total > 5){
+    const save = dF - dS, pct = Math.round(save/dF*100);
+    $('deltaWin').textContent = save >= 0
+      ? 'SABZ SAVES ' + save.toFixed(1) + 's/veh (' + pct + '%)'
+      : 'FIXED LEADS BY ' + (-save).toFixed(1) + 's/veh';
+    $('deltaWin').style.color = save >= 0 ? '#00E676' : '#8b95a7';
+  }
+  // brain panel
+  const b = st.sabz.brain;
+  if (b){
+    $('qStayV').textContent = b.q_stay.toFixed(3);
+    $('qSwitchV').textContent = b.q_switch.toFixed(3);
+    const e0 = Math.exp(b.q_stay/2), e1 = Math.exp(b.q_switch/2);
+    const ps = e0/(e0+e1)*100;
+    $('qStay').style.width = ps.toFixed(1)+'%';
+    $('qSwitch').style.width = (100-ps).toFixed(1)+'%';
+    $('qStay').style.opacity = b.action === 0 ? 1 : 0.45;
+    $('qSwitch').style.opacity = b.action === 1 ? 1 : 0.45;
+    const dec = $('decision');
+    if (b.action === 1){ dec.classList.add('switch'); $('decMain').textContent = 'SWITCH PHASE'; }
+    else { dec.classList.remove('switch'); $('decMain').textContent = 'HOLD GREEN'; }
+    $('decSub').textContent = b.safety_hold ? 'BLOCKED: CAR IN DILEMMA ZONE'
+      : b.executed ? 'DECISION EXECUTED'
+      : b.min_green_lock ? 'LOCKED: MIN GREEN' : 'DECIDED: HOLD';
+  }
+  $('kvPhase').textContent = st.sabz.phase + (st.sabz.transitioning ? ' (YELLOW)' : '');
+  $('kvGreen').textContent = st.sabz.green_elapsed.toFixed(0) + 's';
+  $('phasefill').style.width = Math.min(100, st.sabz.green_elapsed/60*100) + '%';
+  const tp = st.sabz.t > 1 ? Math.round(st.sabz.served / st.sabz.t * 3600) : 0;
+  $('kvTput').textContent = tp + ' veh/h';
+  $('kvServed').textContent = st.sabz.served;
+  $('kvSwitch').textContent = st.sabz.switches;
+  $('kvSafe').textContent = st.sabz.safety_holds;
+  $('qN').textContent = st.sabz.queues.N; $('qS').textContent = st.sabz.queues.S;
+  $('qE').textContent = st.sabz.queues.E; $('qW').textContent = st.sabz.queues.W;
+  // chart
+  histS.push(dS); histF.push(dF);
+  if (histS.length > HISTN){ histS.shift(); histF.shift(); }
+  drawChart();
+}
+
+function drawChart(){
+  const W = chart.width, H = chart.height;
+  cx.clearRect(0, 0, W, H);
+  const all = histS.concat(histF);
+  if (!all.length) return;
+  const mx = Math.max(5, ...all) * 1.15;
+  const X = i => i/(HISTN-1)*W;
+  const Y = v => H - 8 - (v/mx)*(H-18);
+  cx.strokeStyle = 'rgba(255,255,255,.08)'; cx.lineWidth = 1;
+  for (const g of [0.25, 0.5, 0.75]){
+    cx.beginPath(); cx.moveTo(0, H*g); cx.lineTo(W, H*g); cx.stroke();
+  }
+  const line = (arr, col) => {
+    cx.strokeStyle = col; cx.lineWidth = 2.5;
+    cx.shadowColor = col; cx.shadowBlur = 8;
+    cx.beginPath();
+    arr.forEach((v, i) => { const x = X(i + HISTN - arr.length), y = Y(v); i ? cx.lineTo(x, y) : cx.moveTo(x, y); });
+    cx.stroke(); cx.shadowBlur = 0;
+  };
+  line(histF, '#8b95a7'); line(histS, '#00E676');
+}
+
+/* ---------------- render loop ---------------- */
+let viewMode = 'vs';
+let lastT = performance.now();
+function render(){
+  requestAnimationFrame(render);
+  const now = performance.now();
+  const dt = Math.min(0.05, (now - lastT)/1000); lastT = now;
+  const t = now/1000;
+  const views = viewMode === 'vs' ? [Vfixed, Vsabz]
+    : viewMode === 'sabz' ? [Vsabz] : [Vfixed];
+  for (const V of views){
+    if (V.canvas.style.display === 'none') continue;
+    V.camera.position.x = V.camBase.x + Math.sin(t*0.06)*2.5;
+    V.camera.position.z = V.camBase.z + Math.cos(t*0.045)*2.5;
+    V.camera.lookAt(0, 1, 0);
+    const k = Math.min(1, dt*4 + 0.08);
+    for (const e of V.cars.values()){
+      e.mesh.position.x += (e.tx - e.mesh.position.x) * k;
+      e.mesh.position.z += (e.tz - e.mesh.position.z) * k;
+    }
+    for (let i = V.exiting.length - 1; i >= 0; i--){
+      const ex = V.exiting[i], hv = HEAD[ex.a];
+      ex.x += hv[0]*ex.sp*dt; ex.z += hv[2]*ex.sp*dt;
+      ex.mesh.position.x = ex.x; ex.mesh.position.z = ex.z;
+      if (Math.abs(ex.x) > 100 || Math.abs(ex.z) > 100){
+        V.scene.remove(ex.mesh); V.exiting.splice(i, 1);
+      }
+    }
+    V.composer.render();
+  }
+}
+
+/* ---------------- controls + tick ---------------- */
+let paused = false, speed = 1, reqCount = 0;
+async function post(path, body){
+  reqCount++;
+  try {
+    const r = await fetch(path, {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body || {})});
+    if (!r.ok) throw new Error(path + ' -> ' + r.status);
+    return r.json();
+  } finally { reqCount--; }
+}
+function clearWorlds(){
+  for (const W of [Vfixed, Vsabz]){
+    for (const e of W.cars.values()) W.scene.remove(e.mesh);
+    for (const ex of W.exiting) W.scene.remove(ex.mesh);
+    W.cars.clear(); W.exiting.length = 0;
+  }
+  histS.length = 0; histF.length = 0;
+}
+async function tick(){
+  if (!paused && reqCount === 0){
+    try {
+      const st = await post('/api/step', {n: speed});
+      updateHUD(st);
+      syncSide(Vfixed, st.fixed);
+      syncSide(Vsabz, st.sabz);
+    } catch(e){ showErr(e.message + ' - is server.py running on :8099?'); }
+  }
+  setTimeout(tick, 1000);
+}
+document.querySelectorAll('[data-mode]').forEach(b => b.onclick = async () => {
+  document.querySelectorAll('[data-mode]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  viewMode = b.dataset.mode;
+  layoutViews();
+  $('labFixed').style.display = viewMode === 'sabz' ? 'none' : '';
+  $('labSabz').style.display = viewMode === 'fixed' ? 'none' : '';
+  $('labFixed').style.left = viewMode === 'vs' ? '25%' : '50%';
+  $('labSabz').style.left = viewMode === 'vs' ? '75%' : '50%';
+  try { await post('/api/mode', {mode: viewMode}); } catch(e){}
+});
+document.querySelectorAll('[data-sc]').forEach(b => b.onclick = async () => {
+  document.querySelectorAll('[data-sc]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  try { const r = await post('/api/scenario', {scenario: b.dataset.sc}); clearWorlds(); }
+  catch(e){ showErr(e.message); }
+});
+document.querySelectorAll('[data-sp]').forEach(b => b.onclick = async () => {
+  document.querySelectorAll('[data-sp]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  speed = parseInt(b.dataset.sp);
+  try { await post('/api/speed', {speed}); } catch(e){}
+});
+$('btnPause').onclick = () => {
+  paused = !paused;
+  $('btnPause').textContent = paused ? 'RESUME' : 'PAUSE';
+  $('btnPause').classList.toggle('on', paused);
+};
+$('btnReset').onclick = async () => {
+  try { await post('/api/reset', {}); clearWorlds(); } catch(e){ showErr(e.message); }
+};
+$('intro').onclick = () => $('intro').classList.add('hide');
+setTimeout(() => $('intro').classList.add('hide'), 6000);
+
+function resize(){ layoutViews(); }
+addEventListener('resize', resize);
+layoutViews();
+render();
+tick();
+</script>
+</body>
+</html>
