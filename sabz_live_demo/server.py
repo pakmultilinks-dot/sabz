@@ -19,8 +19,15 @@ sys.path.insert(0, WORK)
 
 from sabz_rl import load_net, state_vec_from_dict  # noqa: E402
 
-VIDEO_PATH = os.path.join(WORK, "real_footage", "traffic_cam.mp4")
-BRAIN_PATH = os.path.join(WORK, "sabz_dqn_best.npz")
+def _find(name_parts):
+    for base in (HERE, WORK):
+        p = os.path.join(base, *name_parts)
+        if os.path.exists(p):
+            return p
+    return os.path.join(WORK, *name_parts)
+
+VIDEO_PATH = _find(("real_footage", "traffic_cam.mp4"))
+BRAIN_PATH = _find(("sabz_dqn_best.npz",))
 MIN_GREEN = 5.0          # seconds of green before the brain may switch
 BRAIN_EVERY = 30         # frames between brain queries (1s at 30fps)
 
