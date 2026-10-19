@@ -39,7 +39,7 @@ from sabz_sim2 import (IntersectionV2, PHASES, MAX_GREEN, MIN_GREEN,
 
 N_POI = 6  # location features: school, mosque, office, hospital, friday, hour
 N_STATE = 18  # 10 traffic + 6 location + 2 starvation
-N_H, N_OUT = 64, 2
+N_H, N_OUT = 72, 2
 GAMMA = 0.99  # was 0.97 (myopic: 0.97^60 = 0.16, switch payoff invisible);
               # 0.995 caused re-scale shock on transferred weights, 0.99 is
               # the stable middle: 0.99^70 = 0.49, a full cycle stays visible
@@ -92,8 +92,10 @@ class DQN:
             "b1": np.zeros(N_H),
             "W2": r.normal(0, np.sqrt(2 / N_H), (N_H, N_H)),
             "b2": np.zeros(N_H),
-            "W3": r.normal(0, np.sqrt(2 / N_H), (N_H, N_OUT)),
-            "b3": np.zeros(N_OUT),
+            "W3": r.normal(0, np.sqrt(2 / N_H), (N_H, N_H)),
+            "b3": np.zeros(N_H),
+            "W4": r.normal(0, np.sqrt(2 / N_H), (N_H, N_OUT)),
+            "b4": np.zeros(N_OUT),
         }
         self.m = {k: np.zeros_like(v) for k, v in self.p.items()}
         self.v = {k: np.zeros_like(v) for k, v in self.p.items()}
@@ -104,8 +106,10 @@ class DQN:
         a1 = np.maximum(z1, 0)
         z2 = a1 @ self.p["W2"] + self.p["b2"]
         a2 = np.maximum(z2, 0)
-        q = a2 @ self.p["W3"] + self.p["b3"]
-        return q, (x, z1, a1, z2, a2)
+        z3 = a2 @ self.p["W3"] + self.p["b3"]
+        a3 = np.maximum(z3, 0)
+        q = a3 @ self.p["W4"] + self.p["b4"]
+        return q, (x, z1, a1, z2, a2, z3, a3)
 
     def act(self, s):
         q, _ = self.forward(s)
@@ -119,7 +123,7 @@ class DQN:
         """Double-DQN update with importance-weighted MSE. Returns loss."""
         self.t += 1
         n = s.shape[0]
-        q, (x, z1, a1, z2, a2) = self.forward(s)
+        q, (x, z1, a1, z2, a2, z3, a3) = self.forward(s)
         # Double DQN: online net selects, target net evaluates
         q2_online, _ = self.forward(s2)
         a_star = np.argmax(q2_online, axis=1)
@@ -130,9 +134,13 @@ class DQN:
         dq = np.zeros_like(q)
         dq[np.arange(n), a] = (w * td) / n
         # backprop
-        dW3 = a2.T @ dq
-        db3 = dq.sum(0)
-        da2 = dq @ self.p["W3"].T
+        dW4 = a3.T @ dq
+        db4 = dq.sum(0)
+        da3 = dq @ self.p["W4"].T
+        dz3 = da3 * (z3 > 0)
+        dW3 = a2.T @ dz3
+        db3 = dz3.sum(0)
+        da2 = dz3 @ self.p["W3"].T
         dz2 = da2 * (z2 > 0)
         dW2 = a1.T @ dz2
         db2 = dz2.sum(0)
@@ -141,7 +149,7 @@ class DQN:
         dW1 = x.T @ dz1
         db1 = dz1.sum(0)
         g = {"W1": dW1, "b1": db1, "W2": dW2, "b2": db2,
-             "W3": dW3, "b3": db3}
+             "W3": dW3, "b3": db3, "W4": dW4, "b4": db4}
         # Adam
         b1, b2, eps = 0.9, 0.999, 1e-8
         for k in self.p:
@@ -217,6 +225,10 @@ def save_ckpt(path, net, tgt, eps, episode, best_score):
 def _transfer_matrix(old, new_shape, small=0.01, seed=0):
     """Copy overlapping block of old weights into a new-shaped matrix."""
     new = np.random.default_rng(seed).normal(0, small, new_shape)
+    if old.ndim == 1 or len(new_shape) == 1:
+        n = min(old.shape[0], new_shape[0])
+        new[:n] = old[:n]
+        return new
     rows = min(old.shape[0], new_shape[0])
     cols = min(old.shape[1], new_shape[1])
     new[:rows, :cols] = old[:rows, :cols]
@@ -561,6 +573,9 @@ def load_net(path):
     d = np.load(path)
     net = DQN()
     for k in net.p:
+        if f"p_{k}" not in d:
+            # new layer not in old brain: keep fresh random init
+            continue
         v = d[f"p_{k}"]
         # shape-tolerant: older brains had fewer state features
         net.p[k] = v if v.shape == net.p[k].shape else \
