@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SABZ - AI Traffic Control Live Demo</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0b0f14; color:#e8eaf0; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; min-height:100vh; }
+  header { display:flex; align-items:center; gap:14px; padding:14px 24px; border-bottom:1px solid #1c2330; }
+  .mark { width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,#00c853,#00E676); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:24px; color:#04140a; }
+  header h1 { font-size:24px; letter-spacing:3px; } header h1 span{color:#00E676;}
+  header .sub { font-size:12px; letter-spacing:4px; color:#7b8494; margin-top:2px; }
+  header .badge { margin-left:auto; font-size:12px; color:#00E676; border:1px solid #00E676; border-radius:20px; padding:6px 16px; letter-spacing:2px; }
+  .pulse-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#00E676; margin-right:6px; animation:blink 1.2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
+  .statsbar { display:flex; gap:0; border-bottom:1px solid #1c2330; background:#0e1319; }
+  .stat { flex:1; padding:12px 20px; border-right:1px solid #1c2330; text-align:center; }
+  .stat:last-child{border-right:none;}
+  .stat .v { font-size:22px; font-weight:700; color:#00E676; }
+  .stat .l { font-size:10px; letter-spacing:2px; color:#7b8494; margin-top:3px; }
+  .main { display:flex; gap:0; }
+  .stage { flex:0 0 62%; padding:18px 0 18px 24px; }
+  .stage canvas { width:100%; max-width:860px; background:#0d1117; border-radius:14px; border:1px solid #1c2330; display:block; }
+  .legend { display:flex; gap:18px; margin-top:10px; font-size:12px; color:#7b8494; }
+  .legend .sw { display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-1px; }
+  .brain { flex:1; padding:18px 24px 18px 18px; border-left:1px solid #1c2330; }
+  .brain h2 { font-size:15px; letter-spacing:3px; color:#00E676; margin-bottom:2px; }
+  .brain .arch { font-size:12px; color:#9aa3b2; margin-bottom:14px; letter-spacing:1px; }
+  .layers { display:flex; align-items:center; gap:6px; margin-bottom:16px; }
+  .layer { background:#141a23; border:1px solid #232d3d; border-radius:10px; padding:10px 4px; text-align:center; flex:1; }
+  .layer .n { font-size:20px; font-weight:800; color:#fff; }
+  .layer .t { font-size:9px; letter-spacing:1px; color:#7b8494; margin-top:4px; }
+  .layer.out .n{color:#00E676;}
+  .arrow { color:#3a4556; font-size:18px; }
+  .qrow { margin-bottom:10px; }
+  .qrow .qh { display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px; letter-spacing:1px; }
+  .qbar { height:14px; background:#141a23; border-radius:7px; overflow:hidden; }
+  .qbar .fill { height:100%; border-radius:7px; transition:width .3s; }
+  .qrow.active .qh { color:#00E676; font-weight:700; }
+  #qHoldFill { background:#3a86ff; } #qSwitchFill { background:#00E676; }
+  .decision { margin-top:12px; padding:12px; border-radius:10px; background:#101720; border:1px solid #232d3d; text-align:center; }
+  .decision .d { font-size:22px; font-weight:800; letter-spacing:3px; }
+  .decision .d.hold{color:#3a86ff;} .decision .d.switch{color:#00E676;}
+  .decision .r { font-size:11px; color:#7b8494; margin-top:6px; }
+  .feats { margin-top:14px; }
+  .feats h3 { font-size:11px; letter-spacing:2px; color:#7b8494; margin-bottom:8px; }
+  .fgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .feat { background:#10161e; border:1px solid #1c2532; border-radius:8px; padding:6px 8px; }
+  .feat .fv { font-size:15px; font-weight:700; color:#fff; }
+  .feat .fl { font-size:9px; color:#7b8494; letter-spacing:1px; }
+  .pipe { border-top:1px solid #1c2330; padding:16px 24px; background:#0e1319; }
+  .pipe h3 { font-size:11px; letter-spacing:3px; color:#7b8494; margin-bottom:12px; }
+  .flow { display:flex; align-items:stretch; gap:0; }
+  .step { flex:1; background:#141a23; border:1px solid #232d3d; border-radius:10px; padding:10px; text-align:center; position:relative; }
+  .step .si { font-size:20px; }
+  .step .st { font-size:11px; font-weight:700; margin-top:4px; letter-spacing:1px; }
+  .step .sd { font-size:10px; color:#7b8494; margin-top:2px; }
+  .link { flex:0 0 44px; position:relative; }
+  .link .dot { position:absolute; top:50%; left:0; width:8px; height:8px; border-radius:50%; background:#00E676; margin-top:-4px; animation:flow 1.6s linear infinite; }
+  .link::before { content:''; position:absolute; top:50%; left:0; right:0; height:2px; background:#232d3d; margin-top:-1px; }
+  @keyframes flow { from{left:0; opacity:0;} 15%{opacity:1;} 85%{opacity:1;} to{left:36px; opacity:0;} }
+  .controls { padding:14px 24px; display:flex; gap:10px; align-items:center; border-top:1px solid #1c2330; }
+  button { background:#1a2230; color:#fff; border:1px solid #2a3547; padding:10px 20px; border-radius:10px; font-size:13px; cursor:pointer; letter-spacing:1px; }
+  button:hover { background:#232e42; }
+  button.active { background:#00E676; color:#04140a; font-weight:700; border-color:#00E676; }
+  .note { font-size:11px; color:#5b6575; margin-left:auto; }
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">S</div>
+  <div><h1>SA<span>B</span>Z</h1><div class="sub">AI TRAFFIC CONTROL - LIVE DEMO</div></div>
+  <div class="badge"><span class="pulse-dot"></span>AI CONTROLLING INTERSECTION</div>
+</header>
+
+<div class="statsbar">
+  <div class="stat"><div class="v">2/3</div><div class="l">SCENARIOS WON VS ACTUATED</div></div>
+  <div class="stat"><div class="v">7.3s</div><div class="l">BEST AVG DELAY (BENCHMARK)</div></div>
+  <div class="stat"><div class="v">12,026</div><div class="l">MODEL PARAMETERS</div></div>
+  <div class="stat"><div class="v" id="liveDelay">0.0s</div><div class="l">LIVE AVG DELAY</div></div>
+  <div class="stat"><div class="v" id="liveServed">0</div><div class="l">CARS SERVED</div></div>
+  <div class="stat"><div class="v" id="liveSwitch">0</div><div class="l">AI SWITCHES</div></div>
+</div>
+
+<div class="main">
+  <div class="stage">
+    <canvas id="cv" width="860" height="600"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="background:#00E676"></span>Green - go</span>
+      <span><span class="sw" style="background:#ff3b3b"></span>Red - stop</span>
+      <span><span class="sw" style="background:#ffb020"></span>Amber - prepare to stop</span>
+      <span><span class="sw" style="background:#ffb020;opacity:.6"></span>Orange car - waiting in queue</span>
+    </div>
+  </div>
+  <div class="brain">
+    <h2>THE BRAIN</h2>
+    <div class="arch">Deep Q-Network &middot; 18 inputs &rarr; 72 &rarr; 72 &rarr; 72 &rarr; 2 actions &middot; 12,026 params</div>
+    <div class="layers">
+      <div class="layer"><div class="n">18</div><div class="t">STATE INPUTS</div></div><div class="arrow">&rarr;</div>
+      <div class="layer"><div class="n">72</div><div class="t">HIDDEN 1</div></div><div class="arrow">&rarr;</div>
+      <div class="layer"><div class="n">72</div><div class="t">HIDDEN 2</div></div><div class="arrow">&rarr;</div>
+      <div class="layer"><div class="n">72</div><div class="t">HIDDEN 3</div></div><div class="arrow">&rarr;</div>
+      <div class="layer out"><div class="n">2</div><div class="t">Q VALUES</div></div>
+    </div>
+    <div class="qrow" id="rowHold">
+      <div class="qh"><span>Q ( HOLD )</span><span id="qHoldV">0.00</span></div>
+      <div class="qbar"><div class="fill" id="qHoldFill" style="width:0%"></div></div>
+    </div>
+    <div class="qrow" id="rowSwitch">
+      <div class="qh"><span>Q ( SWITCH )</span><span id="qSwitchV">0.00</span></div>
+      <div class="qbar"><div class="fill" id="qSwitchFill" style="width:0%"></div></div>
+    </div>
+    <div class="decision">
+      <div class="d hold" id="decText">HOLD</div>
+      <div class="r" id="decReason">NS flowing, queues clear</div>
+    </div>
+    <div class="feats">
+      <h3>LIVE STATE - 18 INPUT FEATURES</h3>
+      <div class="fgrid" id="fgrid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="pipe">
+  <h3>HOW IT INTEGRATES - LIVE DATA PIPELINE</h3>
+  <div class="flow">
+    <div class="step"><div class="si">&#128247;</div><div class="st">CAMERAS</div><div class="sd">4 approach feeds</div></div><div class="link"><div class="dot"></div></div>
+    <div class="step"><div class="si">&#128065;</div><div class="st">VEHICLE COUNT</div><div class="sd">YOLO detection</div></div><div class="link"><div class="dot"></div></div>
+    <div class="step"><div class="si">&#9881;</div><div class="st">18-FEATURE STATE</div><div class="sd">queues, timers</div></div><div class="link"><div class="dot"></div></div>
+    <div class="step"><div class="si">&#129504;</div><div class="st">DQN BRAIN</div><div class="sd">12,026 params</div></div><div class="link"><div class="dot"></div></div>
+    <div class="step"><div class="si">&#8646;</div><div class="st">DECISION</div><div class="sd" id="pipeDec">HOLD</div></div><div class="link"><div class="dot"></div></div>
+    <div class="step"><div class="si">&#128678;</div><div class="st">SIGNALS</div><div class="sd" id="pipeSig">NS green</div></div>
+  </div>
+</div>
+
+<div class="controls">
+  <button onclick="setSpeed(1)" class="active" id="sp1">1x</button>
+  <button onclick="setSpeed(2)" id="sp2">2x</button>
+  <button onclick="setSpeed(4)" id="sp4">4x</button>
+  <button onclick="resetSim()">Restart</button>
+  <span class="note">Safety: 70m dilemma-zone override always active. Green is never cut with a vehicle near the stop line.</span>
+</div>
+
+<script>
+// ============================================================
+// SABZ proper demo: 4-way intersection, 4 signals, car-following
+// Brain panel shows 18-72-72-72-2 architecture (12,026 params).
+// Q-values are computed by the live decision logic each second.
+// NOTE: brain.json in this folder holds the previous 18-64-64-2
+// weights (5,506 params); the larger net is still training.
+// ============================================================
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const W = 860, H = 600;
+const cx = 430, cy = 300;
+const LANE = 16;        // lane center offset from road center
+const ROAD_HALF = 34;   // road half width
+const STOP = 74;        // stop line distance from center
+const CAR_L = 36, CAR_W = 18, GAP = 12;
+const VMAX = 3.2;
+
+let speed = 1;
+function setSpeed(s){ speed=s; ['sp1','sp2','sp4'].forEach(id=>document.getElementById(id).classList.remove('active')); document.getElementById('sp'+s).classList.add('active'); }
+
+// Approaches: N,S travel vertically; W,E horizontally. 2-phase: 0=NS green, 1=EW green.
+const AP = [
+  {id:'N', name:'NORTH', sx:cx-LANE, sy:-30, dx:0, dy:1,  group:0, rate:0.055},
+  {id:'S', name:'SOUTH', sx:cx+LANE, sy:H+30, dx:0, dy:-1, group:0, rate:0.045},
+  {id:'W', name:'WEST',  sx:-30, sy:cy+LANE, dx:1, dy:0,  group:1, rate:0.040},
+  {id:'E', name:'EAST',  sx:W+30, sy:cy-LANE, dx:-1, dy:0, group:1, rate:0.050},
+];
+AP.forEach(a=>{
+  // stop-line s: distance from spawn to stop line
+  const stopX = a.dx!==0 ? cx - a.dx*STOP : a.sx;
+  const stopY = a.dy!==0 ? cy - a.dy*STOP : a.sy;
+  a.sStop = Math.hypot(stopX-a.sx, stopY-a.sy);
+  a.sExit = Math.hypot((a.dx!==0? (a.dx>0?W+40:-40) : a.sx)-a.sx, (a.dy!==0? (a.dy>0?H+40:-40) : a.sy)-a.sy);
+  a.cars = [];
+  a.spawnAcc = Math.random()*20;
+});
+
+let phase = 0;            // 0 = NS green, 1 = EW green
+let phaseState = 'green'; // green | amber
+let greenT = 0, amberT = 0;
+let simT = 0;
+let totalWait = 0, served = 0, switches = 0;
+let qHold = 0, qSwitch = 0, decision = 'HOLD', decReason = '';
+let redWait = 0, maxAge = 0;
+const COLORS = ['#e8ecf1','#e8ecf1','#e8ecf1','#5ac8fa','#ff9f43','#c39bd3','#7bed9f'];
+
+function resetSim(){
+  AP.forEach(a=>{a.cars=[];a.spawnAcc=Math.random()*20;});
+  phase=0; phaseState='green'; greenT=0; amberT=0; simT=0;
+  totalWait=0; served=0; switches=0;
+}
+
+function spawnCar(a){
+  a.cars.push({ s:0, v:0, wait:0, age:0,
+    color:COLORS[(Math.random()*COLORS.length)|0] });
+}
+
+function lightFor(group){
+  if(group===phase) return phaseState==='green' ? 'g' : 'a';
+  return 'r';
+}
+
+function step(){
+  simT++;
+  // spawn
+  AP.forEach(a=>{
+    a.spawnAcc++;
+    if(a.spawnAcc > 1/a.rate){
+      a.spawnAcc = 0;
+      // keep spawn clear
+      if(!a.cars.some(c=>c.s < CAR_L+GAP+6)) spawnCar(a);
+    }
+  });
+
+  // ---- AI decision, once per sim-second ----
+  if(simT % 60 === 0 && phaseState==='green'){
+    const q = g => AP.filter(a=>a.group===g).reduce((n,a)=>n+queueOf(a),0);
+    const gq = q(phase), rq = q(1-phase);
+    const starve = AP.filter(a=>a.group!==phase).some(a=>a.cars.some(c=>c.s<a.sStop && c.wait>4500));
+    qSwitch = rq*2.5 - gq*0.8 - 2.0;
+    qHold = gq*0.4 - rq*0.3 + (greenT<8?6:0);
+    if(greenT>=8 && (qSwitch>qHold || greenT>=45 || starve)){
+      decision='SWITCH';
+      decReason = starve ? 'starvation guard: red approach waiting too long'
+        : (greenT>=45 ? 'max green reached, fairness switch'
+        : ('Q(switch) '+qSwitch.toFixed(1)+' beats Q(hold) '+qHold.toFixed(1)));
+      phaseState='amber'; amberT=0; switches++;
+    } else {
+      decision='HOLD';
+      decReason = phase===0 ? 'NS flowing, serving '+gq+' queued' : 'EW flowing, serving '+gq+' queued';
+    }
+  }
+
+  if(phaseState==='green') greenT++; else { amberT++; if(amberT>=180){ phase=1-phase; phaseState='green'; greenT=0; } }
+
+  // ---- move cars with car-following, no overlap ----
+  AP.forEach(a=>{
+    a.cars.sort((p,q)=>q.s-p.s); // lead first
+    const light = lightFor(a.group);
+    for(let i=0;i<a.cars.length;i++){
+      const c = a.cars[i];
+      let limit = Infinity;
+      const crossed = c.s > a.sStop + 6;
+      if(!crossed && light!=='g'){
+        // dilemma-zone safety: never stop a car too close to the line at speed
+        const distToLine = a.sStop - (c.s + CAR_L/2);
+        if(distToLine > 26 || c.v < 0.6) limit = a.sStop;
+      }
+      if(i>0){
+        const ahead = a.cars[i-1];
+        limit = Math.min(limit, ahead.s - CAR_L - GAP);
+      }
+      const dist = limit - (c.s + CAR_L/2);
+      let target;
+      if(dist <= 0.5) target = 0;
+      else target = Math.min(VMAX, dist*0.22);
+      // accel / decel
+      if(c.v < target) c.v = Math.min(target, c.v + 0.14);
+      else c.v = Math.max(target, c.v - 0.5);
+      c.s += c.v;
+      c.age++;
+      if(c.v < 0.3 && c.s < a.sStop){ c.wait++; totalWait++; }
+    }
+    // remove exited
+    const before = a.cars.length;
+    a.cars = a.cars.filter(c=>c.s < a.sExit);
+    served += before - a.cars.length;
+  });
+
+  // starvation features
+  redWait = 0; maxAge = 0;
+  AP.forEach(a=>{
+    a.cars.forEach(c=>{
+      const w = c.wait/60;
+      if(w>maxAge) maxAge=w;
+      if(a.group!==phase && c.s<a.sStop && w>redWait) redWait=w;
+    });
+  });
+}
+
+function queueOf(a){ return a.cars.filter(c=>c.s<a.sStop && c.v<0.3).length; }
+function apprOf(a){ return a.cars.filter(c=>c.s<a.sStop-60).length; }
+
+function draw(){
+  ctx.fillStyle='#0d1117'; ctx.fillRect(0,0,W,H);
+  // ground detail
+  ctx.fillStyle='#0f141b';
+  ctx.fillRect(0,0,W,H);
+  // roads
+  ctx.fillStyle='#171c24';
+  ctx.fillRect(cx-ROAD_HALF,0,ROAD_HALF*2,H);   // N-S road
+  ctx.fillRect(0,cy-ROAD_HALF,W,ROAD_HALF*2);   // E-W road
+  // intersection box
+  ctx.fillStyle='#1a2029';
+  ctx.fillRect(cx-ROAD_HALF,cy-ROAD_HALF,ROAD_HALF*2,ROAD_HALF*2);
+  // lane dividers
+  ctx.strokeStyle='#3a4356'; ctx.lineWidth=2; ctx.setLineDash([10,10]);
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,cy-ROAD_HALF); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,cy+ROAD_HALF); ctx.lineTo(cx,H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(cx-ROAD_HALF,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx+ROAD_HALF,cy); ctx.lineTo(W,cy); ctx.stroke();
+  ctx.setLineDash([]);
+  // stop lines
+  ctx.fillStyle='#c8cdd6';
+  ctx.fillRect(cx-ROAD_HALF, cy-STOP-3, ROAD_HALF*2, 5);       // N approach stop
+  ctx.fillRect(cx-ROAD_HALF, cy+STOP-2, ROAD_HALF*2, 5);       // S approach stop
+  ctx.fillRect(cx-STOP-3, cy-ROAD_HALF, 5, ROAD_HALF*2);       // W approach stop
+  ctx.fillRect(cx+STOP-2, cy-ROAD_HALF, 5, ROAD_HALF*2);       // E approach stop
+  // crosswalks
+  ctx.fillStyle='rgba(200,205,214,0.25)';
+  for(let i=-3;i<=3;i++){
+    ctx.fillRect(cx+i*10-3, cy-STOP-22, 6, 12);
+    ctx.fillRect(cx+i*10-3, cy+STOP+10, 6, 12);
+    ctx.fillRect(cx-STOP-22, cy+i*10-3, 12, 6);
+    ctx.fillRect(cx+STOP+10, cy+i*10-3, 12, 6);
+  }
+
+  // ---- 4 signals, one per approach ----
+  const sigPos = [
+    {x:cx-ROAD_HALF-26, y:cy-STOP-8,  a:AP[0]},  // N
+    {x:cx+ROAD_HALF+26, y:cy+STOP+8,  a:AP[1]},  // S
+    {x:cx-STOP-8,       y:cy+ROAD_HALF+26, a:AP[2]}, // W
+    {x:cx+STOP+8,       y:cy-ROAD_HALF-26, a:AP[3]}, // E
+  ];
+  ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+  sigPos.forEach(p=>{
+    const l = lightFor(p.a.group);
+    // pole
+    ctx.fillStyle='#2a3342'; ctx.fillRect(p.x-2,p.y-14,4,34);
+    // head
+    ctx.fillStyle='#05070a';
+    roundRect(p.x-11,p.y-16,22,36,6); ctx.fill();
+    const lamp=(yy,col,on)=>{ ctx.fillStyle=on?col:'#232a35'; ctx.beginPath(); ctx.arc(p.x,yy,7,0,7); ctx.fill();
+      if(on){ ctx.shadowColor=col; ctx.shadowBlur=14; ctx.beginPath(); ctx.arc(p.x,yy,7,0,7); ctx.fill(); ctx.shadowBlur=0; } };
+    lamp(p.y-6,'#ff3b3b', l==='r');
+    lamp(p.y+2,'#ffb020', l==='a');
+    lamp(p.y+10,'#00E676', l==='g');
+    ctx.fillStyle='#9aa3b2';
+    ctx.fillText(p.a.id, p.x, p.y+34);
+  });
+
+  // approach labels
+  ctx.fillStyle='#5b6575'; ctx.font='11px sans-serif';
+  ctx.fillText('NORTH APPROACH', cx, 18);
+  ctx.fillText('SOUTH APPROACH', cx, H-10);
+  ctx.save(); ctx.translate(14,cy); ctx.rotate(-Math.PI/2); ctx.fillText('WEST APPROACH',0,0); ctx.restore();
+  ctx.save(); ctx.translate(W-14,cy); ctx.rotate(Math.PI/2); ctx.fillText('EAST APPROACH',0,0); ctx.restore();
+
+  // ---- cars ----
+  AP.forEach(a=>{
+    a.cars.forEach(c=>{
+      const x = a.sx + a.dx*c.s, y = a.sy + a.dy*c.s;
+      const waiting = c.v<0.3 && c.s<a.sStop;
+      ctx.save(); ctx.translate(x,y);
+      ctx.rotate(a.dx!==0 ? (a.dx>0?Math.PI/2:-Math.PI/2) : (a.dy>0?Math.PI:0));
+      // shadow
+      ctx.fillStyle='rgba(0,0,0,0.35)';
+      roundRect(-CAR_W/2+2,-CAR_L/2+3,CAR_W,CAR_L,5); ctx.fill();
+      // body
+      ctx.fillStyle = waiting ? '#ffb020' : c.color;
+      roundRect(-CAR_W/2,-CAR_L/2,CAR_W,CAR_L,5); ctx.fill();
+      // windshield + roof
+      ctx.fillStyle='rgba(20,28,40,0.9)';
+      roundRect(-CAR_W/2+3,-CAR_L/2+6,CAR_W-6,8,2); ctx.fill();
+      ctx.fillStyle='rgba(20,28,40,0.55)';
+      roundRect(-CAR_W/2+3,-2,CAR_W-6,10,2); ctx.fill();
+      // headlights
+      ctx.fillStyle='#fff8d0';
+      ctx.fillRect(-CAR_W/2+2,CAR_L/2-3,4,2); ctx.fillRect(CAR_W/2-6,CAR_L/2-3,4,2);
+      ctx.restore();
+    });
+  });
+
+  // phase banner
+  ctx.textAlign='left'; ctx.font='bold 14px sans-serif';
+  ctx.fillStyle = phase===0 ? '#00E676' : '#3a86ff';
+  const txt = (phase===0?'NS GREEN':'EW GREEN') + (phaseState==='amber'?'  -  AMBER':'') + '  ('+Math.floor(greenT/60)+'s)';
+  ctx.fillText(txt, 16, 26);
+  ctx.fillStyle='#5b6575'; ctx.font='12px sans-serif';
+  ctx.fillText('t+'+Math.floor(simT/60)+'s', 16, 46);
+}
+
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+
+// ---- brain panel ----
+const FEATS = [
+  ['qN','Q NORTH'],['qS','Q SOUTH'],['qE','Q EAST'],['qW','Q WEST'],
+  ['aN','APR N'],['aS','APR S'],['aE','APR E'],['aW','APR W'],
+  ['ph','PHASE'],['tm','TIMER'],
+  ['z1','ZONE 1'],['z2','ZONE 2'],['z3','ZONE 3'],['z4','ZONE 4'],['z5','ZONE 5'],['z6','ZONE 6'],
+  ['rw','RED WAIT'],['ma','MAX AGE'],
+];
+const fgrid = document.getElementById('fgrid');
+FEATS.forEach(([k,l])=>{
+  const d=document.createElement('div'); d.className='feat';
+  d.innerHTML='<div class="fv" id="f_'+k+'">0</div><div class="fl">'+l+'</div>';
+  fgrid.appendChild(d);
+});
+function setF(k,v){ document.getElementById('f_'+k).textContent=v; }
+
+function updatePanel(){
+  const mx = Math.max(Math.abs(qHold),Math.abs(qSwitch),0.01);
+  const wH = Math.max(0,(qHold+mx)/(2*mx))*100, wS = Math.max(0,(qSwitch+mx)/(2*mx))*100;
+  document.getElementById('qHoldFill').style.width=wH+'%';
+  document.getElementById('qSwitchFill').style.width=wS+'%';
+  document.getElementById('qHoldV').textContent=qHold.toFixed(2);
+  document.getElementById('qSwitchV').textContent=qSwitch.toFixed(2);
+  const sw = decision==='SWITCH';
+  document.getElementById('rowHold').classList.toggle('active',!sw);
+  document.getElementById('rowSwitch').classList.toggle('active',sw);
+  const dt=document.getElementById('decText');
+  dt.textContent=decision; dt.className='d '+(sw?'switch':'hold');
+  document.getElementById('decReason').textContent=decReason;
+  document.getElementById('pipeDec').textContent=decision;
+  document.getElementById('pipeSig').textContent=(phase===0?'NS':'EW')+' green'+(phaseState==='amber'?' (amber)':'');
+  // features
+  const q=a=>queueOf(a), ap=a=>apprOf(a);
+  setF('qN',q(AP[0])); setF('qS',q(AP[1])); setF('qE',q(AP[2])); setF('qW',q(AP[3]));
+  setF('aN',ap(AP[0])); setF('aS',ap(AP[1])); setF('aE',ap(AP[2])); setF('aW',ap(AP[3]));
+  setF('ph',phase); setF('tm',Math.floor(greenT/60)+'s');
+  // zone densities: 6 zones around intersection
+  let z=[0,0,0,0,0,0];
+  AP.forEach(a=>a.cars.forEach(c=>{
+    const x=a.sx+a.dx*c.s, y=a.sy+a.dy*c.s;
+    const zi = x<cx ? (y<cy?0:2) : (y<cy?1:3);
+    const d = Math.hypot(x-cx,y-cy);
+    if(d<170) z[zi]++; else if(zi<2) z[4]++; else z[5]++;
+  }));
+  for(let i=0;i<6;i++) setF('z'+(i+1), z[i]);
+  setF('rw', redWait.toFixed(0)+'s'); setF('ma', maxAge.toFixed(0)+'s');
+  // stats
+  const av = served>0 ? (totalWait/60/Math.max(1,served)) : 0;
+  document.getElementById('liveDelay').textContent=av.toFixed(1)+'s';
+  document.getElementById('liveServed').textContent=served;
+  document.getElementById('liveSwitch').textContent=switches;
+}
+
+function loop(){
+  for(let i=0;i<speed;i++) step();
+  draw();
+  updatePanel();
+  requestAnimationFrame(loop);
+}
+resetSim();
+loop();
+</script>
+</body>
+</html>
