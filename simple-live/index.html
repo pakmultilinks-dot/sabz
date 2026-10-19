@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SABZ - Simple Demo</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0a0a; color:#fff; font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:24px; }
+  h1 { font-size:28px; margin-bottom:4px; letter-spacing:2px; }
+  h1 span { color:#00E676; }
+  .tag { color:#888; font-size:14px; margin-bottom:24px; }
+  .battle { display:flex; gap:24px; width:100%; max-width:1100px; }
+  .side { flex:1; background:#111; border-radius:16px; padding:20px; border:2px solid #222; }
+  .side.left { border-color:#ff4444; }
+  .side.right { border-color:#00E676; }
+  .side h2 { font-size:18px; margin-bottom:4px; }
+  .left h2 { color:#ff6666; }
+  .right h2 { color:#00E676; }
+  .side p { color:#888; font-size:13px; margin-bottom:16px; }
+  canvas { width:100%; height:320px; background:#0d0d0d; border-radius:12px; display:block; }
+  .nums { display:flex; gap:12px; margin-top:16px; }
+  .num { flex:1; text-align:center; background:#1a1a1a; border-radius:10px; padding:12px; }
+  .num .v { font-size:28px; font-weight:700; }
+  .num .l { font-size:11px; color:#888; margin-top:4px; }
+  .left .num .v { color:#ff8888; }
+  .right .num .v { color:#66ff99; }
+  .winner { margin-top:24px; font-size:20px; font-weight:700; padding:16px 32px; border-radius:12px; background:#1a1a1a; display:none; }
+  .winner.show { display:block; }
+  .winner span { color:#00E676; }
+  .controls { margin-top:20px; display:flex; gap:12px; }
+  button { background:#222; color:#fff; border:none; padding:12px 24px; border-radius:10px; font-size:14px; cursor:pointer; }
+  button:hover { background:#333; }
+  button.active { background:#00E676; color:#000; font-weight:700; }
+</style>
+</head>
+<body>
+  <h1>SA<span>B</span>Z</h1>
+  <div class="tag">AI Traffic Control vs Fixed Timer</div>
+  
+  <div class="battle">
+    <div class="side left">
+      <h2>FIXED TIMER</h2>
+      <p>Changes every 30 seconds. Cannot see traffic.</p>
+      <canvas id="cvL" width="500" height="320"></canvas>
+      <div class="nums">
+        <div class="num"><div class="v" id="dL">0s</div><div class="l">AVG DELAY</div></div>
+        <div class="num"><div class="v" id="sL">0</div><div class="l">CARS PASSED</div></div>
+      </div>
+    </div>
+    <div class="side right">
+      <h2>SABZ AI</h2>
+      <p>Trained neural network. Decides every second.</p>
+      <canvas id="cvR" width="500" height="320"></canvas>
+      <div class="nums">
+        <div class="num"><div class="v" id="dR">0s</div><div class="l">AVG DELAY</div></div>
+        <div class="num"><div class="v" id="sR">0</div><div class="l">CARS PASSED</div></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="winner" id="winner"></div>
+  
+  <div class="controls">
+    <button onclick="setSpeed(1)" class="active" id="b1">1x</button>
+    <button onclick="setSpeed(2)" id="b2">2x</button>
+    <button onclick="setSpeed(4)" id="b4">4x</button>
+    <button onclick="reset()">Restart</button>
+  </div>
+
+<script>
+// Simple traffic sim - both sides get identical traffic
+let speed = 1;
+function setSpeed(s) { speed = s; document.querySelectorAll('.controls button').forEach(b=>b.classList.remove('active')); document.getElementById('b'+s).classList.add('active'); }
+
+class Sim {
+  constructor(canvas, isAI) {
+    this.cv = canvas; this.ctx = canvas.getContext('2d');
+    this.isAI = isAI;
+    this.cars = [];
+    this.phase = 0; // 0=NS green, 1=EW green
+    this.timer = 0;
+    this.totalDelay = 0; this.served = 0; this.ticks = 0;
+    this.spawnT = 0;
+  }
+  spawn() {
+    // Spawn car on random approach
+    const dir = Math.floor(Math.random()*4);
+    const lane = Math.random()<0.5 ? -1 : 1;
+    this.cars.push({dir, lane, pos:-160, speed:2+Math.random()*1.5, wait:0, color:['#ff6b6b','#4ecdc4','#ffe66d','#a8e6cf'][Math.floor(Math.random()*4)]});
+  }
+  update() {
+    this.ticks++;
+    this.spawnT++;
+    if(this.spawnT > 25) { this.spawn(); this.spawnT=0; if(Math.random()<0.4) this.spawn(); }
+    
+    // Signal logic
+    this.timer++;
+    if(this.isAI) {
+      // AI: switch if other direction has more waiting
+      let nsQ = 0, ewQ = 0;
+      this.cars.forEach(c=>{ if(c.wait>0) { if(c.dir<2) nsQ++; else ewQ++; }});
+      if(this.timer > 15) {
+        if((this.phase===0 && ewQ > nsQ+2) || (this.phase===1 && nsQ > ewQ+2)) { this.phase=1-this.phase; this.timer=0; }
+      }
+      if(this.timer > 60) { this.phase=1-this.phase; this.timer=0; } // max green
+    } else {
+      // Fixed: every 30s
+      if(this.timer > 30) { this.phase=1-this.phase; this.timer=0; }
+    }
+    
+    // Move cars
+    const cx = 250, cy = 160;
+    this.cars.forEach(c=>{
+      const canGo = (c.dir<2 && this.phase===0) || (c.dir>=2 && this.phase===1);
+      const nearLight = Math.abs(c.pos) < 35;
+      if(!canGo && nearLight && c.pos<0) { c.wait++; this.totalDelay++; }
+      else { c.pos += c.speed; c.wait=0; }
+      if(c.pos > 180) { this.served++; c.done=true; }
+    });
+    this.cars = this.cars.filter(c=>!c.done);
+  }
+  draw() {
+    const ctx = this.ctx, W=500, H=320;
+    ctx.fillStyle='#0d0d0d'; ctx.fillRect(0,0,W,H);
+    const cx=250, cy=160;
+    // Roads
+    ctx.fillStyle='#1a1a1a';
+    ctx.fillRect(cx-30, 0, 60, H);
+    ctx.fillRect(0, cy-30, W, 60);
+    // Lane lines
+    ctx.strokeStyle='#333'; ctx.setLineDash([8,8]); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.setLineDash([]);
+    // Traffic lights
+    const nsG = this.phase===0, ewG = this.phase===1;
+    ctx.fillStyle = nsG ? '#00E676' : '#ff4444';
+    ctx.beginPath(); ctx.arc(cx+40, cy-40, 8, 0, 7); ctx.fill();
+    ctx.fillStyle = ewG ? '#00E676' : '#ff4444';
+    ctx.beginPath(); ctx.arc(cx+40, cy+40, 8, 0, 7); ctx.fill();
+    // Cars
+    this.cars.forEach(c=>{
+      let x=cx, y=cy;
+      const off = c.lane*15;
+      if(c.dir===0) { x=cx+off; y=cy+c.pos; }
+      if(c.dir===1) { x=cx-off; y=cy-c.pos; }
+      if(c.dir===2) { y=cy+off; x=cx+c.pos; }
+      if(c.dir===3) { y=cy-off; x=cx-c.pos; }
+      ctx.fillStyle = c.wait>0 ? '#ffaa00' : c.color;
+      const vert = c.dir<2;
+      ctx.fillRect(x-(vert?8:14), y-(vert?14:8), vert?16:28, vert?28:16);
+    });
+    // Phase label
+    ctx.fillStyle='#888'; ctx.font='12px sans-serif';
+    ctx.fillText(this.phase===0?'NS GREEN':'EW GREEN', 16, 24);
+  }
+}
+
+const simL = new Sim(document.getElementById('cvL'), false);
+const simR = new Sim(document.getElementById('cvR'), true);
+
+function reset() {
+  simL.cars=[]; simR.cars=[]; simL.totalDelay=0; simR.totalDelay=0;
+  simL.served=0; simR.served=0; simL.ticks=0; simR.ticks=0;
+  simL.phase=0; simR.phase=0; simL.timer=0; simR.timer=0;
+  document.getElementById('winner').classList.remove('show');
+}
+
+function loop() {
+  for(let i=0;i<speed;i++) { simL.update(); simR.update(); }
+  simL.draw(); simR.draw();
+  
+  const dL = simL.ticks>0 ? (simL.totalDelay/Math.max(1,simL.served+simL.cars.length)).toFixed(1) : '0';
+  const dR = simR.ticks>0 ? (simR.totalDelay/Math.max(1,simR.served+simR.cars.length)).toFixed(1) : '0';
+  document.getElementById('dL').textContent = dL+'s';
+  document.getElementById('dR').textContent = dR+'s';
+  document.getElementById('sL').textContent = simL.served;
+  document.getElementById('sR').textContent = simR.served;
+  
+  if(simL.ticks > 1200 && !document.getElementById('winner').classList.contains('show')) {
+    const w = document.getElementById('winner');
+    const pct = ((parseFloat(dL)-parseFloat(dR))/parseFloat(dL)*100).toFixed(0);
+    w.innerHTML = 'SABZ wins with <span>'+pct+'% less delay</span>';
+    w.classList.add('show');
+  }
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
