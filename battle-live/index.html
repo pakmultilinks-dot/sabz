@@ -51,6 +51,10 @@
     padding: 10px 24px;
   }
   .panel-head h3 { font-size: 17px; letter-spacing: 4px; font-weight: 700; }
+  .panel-sub {
+    font-size: 12px; letter-spacing: 1px; color: #8a8f9e; font-weight: 400;
+    padding: 0 24px 8px; text-align: left;
+  }
   .panel.fixed .panel-head h3 { color: #ff5a5a; }
   .panel.sabz .panel-head h3 { color: #00E676; }
   .phase-chip {
@@ -140,6 +144,7 @@
       <h3>FIXED TIMER</h3>
       <div class="phase-chip" id="phaseFixed">NS GREEN</div>
     </div>
+    <div class="panel-sub">Switches every 25s. Blind to traffic.</div>
     <div class="sim-wrap"><canvas class="sim" id="cvFixed" width="560" height="560"></canvas></div>
     <div class="scoreboard">
       <div class="stat" id="stDelayF"><div class="lbl">AVG DELAY</div><div class="val">0.0s</div></div>
@@ -155,6 +160,7 @@
       <h3>SABZ AI &middot; TRAINED DQN</h3>
       <div class="phase-chip" id="phaseSabz">NS GREEN</div>
     </div>
+    <div class="panel-sub">Watches traffic. Decides every second.</div>
     <div class="sim-wrap"><canvas class="sim" id="cvSabz" width="560" height="560"></canvas></div>
     <div class="scoreboard">
       <div class="stat" id="stDelayS"><div class="lbl">AVG DELAY</div><div class="val">0.0s</div></div>
@@ -462,26 +468,29 @@ function makeRenderer(canvasId, accent) {
           else { x = C - RW - SL - p; y = C + 16; }
           if (x < -20 || x > W + 20 || y < -20 || y > H + 20) continue;
           const queued = v.queued;
-          const col = queued ? "255,170,60" : "255,255,255";
-          const r = queued ? 4.5 : 4;
+          // draw as a car (rounded rect oriented by direction), not a dot
+          const CW = 9, CL = 17; // car width, length
+          ctx.save();
+          ctx.translate(x, y);
+          if (a === "N") ctx.rotate(Math.PI);
+          else if (a === "E") ctx.rotate(-Math.PI/2);
+          else if (a === "W") ctx.rotate(Math.PI/2);
+          // (S needs no rotation: pointing up = moving north on screen for S approach? S approach moves north)
           // glow
-          const gg = ctx.createRadialGradient(x, y, 0, x, y, r * 3.2);
-          gg.addColorStop(0, `rgba(${col},.9)`); gg.addColorStop(1, `rgba(${col},0)`);
-          ctx.fillStyle = gg;
-          ctx.beginPath(); ctx.arc(x, y, r * 3.2, 0, 7); ctx.fill();
-          // core
-          ctx.fillStyle = queued ? "#ffb04d" : "#ffffff";
-          ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
-          // motion streak for moving
-          if (!queued) {
-            ctx.strokeStyle = `rgba(${col},.35)`; ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            if (a === "N") { ctx.moveTo(x, y); ctx.lineTo(x, y + 16); }
-            else if (a === "S") { ctx.moveTo(x, y); ctx.lineTo(x, y - 16); }
-            else if (a === "E") { ctx.moveTo(x, y); ctx.lineTo(x - 16, y); }
-            else { ctx.moveTo(x, y); ctx.lineTo(x + 16, y); }
-            ctx.stroke();
-          }
+          ctx.shadowColor = queued ? "rgba(255,170,60,.9)" : "rgba(255,255,255,.55)";
+          ctx.shadowBlur = 10;
+          // body
+          ctx.fillStyle = queued ? "#ffb04d" : "#f2f4f8";
+          ctx.beginPath();
+          ctx.roundRect(-CW/2, -CL/2, CW, CL, 3);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          // windshield
+          ctx.fillStyle = queued ? "#7a4d1a" : "#3a4356";
+          ctx.fillRect(-CW/2+1.5, -CL/2+3, CW-3, 5);
+          // rear window
+          ctx.fillRect(-CW/2+1.5, CL/2-7, CW-3, 3.5);
+          ctx.restore();
         }
       }
       // traffic light orbs at each approach
