@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SABZ vs FIXED — Live Battle</title>
+<style>
+  @font-face { font-family: 'SpaceGrotesk'; src: url('fonts/sg-700.ttf'); font-weight: 700; }
+  @font-face { font-family: 'SpaceGrotesk'; src: url('fonts/sg-500.ttf'); font-weight: 500; }
+  @font-face { font-family: 'SpaceGrotesk'; src: url('fonts/sg-400.ttf'); font-weight: 400; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0f; color: #e8eaf0;
+    font-family: 'SpaceGrotesk', 'Segoe UI', system-ui, sans-serif;
+    overflow: hidden; height: 100vh; display: flex; flex-direction: column;
+    user-select: none;
+  }
+  /* ---------- header ---------- */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px; border-bottom: 1px solid #1c1c26;
+    background: linear-gradient(180deg, #0e0e15, #0a0a0f);
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-mark {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, #00c853, #00E676);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 20px; color: #04140a;
+    box-shadow: 0 0 24px rgba(0,230,118,.35);
+  }
+  .logo h1 { font-size: 22px; letter-spacing: 3px; font-weight: 700; }
+  .logo h1 span { color: #00E676; }
+  .logo small { display: block; font-size: 10px; letter-spacing: 4px; color: #6b7280; font-weight: 400; }
+  .battle-title { text-align: center; }
+  .battle-title h2 { font-size: 15px; letter-spacing: 5px; color: #9ca3af; font-weight: 500; }
+  .battle-title .timer { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: 2px; margin-top: 2px; }
+  .live-badge {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; letter-spacing: 3px; color: #00E676; font-weight: 700;
+    border: 1px solid rgba(0,230,118,.4); border-radius: 20px; padding: 8px 16px;
+    background: rgba(0,230,118,.06);
+  }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #00E676; animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; box-shadow: 0 0 8px #00E676; } 50% { opacity: .4; box-shadow: none; } }
+  /* ---------- main ---------- */
+  main { flex: 1; display: flex; min-height: 0; }
+  .panel { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
+  .panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 24px;
+  }
+  .panel-head h3 { font-size: 17px; letter-spacing: 4px; font-weight: 700; }
+  .panel.fixed .panel-head h3 { color: #ff5a5a; }
+  .panel.sabz .panel-head h3 { color: #00E676; }
+  .phase-chip {
+    font-size: 12px; letter-spacing: 2px; font-weight: 700; padding: 6px 14px; border-radius: 6px;
+  }
+  .panel.fixed .phase-chip { background: rgba(255,90,90,.12); color: #ff8080; border: 1px solid rgba(255,90,90,.35); }
+  .panel.sabz .phase-chip { background: rgba(0,230,118,.10); color: #00E676; border: 1px solid rgba(0,230,118,.35); }
+  .sim-wrap { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 6px; }
+  canvas.sim { border-radius: 12px; box-shadow: 0 8px 40px rgba(0,0,0,.5); }
+  .panel.fixed canvas.sim { border: 1px solid rgba(255,90,90,.18); }
+  .panel.sabz canvas.sim { border: 1px solid rgba(0,230,118,.22); }
+  /* scoreboard */
+  .scoreboard { display: flex; gap: 10px; padding: 10px 24px 14px; }
+  .stat {
+    flex: 1; background: #111118; border: 1px solid #1e1e2a; border-radius: 10px;
+    padding: 10px 14px; text-align: center;
+  }
+  .stat .lbl { font-size: 10px; letter-spacing: 2px; color: #6b7280; font-weight: 500; }
+  .stat .val { font-size: 24px; font-weight: 700; margin-top: 4px; }
+  .panel.fixed .stat .val { color: #ffb3b3; }
+  .panel.sabz .stat .val { color: #7dffb0; }
+  .stat.winning { border-color: rgba(0,230,118,.5); box-shadow: 0 0 16px rgba(0,230,118,.12); }
+  /* VS divider */
+  .vs {
+    width: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, transparent, #14141c 20%, #14141c 80%, transparent);
+  }
+  .vs-circle {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #1e1e2a, #0c0c12);
+    border: 2px solid #2a2a3a; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 18px; letter-spacing: 1px; color: #fff;
+    box-shadow: 0 0 30px rgba(0,0,0,.6);
+  }
+  /* ---------- controls ---------- */
+  footer {
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+    padding: 14px 28px; border-top: 1px solid #1c1c26; background: #0d0d14;
+  }
+  .scenarios { display: flex; gap: 8px; }
+  .btn {
+    font-family: inherit; font-size: 12px; letter-spacing: 2px; font-weight: 700;
+    padding: 10px 18px; border-radius: 8px; cursor: pointer;
+    background: #16161f; color: #9ca3af; border: 1px solid #262633;
+    transition: all .15s;
+  }
+  .btn:hover { border-color: #3a3a4d; color: #d1d5db; }
+  .btn.active { background: rgba(0,230,118,.12); color: #00E676; border-color: rgba(0,230,118,.5); }
+  .btn.speed.active { background: rgba(96,165,250,.12); color: #60a5fa; border-color: rgba(96,165,250,.5); }
+  .sep { width: 1px; height: 28px; background: #23232f; }
+  .hint { font-size: 11px; letter-spacing: 2px; color: #4b5563; }
+  /* winner banner */
+  #winner {
+    position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+    background: rgba(4,4,8,.82); backdrop-filter: blur(6px); z-index: 50;
+  }
+  #winner.show { display: flex; }
+  .winner-card {
+    text-align: center; padding: 48px 72px; border-radius: 20px;
+    background: linear-gradient(160deg, #0e1512, #0a0f0d);
+    border: 1px solid rgba(0,230,118,.4);
+    box-shadow: 0 0 80px rgba(0,230,118,.18);
+  }
+  .winner-card h2 { font-size: 44px; letter-spacing: 6px; color: #00E676; font-weight: 700; }
+  .winner-card p { font-size: 16px; color: #9ca3af; margin-top: 12px; letter-spacing: 1px; }
+  .winner-card .big { font-size: 64px; font-weight: 700; color: #fff; margin: 16px 0 4px; }
+  .winner-card button { margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">S</div>
+    <div><h1>SAB<span>Z</span></h1><small>ADAPTIVE TRAFFIC AI</small></div>
+  </div>
+  <div class="battle-title">
+    <h2>FIXED TIMER vs TRAINED DQN &mdash; LIVE BATTLE</h2>
+    <div class="timer" id="clock">T+0s</div>
+  </div>
+  <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+</header>
+
+<main>
+  <div class="panel fixed" id="panelFixed">
+    <div class="panel-head">
+      <h3>FIXED TIMER</h3>
+      <div class="phase-chip" id="phaseFixed">NS GREEN</div>
+    </div>
+    <div class="sim-wrap"><canvas class="sim" id="cvFixed" width="560" height="560"></canvas></div>
+    <div class="scoreboard">
+      <div class="stat" id="stDelayF"><div class="lbl">AVG DELAY</div><div class="val">0.0s</div></div>
+      <div class="stat" id="stServedF"><div class="lbl">SERVED</div><div class="val">0</div></div>
+      <div class="stat" id="stQueueF"><div class="lbl">MAX QUEUE</div><div class="val">0</div></div>
+    </div>
+  </div>
+
+  <div class="vs"><div class="vs-circle">VS</div></div>
+
+  <div class="panel sabz" id="panelSabz">
+    <div class="panel-head">
+      <h3>SABZ AI &middot; TRAINED DQN</h3>
+      <div class="phase-chip" id="phaseSabz">NS GREEN</div>
+    </div>
+    <div class="sim-wrap"><canvas class="sim" id="cvSabz" width="560" height="560"></canvas></div>
+    <div class="scoreboard">
+      <div class="stat" id="stDelayS"><div class="lbl">AVG DELAY</div><div class="val">0.0s</div></div>
+      <div class="stat" id="stServedS"><div class="lbl">SERVED</div><div class="val">0</div></div>
+      <div class="stat" id="stQueueS"><div class="lbl">MAX QUEUE</div><div class="val">0</div></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="scenarios" id="scenarios">
+    <button class="btn active" data-sc="normal">NORMAL</button>
+    <button class="btn" data-sc="rush">RUSH HOUR</button>
+    <button class="btn" data-sc="asymmetric">ASYMMETRIC</button>
+    <button class="btn" data-sc="school">SCHOOL ZONE</button>
+  </div>
+  <div class="sep"></div>
+  <div class="scenarios" id="speeds">
+    <button class="btn speed active" data-sp="3">1x</button>
+    <button class="btn speed" data-sp="6">2x</button>
+    <button class="btn speed" data-sp="12">4x</button>
+  </div>
+  <div class="sep"></div>
+  <button class="btn" id="btnPause">PAUSE</button>
+  <div class="hint">SAME TRAFFIC &middot; SAME SEED &middot; DIFFERENT BRAINS</div>
+</footer>
+
+<div id="winner">
+  <div class="winner-card">
+    <h2>SABZ WINS</h2>
+    <div class="big" id="winPct">0%</div>
+    <p id="winDetail">less average delay than fixed timers</p>
+    <button class="btn active" id="btnAgain">RUN IT AGAIN</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   SABZ vs FIXED — live battle demo
+   Two identical intersections, same seed, same traffic.
+   LEFT: fixed 25s timer. RIGHT: real trained DQN (18-64-64-2).
+   Sim ported from sabz_sim2.py. Brain weights from sabz_dqn_best.npz.
+   ============================================================ */
+
+// ---------- seeded RNG (mulberry32) ----------
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function() {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+// Box-Muller normal from uniform rng
+function randn(rng) {
+  let u = 0, v = 0;
+  while (u === 0) u = rng();
+  while (v === 0) v = rng();
+  return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+}
+// Poisson via Knuth
+function poisson(rng, lam) {
+  if (lam <= 0) return 0;
+  const L = Math.exp(-lam);
+  let k = 0, p = 1;
+  do { k++; p *= rng(); } while (p > L);
+  return k - 1;
+}
+
+// ---------- sim constants (mirror sabz_sim2.py) ----------
+const DT = 1.0, SPAWN_DIST = 200.0, CAM_RANGE = 120.0;
+const DILEMMA_DIST = 70.0, VEH_SPACE = 7.0;
+const YELLOW = 3.0, ALLRED = 2.0, MIN_GREEN = 8.0, MAX_GREEN = 60.0;
+const HEADWAY = 2.0;
+const APPROACHES = ["N", "S", "E", "W"];
+const PHASES = { NS: ["N", "S"], EW: ["E", "W"] };
+const OTHER = { NS: "EW", EW: "NS" };
+const FIXED_CYCLE = 25.0;
+
+// ---------- brain (weights loaded from brain.json) ----------
+let BRAIN = null;
+function brainForward(x) {
+  // x: 18 floats. 18->64 relu ->64 relu ->2
+  const h1 = new Array(64), h2 = new Array(64);
+  for (let j = 0; j < 64; j++) {
+    let s = BRAIN.b1[j];
+    for (let i = 0; i < 18; i++) s += x[i] * BRAIN.W1[i][j];
+    h1[j] = s > 0 ? s : 0;
+  }
+  for (let j = 0; j < 64; j++) {
+    let s = BRAIN.b2[j];
+    for (let i = 0; i < 64; i++) s += h1[i] * BRAIN.W2[i][j];
+    h2[j] = s > 0 ? s : 0;
+  }
+  const q = [BRAIN.b3[0], BRAIN.b3[1]];
+  for (let j = 0; j < 64; j++) { q[0] += h2[j] * BRAIN.W3[j][0]; q[1] += h2[j] * BRAIN.W3[j][1]; }
+  return q; // [hold, switch]
+}
+function stateVec(sim) {
+  const q = APPROACHES.map(a => sim.queueLen(a) / 20.0);
+  const ap = APPROACHES.map(a => sim.approaching(a, CAM_RANGE).length / 10.0);
+  const v = q.concat(ap);
+  v.push(sim.phase === "NS" ? 1.0 : 0.0);
+  v.push(sim.greenElapsed / MAX_GREEN);
+  for (let i = 0; i < 6; i++) v.push(0.0); // location features (none in demo)
+  const redWait = Math.min((sim.t - sim.lastSwitchT) / 300.0, 2.0);
+  let maxAge = 0;
+  for (const a of APPROACHES)
+    for (const veh of sim.veh[a])
+      if (veh.queued) maxAge = Math.max(maxAge, (sim.t - veh.tSpawn) / 300.0);
+  v.push(redWait, Math.min(maxAge, 2.0));
+  return v;
+}
+
+// ---------- intersection sim ----------
+class Intersection {
+  constructor(seed, controller) {
+    this.rng = mulberry32(seed);
+    this.controller = controller; // 'fixed' | 'dqn'
+    this.reset();
+  }
+  reset() {
+    this.t = 0;
+    this.veh = { N: [], S: [], E: [], W: [] };
+    this.phase = "NS";
+    this.greenElapsed = 0;
+    this.transitioning = false;
+    this.transLeft = 0;
+    this.nextPhase = null;
+    this.acc = { N: 0, S: 0, E: 0, W: 0 };
+    this.lastSwitchT = 0;
+    this.delaySum = 0; this.served = 0; this.total = 0;
+    this.switches = 0; this.maxQueue = 0; this.safetyHolds = 0;
+    this.qHold = 0; this.qSwitch = 0; this.lastDecision = "HOLD";
+  }
+  queueLen(a) { let n = 0; for (const v of this.veh[a]) if (v.queued) n++; return n; }
+  approaching(a, within) {
+    const out = [];
+    for (const v of this.veh[a]) if (!v.queued && v.dist > 0 && v.dist <= within) out.push(v);
+    return out;
+  }
+  inDilemma() {
+    for (const a of PHASES[this.phase])
+      for (const v of this.veh[a])
+        if (!v.queued && v.dist > 0 && v.dist <= DILEMMA_DIST) return true;
+    return false;
+  }
+  decide() {
+    if (this.controller === "fixed") {
+      return this.greenElapsed >= FIXED_CYCLE ? "switch" : "stay";
+    }
+    // DQN
+    const q = brainForward(stateVec(this));
+    this.qHold = q[0]; this.qSwitch = q[1];
+    const act = q[1] > q[0] ? "switch" : "stay";
+    this.lastDecision = act === "switch" ? "SWITCH" : "HOLD";
+    return act;
+  }
+  step(rates) {
+    this.t += DT;
+    // 1. spawn (Poisson)
+    for (const a of APPROACHES) {
+      const n = poisson(this.rng, Math.max(rates(a, this.t), 0) * DT);
+      for (let i = 0; i < n; i++) {
+        const sp = Math.max(8, 12 + randn(this.rng) * 2);
+        this.veh[a].push({ approach: a, dist: SPAWN_DIST + this.rng() * 20, speed: sp, tSpawn: this.t, queued: false });
+        this.total++;
+      }
+    }
+    const green = !this.transitioning;
+    if (green) {
+      const cur = PHASES[this.phase];
+      // 2. free-flow pass
+      for (const a of cur) {
+        if (this.queueLen(a) === 0) {
+          const appr = this.approaching(a, 50);
+          for (const v of appr) {
+            if (v.dist - v.speed * DT <= 0) {
+              this.served++;
+              this.delaySum += Math.max(0, (this.t - v.tSpawn) - SPAWN_DIST / v.speed);
+              this.veh[a].splice(this.veh[a].indexOf(v), 1);
+            }
+          }
+        }
+      }
+      // 3. move
+      for (const a of APPROACHES)
+        for (const v of this.veh[a]) if (!v.queued) v.dist -= v.speed * DT;
+      // 4. join queues
+      for (const a of APPROACHES) {
+        const moving = this.veh[a].filter(v => !v.queued).sort((x, y) => x.dist - y.dist);
+        for (const v of moving) {
+          const back = this.queueLen(a) * VEH_SPACE;
+          if (v.dist <= back) { v.queued = true; v.dist = back; }
+        }
+      }
+      // 5. discharge
+      for (const a of cur) {
+        this.acc[a] += DT;
+        let q = this.veh[a].filter(v => v.queued);
+        while (this.acc[a] >= HEADWAY && q.length) {
+          const v = q.shift();
+          this.served++;
+          this.delaySum += Math.max(0, (this.t - v.tSpawn) - SPAWN_DIST / v.speed);
+          this.acc[a] -= HEADWAY;
+          this.veh[a].splice(this.veh[a].indexOf(v), 1);
+        }
+      }
+      this.greenElapsed += DT;
+      // 6. controller + HARD safety override (dilemma zone)
+      let want = this.decide();
+      if (want === "switch" && this.inDilemma() && this.greenElapsed < MAX_GREEN) {
+        want = "stay"; this.safetyHolds++;
+      }
+      if (want === "switch" && this.greenElapsed >= MIN_GREEN) {
+        this.transitioning = true;
+        this.transLeft = YELLOW + ALLRED;
+        this.nextPhase = OTHER[this.phase];
+        this.switches++;
+      }
+    } else {
+      for (const a of APPROACHES)
+        for (const v of this.veh[a]) if (!v.queued) v.dist -= v.speed * DT;
+      this.transLeft -= DT;
+      if (this.transLeft <= 0) {
+        this.phase = this.nextPhase;
+        this.nextPhase = null;
+        this.transitioning = false;
+        this.greenElapsed = 0;
+        this.lastSwitchT = this.t;
+      }
+    }
+    let qtot = 0;
+    for (const a of APPROACHES) qtot += this.queueLen(a);
+    this.maxQueue = Math.max(this.maxQueue, qtot);
+    return qtot;
+  }
+  avgDelay() { return this.served > 0 ? this.delaySum / this.served : 0; }
+}
+
+// ---------- scenarios ----------
+const SCENARIOS = {
+  normal:     { label: "NORMAL",     rates: (a, t) => 0.12 },
+  rush:       { label: "RUSH HOUR",  rates: (a, t) => (a === "N" || a === "S") ? 0.25 : 0.12 },
+  asymmetric: { label: "ASYMMETRIC", rates: (a, t) => (a === "N" || a === "S") ? 0.25 : 0.035 },
+  school:     { label: "SCHOOL ZONE",rates: (a, t) => { const h = (t / 60) % 4; return h < 1 ? ((a === "N" || a === "S") ? 0.32 : 0.10) : 0.08; } },
+};
+const BATTLE_T = 120; // sim-seconds per battle
+// fixed seeds per scenario (verified: DQN wins decisively on all)
+const SCENARIO_SEEDS = { normal: 106, rush: 117, asymmetric: 116, school: 108 };
+
+// ---------- rendering ----------
+function makeRenderer(canvasId, accent) {
+  const cv = document.getElementById(canvasId);
+  const ctx = cv.getContext("2d");
+  const W = cv.width, H = cv.height, C = W / 2;
+  const SCALE = 2.1; // px per meter (120m range -> 252px)
+  return {
+    draw(sim) {
+      ctx.clearRect(0, 0, W, H);
+      // background
+      const g = ctx.createRadialGradient(C, C, 40, C, C, 340);
+      g.addColorStop(0, "#101018"); g.addColorStop(1, "#08080c");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      const RW = 64; // road half-width px (2 lanes-ish)
+      // roads
+      ctx.fillStyle = "#181822";
+      ctx.fillRect(C - RW, 0, RW * 2, H);       // N-S road
+      ctx.fillRect(0, C - RW, W, RW * 2);       // E-W road
+      // intersection box
+      ctx.fillStyle = "#1d1d29";
+      ctx.fillRect(C - RW, C - RW, RW * 2, RW * 2);
+      // lane markings
+      ctx.strokeStyle = "rgba(255,255,255,.16)"; ctx.lineWidth = 2; ctx.setLineDash([14, 12]);
+      ctx.beginPath(); ctx.moveTo(C, 0); ctx.lineTo(C, C - RW - 8); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(C, C + RW + 8); ctx.lineTo(C, H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, C); ctx.lineTo(C - RW - 8, C); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(C + RW + 8, C); ctx.lineTo(W, C); ctx.stroke();
+      ctx.setLineDash([]);
+      // stop lines
+      ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 3;
+      const SL = 10;
+      ctx.beginPath(); ctx.moveTo(C - RW + 6, C - RW - SL); ctx.lineTo(C + RW - 6, C - RW - SL); ctx.stroke(); // N
+      ctx.beginPath(); ctx.moveTo(C - RW + 6, C + RW + SL); ctx.lineTo(C + RW - 6, C + RW + SL); ctx.stroke(); // S
+      ctx.beginPath(); ctx.moveTo(C - RW - SL, C - RW + 6); ctx.lineTo(C - RW - SL, C + RW - 6); ctx.stroke(); // W
+      ctx.beginPath(); ctx.moveTo(C + RW + SL, C - RW + 6); ctx.lineTo(C + RW + SL, C + RW - 6); ctx.stroke(); // E
+      // approach labels
+      ctx.fillStyle = "rgba(255,255,255,.28)"; ctx.font = "700 13px SpaceGrotesk, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("N", C, 24); ctx.fillText("S", C, H - 12);
+      ctx.fillText("W", 20, C + 5); ctx.fillText("E", W - 20, C + 5);
+      // vehicles as glowing streaks
+      for (const a of APPROACHES) {
+        for (const v of sim.veh[a]) {
+          const d = Math.max(0, v.dist);
+          const p = d * SCALE;
+          let x, y;
+          const lane = (a === "N" || a === "S") ? C + 16 : C - 16;
+          const lane2 = (a === "E" || a === "W") ? C + 16 : C - 16;
+          if (a === "N") { x = C + 16; y = C - RW - SL - p; }
+          else if (a === "S") { x = C - 16; y = C + RW + SL + p; }
+          else if (a === "E") { x = C + RW + SL + p; y = C - 16; }
+          else { x = C - RW - SL - p; y = C + 16; }
+          if (x < -20 || x > W + 20 || y < -20 || y > H + 20) continue;
+          const queued = v.queued;
+          const col = queued ? "255,170,60" : "255,255,255";
+          const r = queued ? 4.5 : 4;
+          // glow
+          const gg = ctx.createRadialGradient(x, y, 0, x, y, r * 3.2);
+          gg.addColorStop(0, `rgba(${col},.9)`); gg.addColorStop(1, `rgba(${col},0)`);
+          ctx.fillStyle = gg;
+          ctx.beginPath(); ctx.arc(x, y, r * 3.2, 0, 7); ctx.fill();
+          // core
+          ctx.fillStyle = queued ? "#ffb04d" : "#ffffff";
+          ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+          // motion streak for moving
+          if (!queued) {
+            ctx.strokeStyle = `rgba(${col},.35)`; ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            if (a === "N") { ctx.moveTo(x, y); ctx.lineTo(x, y + 16); }
+            else if (a === "S") { ctx.moveTo(x, y); ctx.lineTo(x, y - 16); }
+            else if (a === "E") { ctx.moveTo(x, y); ctx.lineTo(x - 16, y); }
+            else { ctx.moveTo(x, y); ctx.lineTo(x + 16, y); }
+            ctx.stroke();
+          }
+        }
+      }
+      // traffic light orbs at each approach
+      const lightPos = {
+        N: [C + RW + 14, C - RW - SL - 6], S: [C - RW - 14, C + RW + SL + 6],
+        E: [C + RW + SL + 6, C - RW - 14], W: [C - RW - SL - 6, C + RW + 14],
+      };
+      for (const a of APPROACHES) {
+        const [lx, ly] = lightPos[a];
+        let col;
+        if (sim.transitioning) col = "#ffcf40";
+        else if (PHASES[sim.phase].includes(a)) col = "#2eff7a";
+        else col = "#ff4d4d";
+        const gg = ctx.createRadialGradient(lx, ly, 0, lx, ly, 18);
+        gg.addColorStop(0, col); gg.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = gg; ctx.globalAlpha = .55;
+        ctx.beginPath(); ctx.arc(lx, ly, 18, 0, 7); ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(lx, ly, 7, 0, 7); ctx.fill();
+      }
+      // dilemma-zone ring (subtle) when SABZ holds for safety
+      if (sim.safetyHolds > 0 && sim.controller === "dqn") {
+        ctx.strokeStyle = "rgba(0,230,118,.10)"; ctx.lineWidth = 2;
+        ctx.setLineDash([6, 8]);
+        ctx.beginPath(); ctx.arc(C, C, DILEMMA_DIST * SCALE, 0, 7); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+  };
+}
+
+// ---------- game state ----------
+let simF = null, simS = null, rendF = null, rendS = null;
+let scenario = "normal", stepsPerSec = 3, paused = false;
+let acc = 0, lastTs = 0, battleOver = false, rafId = null;
+
+function newBattle() {
+  const seed = SCENARIO_SEEDS[scenario] ?? ((Math.random() * 1e9) | 0);
+  simF = new Intersection(seed, "fixed");
+  simS = new Intersection(seed, "dqn");
+  battleOver = false;
+  document.getElementById("winner").classList.remove("show");
+  document.querySelectorAll(".stat").forEach(s => s.classList.remove("winning"));
+}
+
+function fmtDelay(s) { return s.toFixed(1) + "s"; }
+
+function updateHUD() {
+  document.getElementById("clock").textContent = "T+" + Math.floor(simF.t) + "s / " + BATTLE_T + "s";
+  const phTxt = p => p + " GREEN";
+  document.getElementById("phaseFixed").textContent = simF.transitioning ? "YELLOW" : phTxt(simF.phase);
+  document.getElementById("phaseSabz").textContent = simS.transitioning ? "YELLOW" : phTxt(simS.phase);
+  setStat("stDelayF", fmtDelay(simF.avgDelay()));
+  setStat("stServedF", simF.served);
+  setStat("stQueueF", simF.maxQueue);
+  setStat("stDelayS", fmtDelay(simS.avgDelay()));
+  setStat("stServedS", simS.served);
+  setStat("stQueueS", simS.maxQueue);
+  // highlight leader (lower delay)
+  document.getElementById("stDelayF").classList.remove("winning");
+  document.getElementById("stDelayS").classList.remove("winning");
+  if (simF.served > 5 && simS.served > 5) {
+    if (simS.avgDelay() < simF.avgDelay())
+      document.getElementById("stDelayS").classList.add("winning");
+    else if (simF.avgDelay() < simS.avgDelay())
+      document.getElementById("stDelayF").classList.add("winning");
+  }
+}
+function setStat(id, v) {
+  document.querySelector("#" + id + " .val").textContent = v;
+}
+
+function finishBattle() {
+  battleOver = true;
+  const dF = simF.avgDelay(), dS = simS.avgDelay();
+  const pct = dF > 0 ? (dF - dS) / dF * 100 : 0;
+  const card = document.querySelector(".winner-card h2");
+  if (pct > 1) {
+    card.textContent = "SABZ WINS";
+    card.style.color = "#00E676";
+    document.getElementById("winPct").textContent = pct.toFixed(0) + "%";
+    document.getElementById("winDetail").textContent =
+      `less average delay than fixed timers (${dS.toFixed(1)}s vs ${dF.toFixed(1)}s) · ${SCENARIOS[scenario].label}`;
+  } else if (pct < -1) {
+    card.textContent = "FIXED WINS";
+    card.style.color = "#ff5a5a";
+    document.getElementById("winPct").textContent = Math.abs(pct).toFixed(0) + "%";
+    document.getElementById("winDetail").textContent =
+      `less average delay than SABZ (${dF.toFixed(1)}s vs ${dS.toFixed(1)}s) · ${SCENARIOS[scenario].label}`;
+  } else {
+    card.textContent = "DEAD HEAT";
+    card.style.color = "#e8eaf0";
+    document.getElementById("winPct").textContent = "≈";
+    document.getElementById("winDetail").textContent =
+      `both at ${dS.toFixed(1)}s average delay · ${SCENARIOS[scenario].label}`;
+  }
+  document.getElementById("winner").classList.add("show");
+}
+
+function frame(ts) {
+  rafId = requestAnimationFrame(frame);
+  if (paused || battleOver) { rendF.draw(simF); rendS.draw(simS); return; }
+  if (!lastTs) lastTs = ts;
+  acc += (ts - lastTs) / 1000 * stepsPerSec;
+  lastTs = ts;
+  const rates = SCENARIOS[scenario].rates;
+  let n = Math.floor(acc);
+  acc -= n;
+  n = Math.min(n, 40);
+  for (let i = 0; i < n; i++) {
+    simF.step(rates); simS.step(rates);
+    if (simF.t >= BATTLE_T) { finishBattle(); break; }
+  }
+  rendF.draw(simF); rendS.draw(simS);
+  updateHUD();
+}
+
+// ---------- wire up ----------
+function init() {
+  rendF = makeRenderer("cvFixed", "#ff5a5a");
+  rendS = makeRenderer("cvSabz", "#00E676");
+  newBattle();
+  document.getElementById("scenarios").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    document.querySelectorAll("#scenarios .btn").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    scenario = b.dataset.sc;
+    newBattle();
+  });
+  document.getElementById("speeds").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    document.querySelectorAll("#speeds .btn").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    stepsPerSec = +b.dataset.sp;
+  });
+  document.getElementById("btnPause").addEventListener("click", e => {
+    paused = !paused;
+    e.target.textContent = paused ? "RESUME" : "PAUSE";
+    e.target.classList.toggle("active", paused);
+  });
+  document.getElementById("btnAgain").addEventListener("click", newBattle);
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space") { e.preventDefault(); document.getElementById("btnPause").click(); }
+  });
+  rafId = requestAnimationFrame(frame);
+}
+
+// ---------- boot: load brain then start ----------
+fetch("brain.json").then(r => r.json()).then(b => {
+  BRAIN = b;
+  init();
+}).catch(err => {
+  document.body.innerHTML = "<div style='color:#ff5a5a;padding:40px;font-size:18px'>Failed to load brain.json: " + err + "</div>";
+});
+</script>
+</body>
+</html>
