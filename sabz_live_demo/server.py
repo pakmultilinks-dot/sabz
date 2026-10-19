@@ -105,14 +105,39 @@ class Demo:
         boxes = []
         for c in contours:
             area = cv2.contourArea(c)
-            if area < 800 or area > 60000:
+            if area < 1500 or area > 60000:
                 continue
             x, y, w, h = cv2.boundingRect(c)
             aspect = w / max(h, 1)
-            if aspect < 0.35 or aspect > 4.5:
+            if aspect < 0.4 or aspect > 4.0:
                 continue
             boxes.append([int(x), int(y), int(w), int(h)])
-        return boxes
+        return self._nms(boxes)
+
+    @staticmethod
+    def _nms(boxes, iou_thresh=0.3):
+        """Merge overlapping boxes so one vehicle = one box."""
+        if not boxes:
+            return []
+        b = np.array(boxes, dtype=np.float32)
+        x1, y1 = b[:, 0], b[:, 1]
+        x2, y2 = b[:, 0] + b[:, 2], b[:, 1] + b[:, 3]
+        area = b[:, 2] * b[:, 3]
+        order = area.argsort()[::-1]  # biggest first
+        keep = []
+        while order.size:
+            i = order[0]
+            keep.append(i)
+            xx1 = np.maximum(x1[i], x1[order[1:]])
+            yy1 = np.maximum(y1[i], y1[order[1:]])
+            xx2 = np.minimum(x2[i], x2[order[1:]])
+            yy2 = np.minimum(y2[i], y2[order[1:]])
+            w = np.maximum(0.0, xx2 - xx1)
+            h = np.maximum(0.0, yy2 - yy1)
+            inter = w * h
+            iou = inter / (area[i] + area[order[1:]] - inter + 1e-6)
+            order = order[1:][iou <= iou_thresh]
+        return [boxes[i] for i in keep]
 
     def brain_step(self):
         """Ask the trained DQN whether to hold or switch, from live counts."""
