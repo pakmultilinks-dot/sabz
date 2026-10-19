@@ -77,7 +77,7 @@
 <div class="statsbar">
   <div class="stat"><div class="v">2/3</div><div class="l">SCENARIOS WON VS ACTUATED</div></div>
   <div class="stat"><div class="v">7.3s</div><div class="l">BEST AVG DELAY (BENCHMARK)</div></div>
-  <div class="stat"><div class="v">12,026</div><div class="l">MODEL PARAMETERS</div></div>
+  <div class="stat"><div class="v">5,506</div><div class="l">MODEL PARAMETERS (LIVE)</div></div>
   <div class="stat"><div class="v" id="liveDelay">0.0s</div><div class="l">LIVE AVG DELAY</div></div>
   <div class="stat"><div class="v" id="liveServed">0</div><div class="l">CARS SERVED</div></div>
   <div class="stat"><div class="v" id="liveSwitch">0</div><div class="l">AI SWITCHES</div></div>
@@ -95,12 +95,11 @@
   </div>
   <div class="brain">
     <h2>THE BRAIN</h2>
-    <div class="arch">Deep Q-Network &middot; 18 inputs &rarr; 72 &rarr; 72 &rarr; 72 &rarr; 2 actions &middot; 12,026 params</div>
+    <div class="arch">Deep Q-Network &middot; 18 inputs &rarr; 64 &rarr; 64 &rarr; 2 actions &middot; 5,506 params &middot; real trained weights</div>
     <div class="layers">
       <div class="layer"><div class="n">18</div><div class="t">STATE INPUTS</div></div><div class="arrow">&rarr;</div>
-      <div class="layer"><div class="n">72</div><div class="t">HIDDEN 1</div></div><div class="arrow">&rarr;</div>
-      <div class="layer"><div class="n">72</div><div class="t">HIDDEN 2</div></div><div class="arrow">&rarr;</div>
-      <div class="layer"><div class="n">72</div><div class="t">HIDDEN 3</div></div><div class="arrow">&rarr;</div>
+      <div class="layer"><div class="n">64</div><div class="t">HIDDEN 1</div></div><div class="arrow">&rarr;</div>
+      <div class="layer"><div class="n">64</div><div class="t">HIDDEN 2</div></div><div class="arrow">&rarr;</div>
       <div class="layer out"><div class="n">2</div><div class="t">Q VALUES</div></div>
     </div>
     <div class="qrow" id="rowHold">
@@ -128,7 +127,7 @@
     <div class="step"><div class="si">&#128247;</div><div class="st">CAMERAS</div><div class="sd">4 approach feeds</div></div><div class="link"><div class="dot"></div></div>
     <div class="step"><div class="si">&#128065;</div><div class="st">VEHICLE COUNT</div><div class="sd">YOLO detection</div></div><div class="link"><div class="dot"></div></div>
     <div class="step"><div class="si">&#9881;</div><div class="st">18-FEATURE STATE</div><div class="sd">queues, timers</div></div><div class="link"><div class="dot"></div></div>
-    <div class="step"><div class="si">&#129504;</div><div class="st">DQN BRAIN</div><div class="sd">12,026 params</div></div><div class="link"><div class="dot"></div></div>
+    <div class="step"><div class="si">&#129504;</div><div class="st">DQN BRAIN</div><div class="sd">5,506 params, live</div></div><div class="link"><div class="dot"></div></div>
     <div class="step"><div class="si">&#8646;</div><div class="st">DECISION</div><div class="sd" id="pipeDec">HOLD</div></div><div class="link"><div class="dot"></div></div>
     <div class="step"><div class="si">&#128678;</div><div class="st">SIGNALS</div><div class="sd" id="pipeSig">NS green</div></div>
   </div>
@@ -145,11 +144,44 @@
 <script>
 // ============================================================
 // SABZ proper demo: 4-way intersection, 4 signals, car-following
-// Brain panel shows 18-72-72-72-2 architecture (12,026 params).
-// Q-values are computed by the live decision logic each second.
-// NOTE: brain.json in this folder holds the previous 18-64-64-2
-// weights (5,506 params); the larger net is still training.
+// Brain: REAL trained DQN weights (sabz_dqn_best.npz, 18-64-64-2,
+// 5,506 params). Forward pass runs live in JS every sim-second.
+// The 12,026-param net (18-72-72-72-2) is training; when done,
+// its weights replace brain_real.json with zero code changes.
 // ============================================================
+let BRAIN = null;   // real weights, loaded async
+fetch('brain_real.json').then(r=>r.json()).then(b=>{ BRAIN = b; }).catch(()=>{});
+function brainForward(s){
+  // s: 18-dim state. Returns [Q_hold, Q_switch]. Real trained weights.
+  if(!BRAIN) return [0, 0];
+  const relu = a => a.map(v=>v>0?v:0);
+  const matvec = (v, M, b) => {
+    const out = new Array(M[0].length).fill(0);
+    for(let j=0;j<M[0].length;j++){ let t=b[j]; for(let i=0;i<v.length;i++) t+=v[i]*M[i][j]; out[j]=t; }
+    return out;
+  };
+  const a1 = relu(matvec(s, BRAIN.W1, BRAIN.b1));
+  const a2 = relu(matvec(a1, BRAIN.W2, BRAIN.b2));
+  return matvec(a2, BRAIN.W3, BRAIN.b3);
+}
+function buildState(){
+  // Match sabz_rl.get_state(): 4 queues, 4 approaching, phase,
+  // green timer, 6 location (0), red_wait, max_age.
+  const MG = 45; // MAX_GREEN seconds (sim-seconds)
+  const q = id => queueOf(AP.find(a=>a.id===id));
+  const ap = id => { const a=AP.find(x=>x.id===id); return a.cars.filter(c=>c.s<a.sStop && c.wait===0).length; };
+  const qs = ['N','S','E','W'].map(id=>q(id)/20.0);
+  const aps = ['N','S','E','W'].map(id=>ap(id)/10.0);
+  let maxAgeS = 0;
+  AP.forEach(a=>a.cars.forEach(c=>{ if(c.s<a.sStop && c.age>maxAgeS) maxAgeS=c.age; }));
+  return qs.concat(aps, [
+    phase===0?1.0:0.0,
+    Math.min(greenT/60, MG)/MG,
+    0,0,0,0,0,0,                                   // location features
+    Math.min(redWait/60/300, 2.0),                 // red_wait
+    Math.min(maxAgeS/60/300, 2.0)                  // max_q_age
+  ]);
+}
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 const W = 860, H = 600;
@@ -217,22 +249,32 @@ function step(){
     }
   });
 
-  // ---- AI decision, once per sim-second ----
+  // ---- AI decision: REAL trained DQN, once per sim-second ----
   if(simT % 60 === 0 && phaseState==='green'){
-    const q = g => AP.filter(a=>a.group===g).reduce((n,a)=>n+queueOf(a),0);
-    const gq = q(phase), rq = q(1-phase);
-    const starve = AP.filter(a=>a.group!==phase).some(a=>a.cars.some(c=>c.s<a.sStop && c.wait>4500));
-    qSwitch = rq*2.5 - gq*0.8 - 2.0;
-    qHold = gq*0.4 - rq*0.3 + (greenT<8?6:0);
-    if(greenT>=8 && (qSwitch>qHold || greenT>=45 || starve)){
+    const state = buildState();
+    const qv = brainForward(state);
+    qHold = qv[0]; qSwitch = qv[1];
+    const gq = AP.filter(a=>a.group===phase).reduce((n,a)=>n+queueOf(a),0);
+    // Safety: dilemma-zone override (70m rule) + starvation guard.
+    // These are hard rules, never learned: never cut green on approaching cars,
+    // never starve a red approach.
+    const dilemma = AP.filter(a=>a.group===phase).some(a=>
+      a.cars.some(c=>{ const d = a.sStop - c.s; return d>0 && d<50 && c.v>1.5; }));
+    const starve = AP.filter(a=>a.group!==phase).some(a=>
+      a.cars.some(c=>c.s<a.sStop && c.wait>4500));
+    redWait = phase===0 ? 0 : redWait; // tracked below
+    if(greenT>=8 && !dilemma && (qv[1]>qv[0] || greenT>=45 || starve)){
       decision='SWITCH';
       decReason = starve ? 'starvation guard: red approach waiting too long'
+        : (dilemma ? 'dilemma-zone veto active'
         : (greenT>=45 ? 'max green reached, fairness switch'
-        : ('Q(switch) '+qSwitch.toFixed(1)+' beats Q(hold) '+qHold.toFixed(1)));
+        : ('brain: Q(switch) '+qSwitch.toFixed(1)+' > Q(hold) '+qHold.toFixed(1))));
       phaseState='amber'; amberT=0; switches++;
     } else {
       decision='HOLD';
-      decReason = phase===0 ? 'NS flowing, serving '+gq+' queued' : 'EW flowing, serving '+gq+' queued';
+      decReason = dilemma ? 'dilemma-zone: cars approaching, holding green'
+        : (BRAIN ? 'brain: Q(hold) '+qHold.toFixed(1)+' >= Q(switch) '+qSwitch.toFixed(1)
+        : 'brain loading...');
     }
   }
 
