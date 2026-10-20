@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SABZ Standee v2</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1800px; height:4500px; }
+  body {
+    font-family:'Inter',sans-serif;
+    background:#0B1220;
+    color:#EDF2F8;
+    overflow:hidden;
+    position:relative;
+  }
+  /* faint green ambience behind the top of the banner */
+  .glow {
+    position:absolute; top:-500px; right:-400px;
+    width:1500px; height:1500px; border-radius:50%;
+    background:radial-gradient(circle, rgba(0,230,118,0.13) 0%, rgba(0,230,118,0) 65%);
+  }
+  .col {
+    position:relative;
+    height:4500px;
+    display:flex; flex-direction:column;
+    padding:120px 135px 110px 135px;
+  }
+  /* ---------- brand ---------- */
+  .logo { width:1040px; display:block; }
+  /* ---------- headline ---------- */
+  .headline {
+    margin-top:100px;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:292px;
+    line-height:1.03;
+    letter-spacing:-2px;
+    text-transform:uppercase;
+  }
+  .headline .smart { color:#00E676; }
+  .sub {
+    margin-top:48px;
+    font-size:63px; font-weight:500;
+    color:#B9C6D6;
+    letter-spacing:0.2px;
+  }
+  /* ---------- hero photo ---------- */
+  .hero {
+    margin:100px -135px 0 -135px;
+    height:1000px;
+    position:relative;
+    flex-shrink:0;
+  }
+  .hero img { width:1800px; height:1000px; object-fit:cover; object-position:50% 100%; display:block; }
+  .hero .fade {
+    position:absolute; inset:0;
+    background:linear-gradient(to bottom,
+      rgba(11,18,32,0.62) 0%,
+      rgba(11,18,32,0.12) 30%,
+      rgba(11,18,32,0.05) 55%,
+      rgba(11,18,32,0.72) 84%,
+      #0B1220 100%);
+  }
+  .hero .cap {
+    position:absolute; left:135px; bottom:64px;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:44px; font-weight:600;
+    letter-spacing:7px; text-transform:uppercase;
+    color:#FFFFFF;
+    text-shadow:0 4px 30px rgba(0,0,0,0.8);
+  }
+  .hero .cap b { color:#00E676; font-weight:600; }
+  /* ---------- logic rows ---------- */
+  .steps { margin-top:76px; }
+  .step {
+    display:flex; align-items:baseline; gap:56px;
+    padding:28px 0;
+  }
+  .step + .step { border-top:2px solid rgba(0,230,118,0.16); }
+  .step .w {
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700; font-size:88px;
+    color:#00E676;
+    width:340px; flex-shrink:0;
+    letter-spacing:1px;
+  }
+  .step .t { font-size:52px; font-weight:500; color:#C7D2E0; line-height:1.25; }
+  /* ---------- stats ---------- */
+  .stats {
+    margin-top:60px;
+    display:flex; gap:60px;
+  }
+  .stat { flex:1; }
+  .stat .n {
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700; font-size:148px; line-height:1;
+    color:#FFFFFF;
+  }
+  .stat .n span { color:#00E676; }
+  .stat .c {
+    margin-top:20px;
+    font-size:39px; font-weight:600;
+    letter-spacing:4.5px; text-transform:uppercase;
+    color:#7E8FA8; line-height:1.35;
+  }
+  .spacer { flex-grow:1; }
+  /* ---------- footer ---------- */
+  .foot { border-top:2px solid rgba(255,255,255,0.14); padding-top:56px; }
+  .team {
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700; font-size:76px; letter-spacing:1px;
+  }
+  .team span { color:#00E676; }
+  .uni { margin-top:16px; font-size:55px; font-weight:500; color:#C7D2E0; }
+  .champ { margin-top:10px; font-size:48px; color:#7E8FA8; }
+  .qrrow { margin-top:44px; display:flex; align-items:center; gap:48px; }
+  .qrbox { background:#FFFFFF; border-radius:24px; padding:22px; flex-shrink:0; }
+  .qrbox img { width:280px; height:280px; display:block; }
+  .qrt .a {
+    font-family:'Space Grotesk',sans-serif;
+    font-size:46px; font-weight:600; letter-spacing:6px;
+    color:#00E676; text-transform:uppercase;
+  }
+  .qrt .b { margin-top:14px; font-size:47px; color:#C7D2E0; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="col">
+    <img class="logo" src="logo_hires.png" alt="SABZ, AI-Adaptive Traffic Signals">
+
+    <div class="headline">Green<br>Means<br><span class="smart">Smart.</span></div>
+    <div class="sub">AI traffic signals that see, think, and adapt.</div>
+
+    <div class="hero">
+      <img src="hero.jpg" alt="Cars queued at a red light at dusk">
+      <div class="fade"></div>
+      <div class="cap">The problem: <b>lights that cannot see</b></div>
+    </div>
+
+    <div class="steps">
+      <div class="step"><div class="w">SEE</div><div class="t">Cameras count every vehicle on every approach, in real time.</div></div>
+      <div class="step"><div class="w">THINK</div><div class="t">A deep Q-network weighs the traffic and decides every second.</div></div>
+      <div class="step"><div class="w">ADAPT</div><div class="t">Green follows real demand, not a fixed clock. Queues stay short.</div></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n">2/3</div><div class="c">Benchmark scenarios won</div></div>
+      <div class="stat"><div class="n">7.3<span>s</span></div><div class="c">Best average delay</div></div>
+      <div class="stat"><div class="n">47<span>%</span></div><div class="c">Less delay, up to</div></div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="foot">
+      <div class="team">TEAM <span>SABZ</span></div>
+      <div class="uni">Lahore Garrison University</div>
+      <div class="champ">4th International AI Championship &middot; AI in Urban Tech</div>
+      <div class="qrrow">
+        <div class="qrbox"><img src="qr_standee.png" alt="QR code to the SABZ GitHub repository"></div>
+        <div class="qrt">
+          <div class="a">See the code</div>
+          <div class="b">github.com/pakmultilinks-dot/sabz</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
