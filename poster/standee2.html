@@ -26,7 +26,7 @@
     padding:120px 135px 110px 135px;
   }
   /* ---------- brand ---------- */
-  .logo { width:1040px; display:block; }
+  .logo { width:1040px; display:block; margin:0 auto; }
   /* ---------- headline ---------- */
   .headline {
     margin-top:100px;
@@ -36,6 +36,7 @@
     line-height:1.03;
     letter-spacing:-2px;
     text-transform:uppercase;
+    text-align:center;
   }
   .headline .smart { color:#00E676; }
   .sub {
@@ -43,6 +44,7 @@
     font-size:63px; font-weight:500;
     color:#B9C6D6;
     letter-spacing:0.2px;
+    text-align:center;
   }
   /* ---------- hero photo ---------- */
   .hero {
@@ -62,7 +64,7 @@
       #0B1220 100%);
   }
   .hero .cap {
-    position:absolute; left:135px; bottom:64px;
+    position:absolute; left:0; right:0; bottom:64px; text-align:center;
     font-family:'Space Grotesk',sans-serif;
     font-size:44px; font-weight:600;
     letter-spacing:7px; text-transform:uppercase;
@@ -71,7 +73,7 @@
   }
   .hero .cap b { color:#00E676; font-weight:600; }
   /* ---------- logic rows ---------- */
-  .steps { margin-top:76px; }
+  .steps { margin:76px auto 0 auto; width:1420px; }
   .step {
     display:flex; align-items:baseline; gap:56px;
     padding:28px 0;
@@ -90,7 +92,7 @@
     margin-top:60px;
     display:flex; gap:60px;
   }
-  .stat { flex:1; }
+  .stat { flex:1; text-align:center; }
   .stat .n {
     font-family:'Space Grotesk',sans-serif;
     font-weight:700; font-size:148px; line-height:1;
@@ -105,7 +107,7 @@
   }
   .spacer { flex-grow:1; }
   /* ---------- footer ---------- */
-  .foot { border-top:2px solid rgba(255,255,255,0.14); padding-top:56px; }
+  .foot { border-top:2px solid rgba(255,255,255,0.14); padding-top:56px; text-align:center; }
   .team {
     font-family:'Space Grotesk',sans-serif;
     font-weight:700; font-size:76px; letter-spacing:1px;
@@ -113,9 +115,10 @@
   .team span { color:#00E676; }
   .uni { margin-top:16px; font-size:55px; font-weight:500; color:#C7D2E0; }
   .champ { margin-top:10px; font-size:48px; color:#7E8FA8; }
-  .qrrow { margin-top:44px; display:flex; align-items:center; gap:48px; }
+  .qrrow { margin-top:44px; display:flex; align-items:center; justify-content:center; gap:48px; }
   .qrbox { background:#FFFFFF; border-radius:24px; padding:22px; flex-shrink:0; }
   .qrbox img { width:280px; height:280px; display:block; }
+  .qrt { text-align:left; }
   .qrt .a {
     font-family:'Space Grotesk',sans-serif;
     font-size:46px; font-weight:600; letter-spacing:6px;
@@ -157,10 +160,10 @@
       <div class="uni">Lahore Garrison University</div>
       <div class="champ">4th International AI Championship &middot; AI in Urban Tech</div>
       <div class="qrrow">
-        <div class="qrbox"><img src="qr_standee.png" alt="QR code to the SABZ GitHub repository"></div>
+        <div class="qrbox"><img src="qr_demo.png" alt="QR code to the live SABZ demo"></div>
         <div class="qrt">
-          <div class="a">See the code</div>
-          <div class="b">github.com/pakmultilinks-dot/sabz</div>
+          <div class="a">See the demo</div>
+          <div class="b">Scan to watch SABZ beat the fixed timer, live.</div>
         </div>
       </div>
     </div>
