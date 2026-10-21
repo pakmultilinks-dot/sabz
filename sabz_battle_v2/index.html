@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SABZ - Fixed vs SABZ, Rush Hour Battle</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --bg:#04120c; --panel:#071a11; --panel2:#0a2115; --line:#1d3a2a; --line-soft:#16301f;
+    --green:#00E676; --green-dim:#00c853; --txt:#eef4f0; --mut:#8fa89a; --mut2:#6d8577;
+  }
+  body {
+    background:radial-gradient(1200px 600px at 50% -10%, #0a2a1a 0%, var(--bg) 55%) , var(--bg);
+    color:var(--txt); font-family:'Inter',system-ui,-apple-system,sans-serif; min-height:100vh;
+  }
+  .wrap { max-width:1560px; margin:0 auto; padding:16px 26px 30px; }
+
+  /* ---------- NAV ---------- */
+  nav { display:flex; align-items:center; gap:18px; padding:6px 2px 14px; }
+  nav .logo { height:48px; display:block; }
+  nav .links { margin-left:auto; display:flex; align-items:center; gap:34px; }
+  nav .links a { color:#cfe0d5; text-decoration:none; font-size:15px; font-weight:500; padding:6px 1px; }
+  nav .links a.active { color:var(--green); border-bottom:2px solid var(--green); font-weight:600; }
+  nav .links a:hover { color:#fff; }
+  nav .links a.active:hover { color:var(--green); }
+  nav .sep { width:1px; height:22px; background:var(--line); }
+  nav .moon { color:#9fb4a7; display:flex; }
+  nav .live { display:flex; align-items:center; gap:8px; color:var(--green); font-size:14px; font-weight:600; }
+  .pulse-dot { width:9px; height:9px; border-radius:50%; background:var(--green); animation:blink 1.4s infinite; }
+  @keyframes blink { 0%,100%{opacity:1; box-shadow:0 0 0 0 rgba(0,230,118,.45);} 50%{opacity:.55; box-shadow:0 0 0 6px rgba(0,230,118,0);} }
+
+  /* ---------- STAT CHIPS ---------- */
+  .chips { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:2px; }
+  .chip { background:linear-gradient(180deg, var(--panel2), var(--panel)); border:1px solid var(--line); border-radius:12px;
+    padding:16px 20px; display:flex; align-items:center; gap:18px; }
+  .chip .ic { color:var(--green); flex-shrink:0; display:flex; }
+  .chip .v { font-family:'Space Grotesk',sans-serif; font-size:27px; font-weight:700; line-height:1.05; }
+  .chip .l { font-size:13.5px; color:var(--mut); margin-top:3px; }
+
+  /* ---------- TITLE ROW ---------- */
+  .titlerow { display:flex; align-items:flex-end; gap:24px; margin-top:26px; }
+  h1.title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:66px; letter-spacing:.5px; line-height:.98; text-transform:uppercase; }
+  h1.title .vs { color:#7d8a83; font-weight:500; text-transform:none; }
+  h1.title .sabz { color:var(--green); }
+  .subtitle { margin-top:10px; font-size:19px; font-weight:600; color:#d7e4da; }
+  .livebadge { margin-left:auto; flex-shrink:0; display:flex; gap:16px; align-items:flex-start;
+    border:1px solid rgba(0,230,118,.55); background:rgba(0,230,118,.06); border-radius:12px; padding:16px 20px; max-width:330px; }
+  .livebadge .bigdot { width:24px; height:24px; border-radius:50%; background:var(--green); flex-shrink:0; margin-top:3px; animation:blink 1.4s infinite; }
+  .livebadge .t { color:var(--green); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; letter-spacing:2.5px; }
+  .livebadge .d { color:#c4d6c9; font-size:13.5px; margin-top:5px; line-height:1.45; }
+
+  /* ---------- WINNER ---------- */
+  #winner { display:none; margin-top:20px; text-align:center; padding:15px; font-family:'Space Grotesk',sans-serif;
+    font-size:20px; font-weight:700; letter-spacing:2px; color:var(--green);
+    background:linear-gradient(90deg, rgba(0,230,118,.14), rgba(0,230,118,.04)); border:1px solid rgba(0,230,118,.6); border-radius:12px; }
+  #winner.show { display:block; }
+  #winner .pct { font-size:27px; }
+
+  /* ---------- PANELS ---------- */
+  .battle { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:22px; }
+  .panel { background:linear-gradient(180deg, var(--panel2), var(--panel)); border:1px solid var(--line); border-radius:14px; padding:18px 20px 16px; min-width:0; }
+  .panel.ai { border-color:rgba(0,230,118,.65); box-shadow:0 0 0 1px rgba(0,230,118,.18), 0 12px 40px rgba(0,0,0,.35); }
+  .phead { display:flex; align-items:flex-start; gap:14px; }
+  .phead h2 { font-family:'Space Grotesk',sans-serif; font-size:23px; font-weight:700; letter-spacing:1.5px; }
+  .panel.ai .phead h2 { color:var(--green); }
+  .phead .tag { font-size:14px; color:var(--mut); margin-top:4px; }
+  .badge { margin-left:auto; flex-shrink:0; font-size:12.5px; font-weight:500; color:#cfe0d5; border:1px solid var(--line);
+    background:rgba(255,255,255,.03); border-radius:8px; padding:6px 12px; }
+  .panel.ai .badge { color:var(--green); border-color:rgba(0,230,118,.55); }
+  .scene { margin-top:14px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.06); }
+  .scene canvas { width:100%; display:block; }
+  .pstats { display:grid; grid-template-columns:1fr 1fr 1fr; margin-top:16px; background:rgba(0,0,0,.25);
+    border:1px solid var(--line-soft); border-radius:10px; padding:14px 6px; }
+  .pstat { padding:0 18px; }
+  .pstat + .pstat { border-left:1px solid var(--line); }
+  .pstat .l { font-size:13px; color:var(--mut); }
+  .pstat .v { font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; margin-top:5px; }
+  .pstat .v small { font-size:16px; font-weight:600; color:var(--mut); font-family:'Inter',sans-serif; }
+  .panel.ai .pstat .v { color:var(--green); }
+  .panel.ai .pstat .v small { color:#5da87f; }
+  .brainline { margin-top:13px; font-size:13px; color:var(--mut); display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; }
+  .brainline .dec { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:1.5px; font-size:14px; }
+  .brainline .dec.hold { color:#5ac8fa; } .brainline .dec.switch { color:var(--green); }
+  .brainline b { color:#d7e4da; font-weight:600; }
+
+  /* ---------- CONTROLS ---------- */
+  .controls { display:flex; gap:10px; align-items:center; margin-top:18px; }
+  .controls .lbl { font-size:12px; letter-spacing:2px; color:var(--mut2); margin-right:2px; }
+  button { background:#0d2417; color:#d7e4da; border:1px solid var(--line); padding:9px 18px; border-radius:9px;
+    font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; }
+  button:hover { background:#123620; }
+  button.active { background:var(--green); color:#04140a; border-color:var(--green); }
+  .controls .note { font-size:12px; color:var(--mut2); margin-left:auto; max-width:640px; text-align:right; line-height:1.5; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .how { margin-top:20px; background:linear-gradient(180deg, var(--panel2), var(--panel)); border:1px solid var(--line);
+    border-radius:14px; padding:22px 24px 24px; }
+  .how h2 { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700; }
+  .how .sub { margin-top:6px; font-size:15px; color:var(--mut); }
+  .how .sub b { color:var(--green); font-weight:600; }
+  .steps { display:flex; align-items:stretch; gap:0; margin-top:20px; }
+  .step { flex:1; display:flex; gap:16px; background:rgba(0,0,0,.22); border:1px solid var(--line-soft); border-radius:12px; padding:18px; }
+  .step .tile { width:64px; height:64px; flex-shrink:0; border-radius:12px; background:#0d2417; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; color:#d7e4da; }
+  .step .st { font-size:15.5px; font-weight:700; }
+  .step .sd { font-size:13.5px; color:var(--mut); margin-top:5px; line-height:1.5; }
+  .sarrow { flex:0 0 52px; display:flex; align-items:center; justify-content:center; color:var(--green); }
+
+  @media (max-width:1100px){
+    .battle { grid-template-columns:1fr; }
+    .chips { grid-template-columns:1fr 1fr; }
+    .steps { flex-wrap:wrap; } .sarrow { display:none; } .step { flex:1 1 40%; margin:4px; }
+    h1.title { font-size:44px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav>
+    <img class="logo" src="logo.png" alt="SABZ - AI-Adaptive Traffic Signals">
+    <div class="links">
+      <a href="#" class="active">Live Demo</a>
+      <a href="#how">How It Works</a>
+      <a href="#how">Results</a>
+      <a href="#how">Team</a>
+      <div class="sep"></div>
+      <span class="moon" aria-hidden="true">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </span>
+      <span class="live"><span class="pulse-dot"></span>Live</span>
+    </div>
+  </nav>
+
+  <!-- STAT CHIPS -->
+  <div class="chips">
+    <div class="chip">
+      <span class="ic"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a1 1 0 0 0-1 1c0 2 1.5 3.5 4 3.5M17 6h3a1 1 0 0 1 1 1c0 2-1.5 3.5-4 3.5"/></svg></span>
+      <div><div class="v">2/3</div><div class="l">Scenarios Won</div></div>
+    </div>
+    <div class="chip">
+      <span class="ic"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+      <div><div class="v">7.3s</div><div class="l">Best Avg Delay</div></div>
+    </div>
+    <div class="chip">
+      <span class="ic"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1.5"/><rect x="10" y="10" width="4" height="4"/><path d="M9 6V3M15 6V3M9 21v-3M15 21v-3M6 9H3M6 15H3M21 9h-3M21 15h-3"/></svg></span>
+      <div><div class="v">5,506</div><div class="l">Model Parameters</div></div>
+    </div>
+    <div class="chip">
+      <span class="ic"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9.5 2.5h5M12 5V2.5"/></svg></span>
+      <div><div class="v" id="battleTime">00:00</div><div class="l">Battle Time</div></div>
+    </div>
+  </div>
+
+  <!-- TITLE -->
+  <div class="titlerow">
+    <div>
+      <h1 class="title">Fixed <span class="vs">vs</span> <span class="sabz">Sabz</span></h1>
+      <div class="subtitle">Rush Hour Battle - Identical Traffic, Two Controllers</div>
+    </div>
+    <div class="livebadge">
+      <div class="bigdot"></div>
+      <div>
+        <div class="t">LIVE BATTLE</div>
+        <div class="d">Both intersections running with the same traffic flow.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="winner"></div>
+
+  <!-- PANELS -->
+  <div class="battle">
+    <div class="panel" id="panelL">
+      <div class="phead">
+        <div>
+          <h2>FIXED TIMER</h2>
+          <div class="tag">Switches every 30 seconds. Blind to traffic.</div>
+        </div>
+        <div class="badge">Fixed Cycle: 30s</div>
+      </div>
+      <div class="scene"><canvas id="cvL" width="780" height="380"></canvas></div>
+      <div class="pstats">
+        <div class="pstat"><div class="l">Avg Delay (last 60s)</div><div class="v" id="dL">0.0s</div></div>
+        <div class="pstat"><div class="l">Queue Length</div><div class="v"><span id="qL">0</span> <small>vehicles</small></div></div>
+        <div class="pstat"><div class="l">Throughput</div><div class="v"><span id="tL">0</span> <small>veh/hr</small></div></div>
+      </div>
+    </div>
+
+    <div class="panel ai" id="panelR">
+      <div class="phead">
+        <div>
+          <h2>SABZ AI</h2>
+          <div class="tag">Real trained DQN brain. Decides every second.</div>
+        </div>
+        <div class="badge">DQN (5,506 params)</div>
+      </div>
+      <div class="scene"><canvas id="cvR" width="780" height="380"></canvas></div>
+      <div class="pstats">
+        <div class="pstat"><div class="l">Avg Delay (last 60s)</div><div class="v" id="dR">0.0s</div></div>
+        <div class="pstat"><div class="l">Queue Length</div><div class="v"><span id="qR">0</span> <small>vehicles</small></div></div>
+        <div class="pstat"><div class="l">Throughput</div><div class="v"><span id="tR">0</span> <small>veh/hr</small></div></div>
+      </div>
+      <div class="brainline">
+        <span class="dec hold" id="decText">DQN: HOLD</span>
+        <span>Q(hold) <b id="qHoldV">0.00</b></span>
+        <span>Q(switch) <b id="qSwitchV">0.00</b></span>
+        <span id="decReason">brain loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <span class="lbl">SPEED</span>
+    <button onclick="setSpeed(1)" class="active" id="sp1">1x</button>
+    <button onclick="setSpeed(2)" id="sp2">2x</button>
+    <button onclick="setSpeed(4)" id="sp4">4x</button>
+    <button onclick="resetAll()">Restart battle</button>
+    <span class="note">Both intersections get identical rush-hour demand. The fixed timer switches every 30s blindly. The SABZ brain decides every second, with a 70m dilemma-zone safety override.</span>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how" id="how">
+    <h2>How SABZ Works</h2>
+    <div class="sub"><b>SABZ</b> plugs into existing intersections using standard components.</div>
+    <div class="steps">
+      <div class="step">
+        <div class="tile"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5A1.5 1.5 0 0 1 4 7h9a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 13 17H4a1.5 1.5 0 0 1-1.5-1.5v-7z"/><path d="M14.5 10.5l7-3.5v10l-7-3.5"/></svg></div>
+        <div><div class="st">1. Cameras</div><div class="sd">Count vehicles on every approach in real time.</div></div>
+      </div>
+      <div class="sarrow"><svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div>
+      <div class="step">
+        <div class="tile"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4a3.5 3.5 0 0 1 3.4-2.6A4 4 0 0 1 19 8.6c.9.8 1 2 .3 3A4 4 0 0 1 17 17.9a3.5 3.5 0 0 1-5 1.6V4z"/><path d="M12 4a3.5 3.5 0 0 0-3.4-2.6A4 4 0 0 0 5 8.6c-.9.8-1 2-.3 3A4 4 0 0 0 7 17.9a3.5 3.5 0 0 0 5 1.6V4z" transform="translate(24 0) scale(-1 1)"/></svg></div>
+        <div><div class="st">2. DQN Brain</div><div class="sd">Deep Q-network weighs the traffic and decides every second.</div></div>
+      </div>
+      <div class="sarrow"><svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div>
+      <div class="step">
+        <div class="tile"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1"/></svg></div>
+        <div><div class="st">3. Decision</div><div class="sd">Selects the best signal phase based on current state.</div></div>
+      </div>
+      <div class="sarrow"><svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div>
+      <div class="step">
+        <div class="tile"><svg width="30" height="38" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="2" width="14" height="28" rx="3"/><circle cx="12" cy="8.5" r="2.6"/><circle cx="12" cy="16" r="2.6"/><circle cx="12" cy="23.5" r="2.6"/></svg></div>
+        <div><div class="st">4. Signals</div><div class="sd">Sends commands to existing signal controller.</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// SABZ battle v2: FIXED TIMER vs REAL DQN BRAIN, identical
+// traffic. Left sim: blind 30s fixed cycle. Right sim: real
+// trained DQN (sabz_dqn_best.npz, 18-64-64-2, 5,506 params)
+// forward pass every sim-second. Same spawn demand both sides.
+// ============================================================
+let BRAIN = null;
+fetch('brain_real.json').then(r=>r.json()).then(b=>{ BRAIN = b; }).catch(()=>{});
+function brainForward(s){
+  if(!BRAIN) return [0, 0];
+  const relu = a => a.map(v=>v>0?v:0);
+  const matvec = (v, M, b) => {
+    const out = new Array(M[0].length).fill(0);
+    for(let j=0;j<M[0].length;j++){ let t=b[j]; for(let i=0;i<v.length;i++) t+=v[i]*M[i][j]; out[j]=t; }
+    return out;
+  };
+  const a1 = relu(matvec(s, BRAIN.W1, BRAIN.b1));
+  const a2 = relu(matvec(a1, BRAIN.W2, BRAIN.b2));
+  return matvec(a2, BRAIN.W3, BRAIN.b3);
+}
+
+// geometry per canvas
+const GW = 780, GH = 380, GCX = 390, GCY = 190;
+const LANE = 16, ROAD_HALF = 34, STOP = 74;
+const CAR_L = 36, CAR_W = 18, GAP = 12;
+const VMAX = 3.2;
+const AMBER_TICKS = 180;      // 3 sim-seconds
+const FIXED_GREEN = 1800;     // fixed timer: 30 sim-seconds
+const MIN_GREEN = 480;        // brain: 8 sim-seconds (matches training)
+const MAX_GREEN_T = 3600;     // brain: 60 sim-seconds (matches training)
+const PALETTE = ['#e8e8e8','#d64541','#3a7bd5','#c7ccd1','#f39c3c','#d64541','#3a7bd5','#aebfca','#e8e8e8','#3a7bd5'];
+// demand: ~3x benchmark asymmetric (brain's training distribution).
+// N/S heavy, E/W light.
+const RATES = { N:0.0125, S:0.011, W:0.0025, E:0.0030 };
+const SPAWN_OUT = 150;   // spawn this far beyond canvas edge
+
+let speed = 1;
+function setSpeed(s){ speed=s; ['sp1','sp2','sp4'].forEach(id=>document.getElementById(id).classList.remove('active')); document.getElementById('sp'+s).classList.add('active'); }
+
+function createSim(isAI){
+  const sim = {
+    isAI, phase:0, phaseState:'green', greenT:0, amberT:0, simT:0,
+    totalWait:0, served:0, switches:0, demandBlocked:0,
+    qHold:0, qSwitch:0, decision:'HOLD', decReason:'brain loading...',
+    _tw:0, _ts:0,
+    buckets: Array.from({length:60}, ()=>({sec:-1, wait:0, served:0})),
+    AP:[
+      {id:'N', sx:GCX-LANE, sy:-SPAWN_OUT,  dx:0, dy:1,  group:0, rate:RATES.N},
+      {id:'S', sx:GCX+LANE, sy:GH+SPAWN_OUT, dx:0, dy:-1, group:0, rate:RATES.S},
+      {id:'W', sx:-SPAWN_OUT, sy:GCY+LANE,  dx:1, dy:0,  group:1, rate:RATES.W},
+      {id:'E', sx:GW+SPAWN_OUT, sy:GCY-LANE, dx:-1, dy:0, group:1, rate:RATES.E},
+    ]
+  };
+  sim.AP.forEach(a=>{
+    const stopX = a.dx!==0 ? GCX - a.dx*STOP : a.sx;
+    const stopY = a.dy!==0 ? GCY - a.dy*STOP : a.sy;
+    a.sStop = Math.hypot(stopX-a.sx, stopY-a.sy);
+    a.sExit = Math.hypot((a.dx!==0 ? (a.dx>0?GW+40:-40) : a.sx)-a.sx,
+                         (a.dy!==0 ? (a.dy>0?GH+40:-40) : a.sy)-a.sy);
+    a.cars = [];
+    a.spawnAcc = 0;
+    a.spawnN = 0;
+  });
+  return sim;
+}
+const simL = createSim(false);   // fixed timer
+const simR = createSim(true);    // SABZ brain
+
+function resetAll(){
+  [simL, simR].forEach(sim=>{
+    sim.AP.forEach(a=>{a.cars=[];a.spawnAcc=0;a.spawnN=0;});
+    sim.phase=0; sim.phaseState='green'; sim.greenT=0; sim.amberT=0; sim.simT=0;
+    sim.totalWait=0; sim.served=0; sim.switches=0; sim.demandBlocked=0;
+    sim.qHold=0; sim.qSwitch=0; sim.decision='HOLD'; sim.decReason='brain loading...';
+    sim.buckets.forEach(b=>{ b.sec=-1; b.wait=0; b.served=0; });
+  });
+  document.getElementById('winner').classList.remove('show');
+}
+
+function queueOf(a){ return a.cars.filter(c=>c.s<a.sStop && c.v<0.3).length; }
+
+function buildState(sim){
+  const MG = 60;  // MAX_GREEN seconds, matches training
+  const q = id => queueOf(sim.AP.find(a=>a.id===id));
+  const ap = id => { const a=sim.AP.find(x=>x.id===id); return a.cars.filter(c=>c.s<a.sStop && c.wait===0).length; };
+  const qs = ['N','S','E','W'].map(id=>q(id)/20.0);
+  const aps = ['N','S','E','W'].map(id=>ap(id)/10.0);
+  let maxAgeS = 0, redWaitS = 0;
+  sim.AP.forEach(a=>a.cars.forEach(c=>{
+    if(c.s<a.sStop){
+      const ageS = c.age/60;
+      if(ageS>maxAgeS) maxAgeS=ageS;
+      if(a.group!==sim.phase && c.wait/60>redWaitS) redWaitS=c.wait/60;
+    }
+  }));
+  return qs.concat(aps, [
+    sim.phase===0?1.0:0.0,
+    Math.min(sim.greenT/60, MG)/MG,
+    0,0,0,0,0,0,
+    Math.min(redWaitS/300, 2.0),
+    Math.min(maxAgeS/300, 2.0)
+  ]);
+}
+
+function lightFor(sim, group){
+  if(group===sim.phase) return sim.phaseState==='green' ? 'g' : 'a';
+  return 'r';
+}
+
+function stepSim(sim){
+  sim.simT++;
+  sim._tw = 0; sim._ts = 0;
+  // identical demand both sides: same rates, same accumulator logic.
+  // Blocked spawns count as demand delay (cars that cannot even enter).
+  sim.AP.forEach((a, ai)=>{
+    a.spawnAcc++;
+    if(a.spawnAcc > 1/a.rate){
+      if(!a.cars.some(c=>c.s < CAR_L+GAP+6)){
+        a.spawnAcc = 0;
+        const ci = a.spawnN++;
+        a.cars.push({ s:0, v:0, wait:0, age:0,
+          color: PALETTE[(ci*7 + ai*3) % PALETTE.length] });
+      } else {
+        sim.demandBlocked++;
+        sim._tw++;
+      }
+    }
+  });
+
+  // ---- control decision, once per sim-second ----
+  if(sim.simT % 60 === 0 && sim.phaseState==='green'){
+    if(!sim.isAI){
+      // FIXED: blind 30-second cycle
+      if(sim.greenT >= FIXED_GREEN){
+        sim.decision='SWITCH';
+        sim.decReason='fixed timer: 30s elapsed, blind switch';
+        sim.phaseState='amber'; sim.amberT=0; sim.switches++;
+      } else {
+        sim.decision='HOLD';
+        sim.decReason='fixed timer: holding until 30s ('+Math.floor(sim.greenT/60)+'s so far)';
+      }
+    } else {
+      // SABZ: real trained DQN
+      const qv = brainForward(buildState(sim));
+      sim.qHold = qv[0]; sim.qSwitch = qv[1];
+      const dilemma = sim.AP.filter(a=>a.group===sim.phase).some(a=>
+        a.cars.some(c=>{ const d = a.sStop - c.s; return d>0 && d<50 && c.v>1.5; }));
+      const starve = sim.AP.filter(a=>a.group!==sim.phase).some(a=>
+        a.cars.some(c=>c.s<a.sStop && c.wait>2700));
+      const wantSwitch = qv[1]>qv[0] || sim.greenT>=MAX_GREEN_T || starve;
+      // dilemma veto: delay the switch for approaching cars, but never
+      // let it starve the red side or exceed max green
+      const veto = dilemma && !starve && sim.greenT<MAX_GREEN_T;
+      if(sim.greenT>=MIN_GREEN && wantSwitch && !veto){
+        sim.decision='SWITCH';
+        sim.decReason = starve ? 'starvation guard: red approach waiting too long'
+          : (sim.greenT>=MAX_GREEN_T ? 'max green reached, fairness switch'
+          : ('brain: Q(switch) '+sim.qSwitch.toFixed(1)+' > Q(hold) '+sim.qHold.toFixed(1)));
+        sim.phaseState='amber'; sim.amberT=0; sim.switches++;
+      } else {
+        sim.decision='HOLD';
+        sim.decReason = dilemma ? 'dilemma-zone: cars approaching, holding green'
+          : (BRAIN ? 'brain: Q(hold) '+sim.qHold.toFixed(1)+' >= Q(switch) '+sim.qSwitch.toFixed(1)
+          : 'brain loading...');
+      }
+    }
+  }
+
+  if(sim.phaseState==='green') sim.greenT++;
+  else { sim.amberT++; if(sim.amberT>=AMBER_TICKS){ sim.phase=1-sim.phase; sim.phaseState='green'; sim.greenT=0; } }
+
+  // ---- car-following, no overlap, real stopping at red ----
+  sim.AP.forEach(a=>{
+    a.cars.sort((p,q)=>q.s-p.s);
+    const light = lightFor(sim, a.group);
+    for(let i=0;i<a.cars.length;i++){
+      const c = a.cars[i];
+      let wantV = VMAX;
+      const crossed = c.s > a.sStop + 6;
+      if(!crossed && light!=='g'){
+        const dLine = a.sStop - (c.s + CAR_L/2);
+        // dilemma zone: too close and too fast to stop safely -> run it
+        const dilemma = dLine < 12 && c.v > 2.0;
+        if(!dilemma && dLine < 90) wantV = 0;
+      }
+      if(i>0){
+        const ahead = a.cars[i-1];
+        const gap = (ahead.s - CAR_L/2) - (c.s + CAR_L/2) - GAP;
+        if(gap < 40) wantV = Math.min(wantV, Math.max(0, gap*0.3));
+      }
+      if(c.v < wantV) c.v = Math.min(wantV, c.v + 0.14);
+      else c.v = Math.max(wantV, c.v - 0.6);
+      c.s += c.v;
+      c.age++;
+      if(c.v < 0.3 && c.s < a.sStop){ c.wait++; sim.totalWait++; sim._tw++; }
+    }
+    const before = a.cars.length;
+    a.cars = a.cars.filter(c=>c.s < a.sExit);
+    const ex = before - a.cars.length;
+    sim.served += ex; sim._ts += ex;
+  });
+
+  // rolling 60-second window buckets
+  const sec = Math.floor(sim.simT/60);
+  const bk = sim.buckets[sec % 60];
+  if(bk.sec !== sec){ bk.sec = sec; bk.wait = 0; bk.served = 0; }
+  bk.wait += sim._tw; bk.served += sim._ts;
+}
+
+function rollSums(sim){
+  const cur = Math.floor(sim.simT/60);
+  let w=0, s=0;
+  sim.buckets.forEach(b=>{ if(b.sec > cur-60 && b.sec <= cur){ w+=b.wait; s+=b.served; } });
+  return [w, s];
+}
+function rollingDelay(sim){
+  const [w, s] = rollSums(sim);
+  if(s > 0) return (w/60)/s;
+  // nothing served yet in window: fall back to cumulative average
+  return sim.served > 0 ? (sim.totalWait + sim.demandBlocked)/60/sim.served : 0;
+}
+function throughput(sim){
+  const [, s] = rollSums(sim);
+  const elapsed = Math.max(1, Math.min(60, sim.simT/60));
+  return s/elapsed*3600;
+}
+function queueNow(sim){ return sim.AP.reduce((n,a)=>n+queueOf(a), 0); }
+
+// ---------------- scenery (identical for both intersections) ----------------
+function lcg(seed){ let s = seed; return ()=>{ s = (s*1103515245 + 12345) % 2147483648; return s/2147483648; }; }
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+const BUILDINGS = [
+  {x:26, y:18, w:130, h:80}, {x:618, y:22, w:134, h:74},
+  {x:30, y:284, w:120, h:78}, {x:626, y:290, w:126, h:72},
+];
+function makeBackground(){
+  const cv = document.createElement('canvas'); cv.width = GW; cv.height = GH;
+  const ctx = cv.getContext('2d');
+  const rnd = lcg(20241024);
+  // grass
+  ctx.fillStyle = '#21402a'; ctx.fillRect(0,0,GW,GH);
+  for(let i=0;i<54;i++){
+    const x = rnd()*GW, y = rnd()*GH, r = 18+rnd()*46;
+    ctx.fillStyle = rnd()<0.5 ? 'rgba(0,0,0,0.10)' : 'rgba(130,200,115,0.055)';
+    ctx.beginPath(); ctx.ellipse(x,y,r,r*0.62,rnd()*3,0,7); ctx.fill();
+  }
+  // sidewalks (wider light cross under the asphalt)
+  ctx.fillStyle = '#596066';
+  ctx.fillRect(GCX-ROAD_HALF-12, 0, (ROAD_HALF+12)*2, GH);
+  ctx.fillRect(0, GCY-ROAD_HALF-12, GW, (ROAD_HALF+12)*2);
+  // asphalt
+  ctx.fillStyle = '#26292e';
+  ctx.fillRect(GCX-ROAD_HALF, 0, ROAD_HALF*2, GH);
+  ctx.fillRect(0, GCY-ROAD_HALF, GW, ROAD_HALF*2);
+  ctx.fillStyle = '#2a2e34';
+  ctx.fillRect(GCX-ROAD_HALF, GCY-ROAD_HALF, ROAD_HALF*2, ROAD_HALF*2);
+  // road edge lines
+  ctx.fillStyle = 'rgba(225,232,238,0.42)';
+  ctx.fillRect(GCX-ROAD_HALF+2, 0, 2, GCY-ROAD_HALF); ctx.fillRect(GCX-ROAD_HALF+2, GCY+ROAD_HALF, 2, GH-GCY-ROAD_HALF);
+  ctx.fillRect(GCX+ROAD_HALF-4, 0, 2, GCY-ROAD_HALF); ctx.fillRect(GCX+ROAD_HALF-4, GCY+ROAD_HALF, 2, GH-GCY-ROAD_HALF);
+  ctx.fillRect(0, GCY-ROAD_HALF+2, GCX-ROAD_HALF, 2); ctx.fillRect(GCX+ROAD_HALF, GCY-ROAD_HALF+2, GW-GCX-ROAD_HALF, 2);
+  ctx.fillRect(0, GCY+ROAD_HALF-4, GCX-ROAD_HALF, 2); ctx.fillRect(GCX+ROAD_HALF, GCY+ROAD_HALF-4, GW-GCX-ROAD_HALF, 2);
+  // centre dashes
+  ctx.fillStyle = 'rgba(235,240,245,0.55)';
+  for(let y=6; y<GCY-ROAD_HALF-14; y+=22){ ctx.fillRect(GCX-1.5, y, 3, 12); ctx.fillRect(GCX-1.5, y+GCY+ROAD_HALF+8, 3, 12); }
+  for(let x=6; x<GCX-ROAD_HALF-14; x+=22){ ctx.fillRect(x, GCY-1.5, 12, 3); ctx.fillRect(x+GCX+ROAD_HALF+8, GCY-1.5, 12, 3); }
+  // zebra crossings
+  ctx.fillStyle = 'rgba(228,233,238,0.78)';
+  for(let x=GCX-ROAD_HALF+5; x<GCX+ROAD_HALF-8; x+=11.5){
+    ctx.fillRect(x, GCY-STOP-30, 6.5, 20);
+    ctx.fillRect(x, GCY+STOP+10, 6.5, 20);
+  }
+  for(let y=GCY-ROAD_HALF+5; y<GCY+ROAD_HALF-8; y+=11.5){
+    ctx.fillRect(GCX-STOP-30, y, 20, 6.5);
+    ctx.fillRect(GCX+STOP+10, y, 20, 6.5);
+  }
+  // stop lines (entry lanes only)
+  ctx.fillStyle = 'rgba(240,244,248,0.92)';
+  ctx.fillRect(GCX-ROAD_HALF+3, GCY-STOP-3, ROAD_HALF-5, 4);   // N entry
+  ctx.fillRect(GCX+2, GCY+STOP-1, ROAD_HALF-5, 4);             // S entry
+  ctx.fillRect(GCX-STOP-3, GCY+2, 4, ROAD_HALF-5);             // W entry
+  ctx.fillRect(GCX+STOP-1, GCY-ROAD_HALF+3, 4, ROAD_HALF-5);  // E entry
+  // buildings (flat roofs in the corners)
+  BUILDINGS.forEach(b=>{
+    ctx.fillStyle = 'rgba(0,0,0,0.25)'; roundRect(ctx, b.x+4, b.y+6, b.w, b.h, 4); ctx.fill();
+    ctx.fillStyle = '#3f444b'; roundRect(ctx, b.x, b.y, b.w, b.h, 4); ctx.fill();
+    ctx.strokeStyle = '#2b2f36'; ctx.lineWidth = 2; roundRect(ctx, b.x, b.y, b.w, b.h, 4); ctx.stroke();
+    ctx.fillStyle = '#495057'; roundRect(ctx, b.x+8, b.y+8, b.w-16, b.h-16, 3); ctx.fill();
+    ctx.fillStyle = '#343a41'; ctx.fillRect(b.x+b.w*0.58, b.y+b.h*0.24, 20, 14);
+    ctx.fillStyle = '#31363d'; ctx.fillRect(b.x+b.w*0.2, b.y+b.h*0.55, 14, 10);
+  });
+  // trees on the grass corners
+  const zones = [
+    {x0:6, y0:6, x1:GCX-ROAD_HALF-24, y1:GCY-ROAD_HALF-24},
+    {x0:GCX+ROAD_HALF+24, y0:6, x1:GW-6, y1:GCY-ROAD_HALF-24},
+    {x0:6, y0:GCY+ROAD_HALF+24, x1:GCX-ROAD_HALF-24, y1:GH-6},
+    {x0:GCX+ROAD_HALF+24, y0:GCY+ROAD_HALF+24, x1:GW-6, y1:GH-6},
+  ];
+  const trees = [];
+  let guard = 0;
+  while(trees.length < 34 && guard++ < 500){
+    const z = zones[(rnd()*zones.length)|0];
+    const x = z.x0 + rnd()*(z.x1-z.x0), y = z.y0 + rnd()*(z.y1-z.y0), r = 9 + rnd()*11;
+    if(BUILDINGS.some(b=> x > b.x-r-4 && x < b.x+b.w+r+4 && y > b.y-r-4 && y < b.y+b.h+r+4)) continue;
+    if(trees.some(t=> Math.hypot(t.x-x, t.y-y) < t.r + r - 5)) continue;
+    trees.push({x, y, r});
+  }
+  trees.forEach(t=>{
+    ctx.fillStyle = 'rgba(0,0,0,0.20)';
+    ctx.beginPath(); ctx.ellipse(t.x+3, t.y+4, t.r, t.r*0.8, 0, 0, 7); ctx.fill();
+    const g = ctx.createRadialGradient(t.x-t.r*0.3, t.y-t.r*0.3, t.r*0.15, t.x, t.y, t.r);
+    g.addColorStop(0, '#4d8c46'); g.addColorStop(0.65, '#2c5a2f'); g.addColorStop(1, '#1c3f22');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(t.x, t.y, t.r, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(150,210,125,0.20)';
+    ctx.beginPath(); ctx.arc(t.x-t.r*0.32, t.y-t.r*0.34, t.r*0.34, 0, 7); ctx.fill();
+  });
+  return cv;
+}
+const BG = makeBackground();
+
+function drawOverlayLight(ctx, sim){
+  // large signal for the N-S approaches, like the reference overlay
+  const x = 12, y = 84, w = 48, h = 118;
+  ctx.fillStyle = 'rgba(5,9,7,0.94)';
+  roundRect(ctx, x, y, w, h, 10); ctx.fill();
+  ctx.strokeStyle = '#39423c'; ctx.lineWidth = 1.5; roundRect(ctx, x, y, w, h, 10); ctx.stroke();
+  const l = lightFor(sim, 0);
+  const cxp = x + w/2;
+  const lamp = (yy, col, on)=>{
+    if(on){ ctx.shadowColor = col; ctx.shadowBlur = 18; }
+    ctx.fillStyle = on ? col : '#232a26';
+    ctx.beginPath(); ctx.arc(cxp, yy, 13, 0, 7); ctx.fill();
+    ctx.shadowBlur = 0;
+    if(on){ ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.beginPath(); ctx.arc(cxp-4, yy-4, 4.5, 0, 7); ctx.fill(); }
+  };
+  lamp(y+24, '#ff3b3b', l==='r');
+  lamp(y+59, '#ffb020', l==='a');
+  lamp(y+94, '#00E676', l==='g');
+  ctx.fillStyle = 'rgba(5,9,7,0.85)';
+  roundRect(ctx, x-2, y+h+5, w+4, 17, 5); ctx.fill();
+  ctx.fillStyle = '#b9c8bc'; ctx.font = '600 10px Inter, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('N-S SIGNAL', cxp, y+h+17);
+  ctx.textAlign = 'left';
+}
+
+function drawSim(ctx, sim){
+  ctx.drawImage(BG, 0, 0);
+  sim.AP.forEach(a=>{
+    a.cars.forEach(c=>{
+      const x = a.sx + a.dx*c.s, y = a.sy + a.dy*c.s;
+      const stopped = c.v < 0.3;
+      ctx.save(); ctx.translate(x,y);
+      ctx.rotate(a.dx!==0 ? (a.dx>0?Math.PI/2:-Math.PI/2) : (a.dy>0?Math.PI:0));
+      ctx.fillStyle='rgba(0,0,0,0.35)';
+      roundRect(ctx,-CAR_W/2+2,-CAR_L/2+3,CAR_W,CAR_L,5); ctx.fill();
+      ctx.fillStyle = c.color;
+      roundRect(ctx,-CAR_W/2,-CAR_L/2,CAR_W,CAR_L,5); ctx.fill();
+      ctx.fillStyle='rgba(18,24,34,0.92)';
+      roundRect(ctx,-CAR_W/2+3,-CAR_L/2+6,CAR_W-6,8,2); ctx.fill();
+      ctx.fillStyle='rgba(18,24,34,0.55)';
+      roundRect(ctx,-CAR_W/2+3,-1,CAR_W-6,10,2); ctx.fill();
+      if(stopped){
+        ctx.fillStyle='#ff2d2d';
+        ctx.shadowColor='#ff2d2d'; ctx.shadowBlur=7;
+        ctx.fillRect(-CAR_W/2+2,-CAR_L/2+1.5,4.5,2.5); ctx.fillRect(CAR_W/2-6.5,-CAR_L/2+1.5,4.5,2.5);
+        ctx.shadowBlur=0;
+      } else {
+        ctx.fillStyle='#fff6cf';
+        ctx.fillRect(-CAR_W/2+2,CAR_L/2-3.5,4,2.2); ctx.fillRect(CAR_W/2-6,CAR_L/2-3.5,4,2.2);
+      }
+      ctx.restore();
+    });
+  });
+  drawOverlayLight(ctx, sim);
+  // phase pill, bottom-left
+  const label = (sim.phase===0 ? 'NS GREEN' : 'EW GREEN')
+    + (sim.phaseState==='amber' ? ' - AMBER' : '')
+    + '  ' + Math.floor(sim.greenT/60) + 's';
+  ctx.font = '600 11.5px Inter, sans-serif';
+  const tw = ctx.measureText(label).width + 20;
+  ctx.fillStyle = 'rgba(5,9,7,0.82)';
+  roundRect(ctx, 12, GH-30, tw, 21, 6); ctx.fill();
+  ctx.fillStyle = sim.phaseState==='amber' ? '#ffb020' : '#00E676';
+  ctx.fillText(label, 22, GH-16);
+}
+
+const ctxL = document.getElementById('cvL').getContext('2d');
+const ctxR = document.getElementById('cvR').getContext('2d');
+
+function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
+
+function updateHUD(){
+  const dL = rollingDelay(simL), dR = rollingDelay(simR);
+  document.getElementById('dL').textContent = dL.toFixed(1)+'s';
+  document.getElementById('dR').textContent = dR.toFixed(1)+'s';
+  document.getElementById('qL').textContent = queueNow(simL);
+  document.getElementById('qR').textContent = queueNow(simR);
+  document.getElementById('tL').textContent = fmt(throughput(simL));
+  document.getElementById('tR').textContent = fmt(throughput(simR));
+  const bt = Math.floor(simL.simT/60);
+  document.getElementById('battleTime').textContent =
+    String(Math.floor(bt/60)).padStart(2,'0') + ':' + String(bt%60).padStart(2,'0');
+  // winner banner after 2 battle-minutes with a clear gap
+  const w = document.getElementById('winner');
+  if(bt >= 120 && !w.classList.contains('show') && dL > 0.5 && dR < dL*0.85){
+    const pct = ((dL-dR)/dL*100).toFixed(0);
+    w.innerHTML = 'SABZ WINS &middot; <span class="pct">'+pct+'%</span> LESS DELAY THAN FIXED TIMER &middot; '+dR.toFixed(1)+'s vs '+dL.toFixed(1)+'s';
+    w.classList.add('show');
+  }
+  // brain line (SABZ side)
+  const sw = simR.decision==='SWITCH';
+  const dt = document.getElementById('decText');
+  dt.textContent = 'DQN: ' + simR.decision;
+  dt.className = 'dec ' + (sw ? 'switch' : 'hold');
+  document.getElementById('qHoldV').textContent = simR.qHold.toFixed(2);
+  document.getElementById('qSwitchV').textContent = simR.qSwitch.toFixed(2);
+  document.getElementById('decReason').textContent = simR.decReason;
+}
+
+function loop(){
+  for(let i=0;i<speed;i++){ stepSim(simL); stepSim(simR); }
+  drawSim(ctxL, simL);
+  drawSim(ctxR, simR);
+  updateHUD();
+  requestAnimationFrame(loop);
+}
+resetAll();
+loop();
+</script>
+</body>
+</html>
