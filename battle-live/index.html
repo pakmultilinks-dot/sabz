@@ -274,9 +274,12 @@ function brainForward(s){
   return matvec(a2, BRAIN.W3, BRAIN.b3);
 }
 
-// geometry per canvas
+// geometry per canvas. GCX/GCY and the approach lanes/stop lines below are
+// calibrated to the photographic plate (scene_bg.jpg), measured in Python:
+// road centre (390, 190) canvas px; vertical road half-width 49px;
+// horizontal road half-height 57px; entry lanes sit on the plate's lanes.
 const GW = 780, GH = 380, GCX = 390, GCY = 190;
-const LANE = 16, ROAD_HALF = 34, STOP = 74;
+const LANE = 16, ROAD_HALF = 34, STOP = 74;   // fallback plate geometry only
 const CAR_L = 36, CAR_W = 18, GAP = 12;
 const VMAX = 3.2;
 const AMBER_TICKS = 180;      // 3 sim-seconds
@@ -300,15 +303,15 @@ function createSim(isAI){
     _tw:0, _ts:0,
     buckets: Array.from({length:60}, ()=>({sec:-1, wait:0, served:0})),
     AP:[
-      {id:'N', sx:GCX-LANE, sy:-SPAWN_OUT,  dx:0, dy:1,  group:0, rate:RATES.N},
-      {id:'S', sx:GCX+LANE, sy:GH+SPAWN_OUT, dx:0, dy:-1, group:0, rate:RATES.S},
-      {id:'W', sx:-SPAWN_OUT, sy:GCY+LANE,  dx:1, dy:0,  group:1, rate:RATES.W},
-      {id:'E', sx:GW+SPAWN_OUT, sy:GCY-LANE, dx:-1, dy:0, group:1, rate:RATES.E},
+      {id:'N', sx:380, sy:-SPAWN_OUT,  dx:0, dy:1,  group:0, rate:RATES.N, stopC:85},
+      {id:'S', sx:401, sy:GH+SPAWN_OUT, dx:0, dy:-1, group:0, rate:RATES.S, stopC:295},
+      {id:'W', sx:-SPAWN_OUT, sy:200,  dx:1, dy:0,  group:1, rate:RATES.W, stopC:275},
+      {id:'E', sx:GW+SPAWN_OUT, sy:180, dx:-1, dy:0, group:1, rate:RATES.E, stopC:506},
     ]
   };
   sim.AP.forEach(a=>{
-    const stopX = a.dx!==0 ? GCX - a.dx*STOP : a.sx;
-    const stopY = a.dy!==0 ? GCY - a.dy*STOP : a.sy;
+    const stopX = a.dx!==0 ? a.stopC : a.sx;
+    const stopY = a.dy!==0 ? a.stopC : a.sy;
     a.sStop = Math.hypot(stopX-a.sx, stopY-a.sy);
     a.sExit = Math.hypot((a.dx!==0 ? (a.dx>0?GW+40:-40) : a.sx)-a.sx,
                          (a.dy!==0 ? (a.dy>0?GH+40:-40) : a.sy)-a.sy);
@@ -374,6 +377,7 @@ function stepSim(sim){
         a.spawnAcc = 0;
         const ci = a.spawnN++;
         a.cars.push({ s:0, v:0, wait:0, age:0,
+          sprite: (ci*7 + ai*3) % 6,
           color: PALETTE[(ci*7 + ai*3) % PALETTE.length] });
       } else {
         sim.demandBlocked++;
@@ -584,6 +588,29 @@ function makeBackground(){
 }
 const BG = makeBackground();
 
+// ---------------- photographic plate + car sprites ----------------
+// Technique (researched): photographic background plate + textured vehicle
+// sprites composited live, soft offset shadows matched to the plate's sun,
+// then a subtle film-grain/vignette pass to unify sprites with the photo.
+const BGIMG = new Image(); BGIMG.src = 'scene_bg.jpg';
+const CAR_IMGS = [];
+for(let i=0;i<6;i++){ const im = new Image(); im.src = 'car'+i+'.png'; CAR_IMGS.push(im); }
+const GRAIN = (()=>{
+  const cv = document.createElement('canvas'); cv.width = GW; cv.height = GH;
+  const g = cv.getContext('2d');
+  const id = g.createImageData(GW, GH), d = id.data;
+  for(let i=0;i<d.length;i+=4){
+    const n = (Math.random()-0.5)*22;
+    d[i] = d[i+1] = d[i+2] = n > 0 ? 255 : 0;
+    d[i+3] = Math.abs(n);
+  }
+  g.putImageData(id, 0, 0);
+  const vg = g.createRadialGradient(GW/2, GH/2, GH*0.42, GW/2, GH/2, GW*0.62);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.20)');
+  g.fillStyle = vg; g.fillRect(0, 0, GW, GH);
+  return cv;
+})();
+
 function drawOverlayLight(ctx, sim){
   // large signal for the N-S approaches, like the reference overlay
   const x = 12, y = 84, w = 48, h = 118;
@@ -610,33 +637,57 @@ function drawOverlayLight(ctx, sim){
 }
 
 function drawSim(ctx, sim){
-  ctx.drawImage(BG, 0, 0);
+  if(BGIMG.complete && BGIMG.naturalWidth) ctx.drawImage(BGIMG, 0, 0, GW, GH);
+  else ctx.drawImage(BG, 0, 0);
   sim.AP.forEach(a=>{
+    const heading = Math.atan2(a.dy, a.dx);
     a.cars.forEach(c=>{
       const x = a.sx + a.dx*c.s, y = a.sy + a.dy*c.s;
       const stopped = c.v < 0.3;
-      ctx.save(); ctx.translate(x,y);
-      ctx.rotate(a.dx!==0 ? (a.dx>0?Math.PI/2:-Math.PI/2) : (a.dy>0?Math.PI:0));
-      ctx.fillStyle='rgba(0,0,0,0.35)';
-      roundRect(ctx,-CAR_W/2+2,-CAR_L/2+3,CAR_W,CAR_L,5); ctx.fill();
-      ctx.fillStyle = c.color;
-      roundRect(ctx,-CAR_W/2,-CAR_L/2,CAR_W,CAR_L,5); ctx.fill();
-      ctx.fillStyle='rgba(18,24,34,0.92)';
-      roundRect(ctx,-CAR_W/2+3,-CAR_L/2+6,CAR_W-6,8,2); ctx.fill();
-      ctx.fillStyle='rgba(18,24,34,0.55)';
-      roundRect(ctx,-CAR_W/2+3,-1,CAR_W-6,10,2); ctx.fill();
-      if(stopped){
-        ctx.fillStyle='#ff2d2d';
-        ctx.shadowColor='#ff2d2d'; ctx.shadowBlur=7;
-        ctx.fillRect(-CAR_W/2+2,-CAR_L/2+1.5,4.5,2.5); ctx.fillRect(CAR_W/2-6.5,-CAR_L/2+1.5,4.5,2.5);
-        ctx.shadowBlur=0;
+      // soft shadow hugging the car, offset down-left like the plate's shadows
+      ctx.fillStyle = 'rgba(0,0,0,0.38)';
+      ctx.beginPath(); ctx.ellipse(x-3, y+4, CAR_L/2+4, CAR_W/2+3, heading, 0, 7); ctx.fill();
+      const img = CAR_IMGS[c.sprite || 0];
+      ctx.save(); ctx.translate(x, y);
+      if(img && img.complete && img.naturalWidth){
+        // photographic sprite: front points up in the file; rotate so the
+        // front aligns with the direction of travel
+        ctx.rotate(heading + Math.PI/2);
+        const L = CAR_L + 5;
+        const wdt = L * img.naturalWidth / img.naturalHeight;
+        ctx.drawImage(img, -wdt/2, -L/2, wdt, L);
+        if(stopped){
+          ctx.fillStyle = '#ff2d2d';
+          ctx.shadowColor = '#ff2d2d'; ctx.shadowBlur = 8;
+          ctx.fillRect(-wdt/2+2.5, L/2-3.6, 4.6, 2.6); ctx.fillRect(wdt/2-7.1, L/2-3.6, 4.6, 2.6);
+          ctx.shadowBlur = 0;
+        } else {
+          ctx.fillStyle = 'rgba(255,244,200,0.85)';
+          ctx.fillRect(-wdt/2+2.5, -L/2+0.8, 4, 2); ctx.fillRect(wdt/2-6.5, -L/2+0.8, 4, 2);
+        }
       } else {
-        ctx.fillStyle='#fff6cf';
-        ctx.fillRect(-CAR_W/2+2,CAR_L/2-3.5,4,2.2); ctx.fillRect(CAR_W/2-6,CAR_L/2-3.5,4,2.2);
+        // fallback: flat sprite until the photo sprite loads
+        ctx.rotate(a.dx!==0 ? (a.dx>0?Math.PI/2:-Math.PI/2) : (a.dy>0?Math.PI:0));
+        ctx.fillStyle = c.color;
+        roundRect(ctx,-CAR_W/2,-CAR_L/2,CAR_W,CAR_L,5); ctx.fill();
+        ctx.fillStyle='rgba(18,24,34,0.92)';
+        roundRect(ctx,-CAR_W/2+3,-CAR_L/2+6,CAR_W-6,8,2); ctx.fill();
+        ctx.fillStyle='rgba(18,24,34,0.55)';
+        roundRect(ctx,-CAR_W/2+3,-1,CAR_W-6,10,2); ctx.fill();
+        if(stopped){
+          ctx.fillStyle='#ff2d2d';
+          ctx.shadowColor='#ff2d2d'; ctx.shadowBlur=7;
+          ctx.fillRect(-CAR_W/2+2,-CAR_L/2+1.5,4.5,2.5); ctx.fillRect(CAR_W/2-6.5,-CAR_L/2+1.5,4.5,2.5);
+          ctx.shadowBlur=0;
+        } else {
+          ctx.fillStyle='#fff6cf';
+          ctx.fillRect(-CAR_W/2+2,CAR_L/2-3.5,4,2.2); ctx.fillRect(CAR_W/2-6,CAR_L/2-3.5,4,2.2);
+        }
       }
       ctx.restore();
     });
   });
+  ctx.drawImage(GRAIN, 0, 0);
   drawOverlayLight(ctx, sim);
   // phase pill, bottom-left
   const label = (sim.phase===0 ? 'NS GREEN' : 'EW GREEN')
