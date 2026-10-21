@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SABZ - How It Works</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --bg:#04120c; --panel:#071a11; --panel2:#0a2115; --line:#1d3a2a; --line-soft:#16301f;
+    --green:#00E676; --green-dim:#00c853; --txt:#eef4f0; --mut:#8fa89a; --mut2:#6d8577;
+  }
+  body {
+    background:radial-gradient(1200px 600px at 50% -10%, #0a2a1a 0%, var(--bg) 55%) , var(--bg);
+    color:var(--txt); font-family:'Inter',system-ui,-apple-system,sans-serif; min-height:100vh;
+  }
+  .wrap { max-width:1560px; margin:0 auto; padding:16px 26px 30px; }
+
+  /* ---------- NAV ---------- */
+  nav { display:flex; align-items:center; gap:18px; padding:6px 2px 14px; }
+  nav .logo { height:48px; display:block; }
+  nav .links { margin-left:auto; display:flex; align-items:center; gap:34px; }
+  nav .links a { color:#cfe0d5; text-decoration:none; font-size:15px; font-weight:500; padding:6px 1px; }
+  nav .links a.active { color:var(--green); border-bottom:2px solid var(--green); font-weight:600; }
+  nav .links a:hover { color:#fff; }
+  nav .links a.active:hover { color:var(--green); }
+  nav .sep { width:1px; height:22px; background:var(--line); }
+  nav .moon { color:#9fb4a7; display:flex; }
+  nav .live { display:flex; align-items:center; gap:8px; color:var(--green); font-size:14px; font-weight:600; }
+  .pulse-dot { width:9px; height:9px; border-radius:50%; background:var(--green); animation:blink 1.4s infinite; }
+  @keyframes blink { 0%,100%{opacity:1; box-shadow:0 0 0 0 rgba(0,230,118,.45);} 50%{opacity:.55; box-shadow:0 0 0 6px rgba(0,230,118,0);} }
+
+  /* ---------- STAT CHIPS ---------- */
+  .chips { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:2px; }
+  .chip { background:linear-gradient(180deg, var(--panel2), var(--panel)); border:1px solid var(--line); border-radius:12px;
+    padding:16px 20px; display:flex; align-items:center; gap:18px; }
+  .chip .ic { color:var(--green); flex-shrink:0; display:flex; }
+  .chip .v { font-family:'Space Grotesk',sans-serif; font-size:27px; font-weight:700; line-height:1.05; }
+  .chip .l { font-size:13.5px; color:var(--mut); margin-top:3px; }
+
+  /* ---------- TITLE ROW ---------- */
+  .titlerow { display:flex; align-items:flex-end; gap:24px; margin-top:26px; }
+  h1.title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:66px; letter-spacing:.5px; line-height:.98; text-transform:uppercase; }
+  h1.title .vs { color:#7d8a83; font-weight:500; text-transform:none; }
+  h1.title .sabz { color:var(--green); }
+  .subtitle { margin-top:10px; font-size:19px; font-weight:600; color:#d7e4da; }
+  .livebadge { margin-left:auto; flex-shrink:0; display:flex; gap:16px; align-items:flex-start;
+    border:1px solid rgba(0,230,118,.55); background:rgba(0,230,118,.06); border-radius:12px; padding:16px 20px; max-width:330px; }
+  .livebadge .bigdot { width:24px; height:24px; border-radius:50%; background:var(--green); flex-shrink:0; margin-top:3px; animation:blink 1.4s infinite; }
+  .livebadge .t { color:var(--green); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; letter-spacing:2.5px; }
+  .livebadge .d { color:#c4d6c9; font-size:13.5px; margin-top:5px; line-height:1.45; }
+
+  /* ---------- WINNER ---------- */
+  #winner { display:none; margin-top:20px; text-align:center; padding:15px; font-family:'Space Grotesk',sans-serif;
+    font-size:20px; font-weight:700; letter-spacing:2px; color:var(--green);
+    background:linear-gradient(90deg, rgba(0,230,118,.14), rgba(0,230,118,.04)); border:1px solid rgba(0,230,118,.6); border-radius:12px; }
+  #winner.show { display:block; }
+  #winner .pct { font-size:27px; }
+
+  /* ---------- PANELS ---------- */
+  .battle { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:22px; }
+  .panel { background:linear-gradient(180deg, var(--panel2), var(--panel)); border:1px solid var(--line); border-radius:14px; padding:18px 20px 16px; min-width:0; }
+  .panel.ai { border-color:rgba(0,230,118,.65); box-shadow:0 0 0 1px rgba(0,230,118,.18), 0 12px 40px rgba(0,0,0,.35); }
+  .phead { display:flex; align-items:flex-start; gap:14px; }
+  .phead h2 { font-family:'Space Grotesk',sans-serif; font-size:23px; font-weight:700; letter-spacing:1.5px; }
+  .panel.ai .phead h2 { color:var(--green); }
+  .phead .tag { font-size:14px; color:var(--mut); margin-top:4px; }
+  .badge { margin-left:auto; flex-shrink:0; font-size:12.5px; font-weight:500; color:#cfe0d5; border:1px solid var(--line);
+    background:rgba(255,255,255,.03); border-radius:8px; padding:6px 12px; }
+  .panel.ai .badge { color:var(--green); border-color:rgba(0,230,118,.55); }
+  .scene { margin-top:14px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.06); }
+  .scene canvas { width:100%; display:block; }
+  .pstats { display:grid; grid-template-columns:1fr 1fr 1fr; margin-top:16px; background:rgba(0,0,0,.25);
+    border:1px solid var(--line-soft); border-radius:10px; padding:14px 6px; }
+  .pstat { padding:0 18px; }
+  .pstat + .pstat { border-left:1px solid var(--line); }
+  .pstat .l { font-size:13px; color:var(--mut); }
+  .pstat .v { font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; margin-top:5px; }
+  .pstat .v small { font-size:16px; font-weight:600; color:var(--mut); font-family:'Inter',sans-serif; }
+  .panel.ai .pstat .v { color:var(--green); }
+  .panel.ai .pstat .v small { color:#5da87f; }
+  .brainline { margin-top:13px; font-size:13px; color:var(--mut); display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; }
+  .brainline .dec { font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:1.5px; font-size:14px; }
+  .brainline .dec.hold { color:#5ac8fa; } .brainline .dec.switch { color:var(--green); }
+  .brainline b { color:#d7e4da; font-weight:600; }
+
+  /* ---------- CONTROLS ---------- */
+  .controls { display:flex; gap:10px; align-items:center; margin-top:18px; }
+  .controls .lbl { font-size:12px; letter-spacing:2px; color:var(--mut2); margin-right:2px; }
+  button { background:#0d2417; color:#d7e4da; border:1px solid var(--line); padding:9px 18px; border-radius:9px;
+    font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; }
+  button:hover { background:#123620; }
+  button.active { background:var(--green); color:#04140a; border-color:var(--green); }
+  .controls .note { font-size:12px; color:var(--mut2); margin-left:auto; max-width:640px; text-align:right; line-height:1.5; }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .how { margin-top:20px; background:linear-gradient(180deg, var(--panel2), var(--panel)); border:1px solid var(--line);
+    border-radius:14px; padding:22px 24px 24px; }
+  .how h2 { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700; }
+  .how .sub { margin-top:6px; font-size:15px; color:var(--mut); }
+  .how .sub b { color:var(--green); font-weight:600; }
+  .steps { display:flex; align-items:stretch; gap:0; margin-top:20px; }
+  .step { flex:1; display:flex; gap:16px; background:rgba(0,0,0,.22); border:1px solid var(--line-soft); border-radius:12px; padding:18px; }
+  .step .tile { width:64px; height:64px; flex-shrink:0; border-radius:12px; background:#0d2417; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; color:#d7e4da; }
+  .step .st { font-size:15.5px; font-weight:700; }
+  .step .sd { font-size:13.5px; color:var(--mut); margin-top:5px; line-height:1.5; }
+  .sarrow { flex:0 0 52px; display:flex; align-items:center; justify-content:center; color:var(--green); }
+
+  @media (max-width:1100px){
+    .battle { grid-template-columns:1fr; }
+    .chips { grid-template-columns:1fr 1fr; }
+    .steps { flex-wrap:wrap; } .sarrow { display:none; } .step { flex:1 1 40%; margin:4px; }
+    h1.title { font-size:44px; }
+  }
+  html { scroll-behavior:smooth; }
+
+  .rcards { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px; }
+  .rcard { background:rgba(0,0,0,.22); border:1px solid var(--line-soft); border-radius:12px; padding:18px; }
+  .rcard .rv { font-family:'Space Grotesk',sans-serif; font-size:34px; font-weight:700; color:var(--green); }
+  .rcard .rl { margin-top:6px; font-size:13.5px; color:var(--mut); line-height:1.45; }
+  .tcards { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:18px; }
+  .tcard { background:rgba(0,0,0,.22); border:1px solid var(--line-soft); border-radius:12px; padding:18px; }
+  .tcard .tn { font-weight:700; font-size:16.5px; }
+  .tcard .tr { color:var(--mut); font-size:13px; margin-top:4px; }
+  #demo, #how, #results, #team { scroll-margin-top:14px; }
+  @media (max-width:640px){
+    html, body { overflow-x:hidden; }
+    .wrap { padding:12px 12px 24px; }
+    nav { flex-wrap:wrap; gap:10px; padding-bottom:10px; }
+    nav .logo { height:38px; }
+    nav .links { gap:16px; margin-left:0; flex-wrap:wrap; order:3; width:100%; }
+    nav .links a { font-size:13.5px; }
+    nav .sep, nav .moon { display:none; }
+    nav .live { margin-left:auto; }
+    .chips { grid-template-columns:1fr 1fr; gap:10px; }
+    .chip { padding:12px 14px; } .chip .v { font-size:24px; }
+    .titlerow { flex-direction:column; align-items:flex-start; gap:12px; margin-top:16px; }
+    h1.title { font-size:38px; }
+    .subtitle { font-size:15px; }
+    .livebadge { width:100%; box-sizing:border-box; }
+    .battle { gap:14px; margin-top:14px; }
+    .panel { padding:14px 12px 12px; border-radius:12px; }
+    .pstats { margin-top:12px; }
+    .pstat .v { font-size:19px; } .pstat .l { font-size:10.5px; }
+    .steps { flex-direction:column; }
+    .sarrow { display:none; }
+    .step { flex:1 1 auto; margin:4px 0; }
+    .how { padding:18px 14px; border-radius:12px; }
+    .rcards, .tcards { grid-template-columns:1fr; }
+    .controls { flex-wrap:wrap; gap:8px; }
+  }
+
+  /* ---------- shared page furniture (multi-page split) ---------- */
+  img, canvas, svg { max-width:100%; }
+  .scene canvas { height:auto; }
+  .pagehead { margin-top:24px; }
+  .pagehead h1 { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:44px; line-height:1.05; }
+  .pagehead .subtitle { margin-top:8px; }
+  .pipeline { display:flex; align-items:stretch; margin-top:20px; }
+  .pipebox { flex:1; display:flex; align-items:center; justify-content:center; text-align:center;
+    background:rgba(0,230,118,.07); border:1px solid rgba(0,230,118,.35); border-radius:10px;
+    padding:12px 8px; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14.5px; line-height:1.3; }
+  .pipearrow { flex:0 0 30px; display:flex; align-items:center; justify-content:center; color:var(--green); }
+  .honest { font-size:15px; color:#c4d6c9; line-height:1.65; }
+  .honest b { color:var(--green); font-weight:600; }
+  .cta { display:inline-block; margin-top:18px; background:var(--green); color:#04140a; font-weight:700;
+    font-size:15px; padding:12px 22px; border-radius:9px; text-decoration:none; }
+  .cta:hover { background:#33f08a; }
+  @media (max-width:640px){
+    .pstat { padding:0 10px; }
+    .controls .note { margin-left:0; text-align:left; flex:1 1 100%; max-width:100%; }
+    nav .links a { padding:10px 2px; }
+    .chip .ic svg { width:30px; height:30px; }
+    .pagehead { margin-top:16px; }
+    .pagehead h1 { font-size:32px; }
+    .pipeline { flex-direction:column; }
+    .pipearrow { transform:rotate(90deg); flex:0 0 26px; margin:0 auto; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav>
+    <img class="logo" src="logo.png" alt="SABZ - AI-Adaptive Traffic Signals">
+    <div class="links">
+      <a href="https://htmlpreview.github.io/?https://github.com/pakmultilinks-dot/sabz/blob/main/battle-live/index.html">Live Demo</a>
+      <a href="https://htmlpreview.github.io/?https://github.com/pakmultilinks-dot/sabz/blob/main/battle-live/how.html" class="active">How It Works</a>
+      <a href="https://htmlpreview.github.io/?https://github.com/pakmultilinks-dot/sabz/blob/main/battle-live/results.html">Results</a>
+      <a href="https://htmlpreview.github.io/?https://github.com/pakmultilinks-dot/sabz/blob/main/battle-live/team.html">Team</a>
+      <div class="sep"></div>
+      <span class="moon" aria-hidden="true">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </span>
+      <span class="live"><span class="pulse-dot"></span>Live</span>
+    </div>
+  </nav>
+
+  <div class="pagehead">
+    <h1>How SABZ Works</h1>
+    <div class="subtitle"><b style="color:var(--green)">SABZ</b> plugs into existing intersections using standard components.</div>
+  </div>
+
+  <div class="how">
+    <div class="steps">
+      <div class="step">
+        <div class="tile"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5A1.5 1.5 0 0 1 4 7h9a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 13 17H4a1.5 1.5 0 0 1-1.5-1.5v-7z"/><path d="M14.5 10.5l7-3.5v10l-7-3.5"/></svg></div>
+        <div><div class="st">1. Cameras</div><div class="sd">Count vehicles on every approach in real time.</div></div>
+      </div>
+      <div class="sarrow"><svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div>
+      <div class="step">
+        <div class="tile"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4a3.5 3.5 0 0 1 3.4-2.6A4 4 0 0 1 19 8.6c.9.8 1 2 .3 3A4 4 0 0 1 17 17.9a3.5 3.5 0 0 1-5 1.6V4z"/><path d="M12 4a3.5 3.5 0 0 0-3.4-2.6A4 4 0 0 0 5 8.6c-.9.8-1 2-.3 3A4 4 0 0 0 7 17.9a3.5 3.5 0 0 0 5 1.6V4z" transform="translate(24 0) scale(-1 1)"/></svg></div>
+        <div><div class="st">2. DQN Brain</div><div class="sd">Deep Q-network weighs the traffic and decides every second.</div></div>
+      </div>
+      <div class="sarrow"><svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div>
+      <div class="step">
+        <div class="tile"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1"/></svg></div>
+        <div><div class="st">3. Decision</div><div class="sd">Selects the best signal phase based on current state.</div></div>
+      </div>
+      <div class="sarrow"><svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div>
+      <div class="step">
+        <div class="tile"><svg width="30" height="38" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="2" width="14" height="28" rx="3"/><circle cx="12" cy="8.5" r="2.6"/><circle cx="12" cy="16" r="2.6"/><circle cx="12" cy="23.5" r="2.6"/></svg></div>
+        <div><div class="st">4. Signals</div><div class="sd">Sends commands to existing signal controller.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="how">
+    <h2>The Pipeline</h2>
+    <div class="sub">Every second, live traffic flows through the same six stages.</div>
+    <div class="pipeline"><div class="pipebox">Cameras</div><div class="pipearrow"><svg width="20" height="14" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div><div class="pipebox">Vehicle Count</div><div class="pipearrow"><svg width="20" height="14" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div><div class="pipebox">18-Feature State</div><div class="pipearrow"><svg width="20" height="14" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div><div class="pipebox">DQN Brain</div><div class="pipearrow"><svg width="20" height="14" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div><div class="pipebox">Decision</div><div class="pipearrow"><svg width="20" height="14" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div><div class="pipebox">Signals</div></div>
+  </div>
+
+  <div class="how">
+    <h2>The Brain, Honestly</h2>
+    <p class="honest" style="margin-top:10px">The brain is a <b>Double DQN</b>, a deep Q-network trained in simulation. Every second it reads an <b>18-feature state</b>: queue lengths and approaching vehicles on all four approaches, the current phase, how long the green has run, and how long the red side has been waiting. It then picks one action, hold the green or switch. Two safety rules sit above the brain. A <b>70m dilemma-zone rule</b> blocks a switch while a vehicle is too close to the stop line to stop safely. A <b>starvation guard</b> forces a switch when one road has waited too long, so no road waits forever. The network is small, <b>5,506 parameters</b>, and one decision takes about <b>0.024ms</b>.</p>
+  </div>
+</div>
+</body>
+</html>

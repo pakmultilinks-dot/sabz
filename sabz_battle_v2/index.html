@@ -151,6 +151,33 @@
     .rcards, .tcards { grid-template-columns:1fr; }
     .controls { flex-wrap:wrap; gap:8px; }
   }
+
+  /* ---------- shared page furniture (multi-page split) ---------- */
+  img, canvas, svg { max-width:100%; }
+  .scene canvas { height:auto; }
+  .pagehead { margin-top:24px; }
+  .pagehead h1 { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:44px; line-height:1.05; }
+  .pagehead .subtitle { margin-top:8px; }
+  .pipeline { display:flex; align-items:stretch; margin-top:20px; }
+  .pipebox { flex:1; display:flex; align-items:center; justify-content:center; text-align:center;
+    background:rgba(0,230,118,.07); border:1px solid rgba(0,230,118,.35); border-radius:10px;
+    padding:12px 8px; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14.5px; line-height:1.3; }
+  .pipearrow { flex:0 0 30px; display:flex; align-items:center; justify-content:center; color:var(--green); }
+  .honest { font-size:15px; color:#c4d6c9; line-height:1.65; }
+  .honest b { color:var(--green); font-weight:600; }
+  .cta { display:inline-block; margin-top:18px; background:var(--green); color:#04140a; font-weight:700;
+    font-size:15px; padding:12px 22px; border-radius:9px; text-decoration:none; }
+  .cta:hover { background:#33f08a; }
+  @media (max-width:640px){
+    .pstat { padding:0 10px; }
+    .controls .note { margin-left:0; text-align:left; flex:1 1 100%; max-width:100%; }
+    nav .links a { padding:10px 2px; }
+    .chip .ic svg { width:30px; height:30px; }
+    .pagehead { margin-top:16px; }
+    .pagehead h1 { font-size:32px; }
+    .pipeline { flex-direction:column; }
+    .pipearrow { transform:rotate(90deg); flex:0 0 26px; margin:0 auto; }
+  }
 </style>
 </head>
 <body>
@@ -160,10 +187,10 @@
   <nav>
     <img class="logo" src="logo.png" alt="SABZ - AI-Adaptive Traffic Signals">
     <div class="links">
-      <a href="#demo" class="active">Live Demo</a>
-      <a href="#how">How It Works</a>
-      <a href="#results">Results</a>
-      <a href="#team">Team</a>
+      <a href="https://htmlpreview.github.io/?https://github.com/pakmultilinks-dot/sabz/blob/main/battle-live/index.html" class="active">Live Demo</a>
+      <a href="https://htmlpreview.github.io/?https://github.com/pakmultilinks-dot/sabz/blob/main/battle-live/how.html">How It Works</a>
+      <a href="https://htmlpreview.github.io/?https://github.com/pakmultilinks-dot/sabz/blob/main/battle-live/results.html">Results</a>
+      <a href="https://htmlpreview.github.io/?https://github.com/pakmultilinks-dot/sabz/blob/main/battle-live/team.html">Team</a>
       <div class="sep"></div>
       <span class="moon" aria-hidden="true">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -258,56 +285,6 @@
     <button onclick="setSpeed(4)" id="sp4">4x</button>
     <button onclick="resetAll()">Restart battle</button>
     <span class="note">Both intersections get identical rush-hour demand. The fixed timer switches every 30s blindly. The SABZ brain decides every second, with a 70m dilemma-zone safety override.</span>
-  </div>
-
-  <!-- HOW IT WORKS -->
-  <div class="how" id="how">
-    <h2>How SABZ Works</h2>
-    <div class="sub"><b>SABZ</b> plugs into existing intersections using standard components.</div>
-    <div class="steps">
-      <div class="step">
-        <div class="tile"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8.5A1.5 1.5 0 0 1 4 7h9a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 13 17H4a1.5 1.5 0 0 1-1.5-1.5v-7z"/><path d="M14.5 10.5l7-3.5v10l-7-3.5"/></svg></div>
-        <div><div class="st">1. Cameras</div><div class="sd">Count vehicles on every approach in real time.</div></div>
-      </div>
-      <div class="sarrow"><svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div>
-      <div class="step">
-        <div class="tile"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4a3.5 3.5 0 0 1 3.4-2.6A4 4 0 0 1 19 8.6c.9.8 1 2 .3 3A4 4 0 0 1 17 17.9a3.5 3.5 0 0 1-5 1.6V4z"/><path d="M12 4a3.5 3.5 0 0 0-3.4-2.6A4 4 0 0 0 5 8.6c-.9.8-1 2-.3 3A4 4 0 0 0 7 17.9a3.5 3.5 0 0 0 5 1.6V4z" transform="translate(24 0) scale(-1 1)"/></svg></div>
-        <div><div class="st">2. DQN Brain</div><div class="sd">Deep Q-network weighs the traffic and decides every second.</div></div>
-      </div>
-      <div class="sarrow"><svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div>
-      <div class="step">
-        <div class="tile"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1"/></svg></div>
-        <div><div class="st">3. Decision</div><div class="sd">Selects the best signal phase based on current state.</div></div>
-      </div>
-      <div class="sarrow"><svg width="30" height="18" viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9h25M21 3l6 6-6 6"/></svg></div>
-      <div class="step">
-        <div class="tile"><svg width="30" height="38" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="2" width="14" height="28" rx="3"/><circle cx="12" cy="8.5" r="2.6"/><circle cx="12" cy="16" r="2.6"/><circle cx="12" cy="23.5" r="2.6"/></svg></div>
-        <div><div class="st">4. Signals</div><div class="sd">Sends commands to existing signal controller.</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- RESULTS -->
-  <div class="how" id="results">
-    <h2>Results</h2>
-    <div class="sub">Benchmarked head to head against standard controllers in the SABZ simulator.</div>
-    <div class="rcards">
-      <div class="rcard"><div class="rv">2/3</div><div class="rl">Scenarios won against an actuated controller: asymmetric rush, balanced flow, school zone</div></div>
-      <div class="rcard"><div class="rv">7.3s</div><div class="rl">Best average delay per vehicle across the benchmark runs</div></div>
-      <div class="rcard"><div class="rv">47%</div><div class="rl">Largest delay cut seen in the live battle above, with identical traffic on both sides</div></div>
-    </div>
-  </div>
-
-  <!-- TEAM -->
-  <div class="how" id="team">
-    <h2>Team SABZ</h2>
-    <div class="sub">Students of Lahore Garrison University, AI Championship finalists.</div>
-    <div class="tcards">
-      <div class="tcard"><div class="tn">Abdur Rehman</div><div class="tr">Team Lead</div></div>
-      <div class="tcard"><div class="tn">M. Bilal</div><div class="tr">The Brain: the DQN model</div></div>
-      <div class="tcard"><div class="tn">Awais</div><div class="tr">The Demo: live system</div></div>
-      <div class="tcard"><div class="tn">Daud</div><div class="tr">The Vision</div></div>
-    </div>
   </div>
 
 </div>
