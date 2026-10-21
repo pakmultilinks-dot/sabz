@@ -431,12 +431,13 @@ function stepSim(sim){
     for(let i=0;i<a.cars.length;i++){
       const c = a.cars[i];
       let wantV = VMAX;
-      const crossed = c.s > a.sStop + 6;
+      const front = c.s + CAR_L/2;
+      const crossed = front > a.sStop + 2;
       if(!crossed && light!=='g'){
-        const dLine = a.sStop - (c.s + CAR_L/2);
-        // dilemma zone: too close and too fast to stop safely -> run it
-        const dilemma = dLine < 12 && c.v > 2.0;
-        if(!dilemma && dLine < 90) wantV = 0;
+        // STRICT: one road open at a time. Every car stops at the line
+        // on red or amber. No exceptions, no running the light.
+        const dLine = a.sStop - front;
+        if(dLine < 170) wantV = 0;
       }
       if(i>0){
         const ahead = a.cars[i-1];
@@ -446,6 +447,11 @@ function stepSim(sim){
       if(c.v < wantV) c.v = Math.min(wantV, c.v + 0.14);
       else c.v = Math.max(wantV, c.v - 0.6);
       c.s += c.v;
+      // HARD CLAMP: a car that has not crossed can never pass the stop
+      // line while its light is not green.
+      if(light!=='g' && front <= a.sStop && (c.s + CAR_L/2) > a.sStop){
+        c.s = a.sStop - CAR_L/2; c.v = 0;
+      }
       c.age++;
       if(c.v < 0.3 && c.s < a.sStop){ c.wait++; sim.totalWait++; sim._tw++; }
     }
