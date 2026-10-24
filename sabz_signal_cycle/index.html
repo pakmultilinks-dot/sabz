@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SABZ Signal Cycle - Four Roads, One Green</title>
+<title>SABZ Signal Cycle v2 - Photoreal</title>
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
   html, body { margin:0; padding:0; background:#0B1220; overflow:hidden; }
@@ -11,52 +11,48 @@
 </style>
 </head>
 <body>
-<canvas id="cv" width="1920" height="1080"></canvas>
+<canvas id="cv" width="1600" height="1000"></canvas>
 <script>
-// SABZ signal-cycle demo: four approaches (N, E, S, W), four signals,
-// exactly ONE green at a time. Cycle N -> E -> S -> W, green 12s, amber 1s.
-// Cars on a non-green road are frozen solid (speed exactly 0).
-// After the cycle part, a 70m dilemma-zone safety scene closes the video.
+// SABZ signal-cycle v2: SAME logic/timing/HUD as v1, but the scene is the
+// PHOTOREAL plate from battle-live (scene_bg.jpg) with photo car sprites,
+// soft shadows, grain and vignette. Canvas 1600x1000; cars at battle-live
+// absolute scale so 15+ queues fit (spawn extends past the frame edge).
+// Four roads, four signals, exactly ONE green at a time. Cycle N -> E -> S -> W,
+// green 12s, amber 1s. Then the 70m dilemma-zone safety scene.
 const GREEN = '#00E676', AMBER = '#ffb020', RED = '#ff3b3b', INK = '#0B1220';
-const W = 1920, H = 1080;
+const W = 1600, H = 1000;
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 
-// scene geometry (scene area y 72..972)
-const CX = 960, CY = 516;
-const ROAD_V = { x0: 850, x1: 1070 };   // vertical road
-const ROAD_H = { y0: 406, y1: 626 };    // horizontal road
-const CAR_L = 44, CAR_W = 20, GAP = 10, VMAX = 3.0;
+// photo plate geometry, calibrated from battle-live (780x380) to this canvas:
+// photo drawn at (0,60,1600,860); x scale 1600/780, y scale 860/380, y offset 60.
+const CX = 800, CY = 490;
+const CAR_L = 36, CAR_W = 18, GAP = 12, VMAX = 3.2;
 const GREEN_TICKS = 720, AMBER_TICKS = 60;  // 12s green, 1s amber
+const SPAWN_CLEAR = 54; // CAR_L+GAP+6, battle-live spawn rule
 
 function lcg(seed){ let s = seed; return ()=>{ s = (s*1103515245 + 12345) % 2147483648; return s/2147483648; }; }
 const rnd = lcg(20241024);
 
 const ROADS = [
-  { id:'N', name:'NORTH', sx:930,  sy:72,   dx:0,  dy:1,  stop:406,  rate:0.0050 },
-  { id:'E', name:'EAST',  sx:1920, sy:566,  dx:-1, dy:0,  stop:1070, rate:0.0085 },
-  { id:'S', name:'SOUTH', sx:990,  sy:960,  dx:0,  dy:-1, stop:626,  rate:0.0042 },
-  { id:'W', name:'WEST',  sx:0,    sy:496,  dx:1,  dy:0,  stop:850,  rate:0.0075 },
+  { id:'N', name:'NORTH', sx:780,  sy:-240, dx:0,  dy:1,  stop:252,  rate:0.0050 },
+  { id:'E', name:'EAST',  sx:1900, sy:467,  dx:-1, dy:0,  stop:1038, rate:0.0085 },
+  { id:'S', name:'SOUTH', sx:823,  sy:1220, dx:0,  dy:-1, stop:728,  rate:0.0042 },
+  { id:'W', name:'WEST',  sx:-300, sy:513,  dx:1,  dy:0,  stop:564,  rate:0.0075 },
 ];
 ROADS.forEach(a=>{
   a.sStop = Math.abs(a.stop - (a.dx!==0 ? a.sx : a.sy));
-  a.sExit = (a.dx!==0 ? 1980 : 948) + 60;
+  a.sExit = (a.dx!==0 ? 1900 : 1220) + 60;
   a.cars = []; a.passed = 0;
 });
 const ORDER = ['N','E','S','W'];
 const roadById = id => ROADS.find(r=>r.id===id);
 
-const S = {
-  phaseIdx: 0, phaseState: 'green', phaseT: 0,
-  cycleTicks: 0, mode: 'cycle',
-  // safety scene state
-  safY: 80, safPhase: 'ending',
-};
+const S = { phaseIdx: 0, phaseState: 'green', phaseT: 0, cycleTicks: 0, mode: 'cycle' };
 function currentRoad(){ return ORDER[S.phaseIdx]; }
 function roadLight(a){
   if (S.mode === 'safety'){
-    // safety scene: N holds green until the car clears, then amber, then E green
-    const st = safetyState(safetyTNow());
+    const st = safetyState(safetyClock);
     if (a.id === 'N') return st.phase === 'switching' ? 'a' : (st.phase === 'eastgreen' ? 'r' : 'g');
     if (a.id === 'E') return st.phase === 'eastgreen' ? 'g' : 'r';
     return 'r';
@@ -65,7 +61,6 @@ function roadLight(a){
   return 'r';
 }
 let safetyClock = 0;
-function safetyTNow(){ return safetyClock; }
 function waitingOf(a){ return a.cars.filter(c => (c.s + CAR_L/2) < a.sStop).length; }
 
 function stepCycle(){
@@ -75,10 +70,8 @@ function stepCycle(){
   else if (S.phaseState === 'amber' && S.phaseT >= AMBER_TICKS){
     S.phaseState = 'green'; S.phaseT = 0; S.phaseIdx = (S.phaseIdx + 1) % 4;
   }
-  const greenId = currentRoad();
   ROADS.forEach(a=>{
-    // spawn
-    if (rnd() < a.rate && !a.cars.some(c => c.s < 64)){
+    if (rnd() < a.rate && !a.cars.some(c => c.s < SPAWN_CLEAR)){
       a.cars.push({ s:0, v:0, sprite:(rnd()*6)|0 });
     }
     a.cars.sort((p,q)=>q.s-p.s);
@@ -89,15 +82,8 @@ function stepCycle(){
       const front = c.s + CAR_L/2;
       const crossed = front >= a.sStop;
       if (!crossed && light !== 'g'){
-        // RED ROAD RULE: a car may only drive up to the back of its own
-        // queue (or up to the stop line if it leads the queue) and then it
-        // freezes solid. It can never cross the line or enter the box.
-        // (A blanket freeze was tested first: it strands the first car at
-        // the spawn point and caps every queue at ~3 cars, so a visible
-        // 5 -> 10 -> 15 queue could never form. Queued cars here still
-        // have speed exactly 0; only cars travelling to join the tail move.
-        // The stop-line brake applies to EVERY uncrossed car, so a platoon
-        // tail cannot follow its leader through on amber.)
+        // RED ROAD RULE (v1, unchanged): drive only up to the back of your
+        // own queue, then freeze solid. Never cross the line on red/amber.
         const dLine = a.sStop - front;
         if (dLine < 120) wantV = 0;
       }
@@ -109,7 +95,6 @@ function stepCycle(){
       if (c.v < wantV) c.v = Math.min(wantV, c.v + 0.14);
       else c.v = Math.max(wantV, c.v - 0.6);
       c.s += c.v;
-      // HARD CLAMP: never cross the stop line on red/amber.
       if (light !== 'g' && front < a.sStop && (c.s + CAR_L/2) > a.sStop){
         c.s = a.sStop - CAR_L/2; c.v = 0;
       }
@@ -122,8 +107,24 @@ function stepCycle(){
 
 // ---------------- assets ----------------
 const LOGO = new Image(); LOGO.src = 'logo.png';
+const BGIMG = new Image(); BGIMG.src = 'scene_bg.jpg';
 const CAR_IMGS = [];
 for (let i=0;i<6;i++){ const im = new Image(); im.src = 'car'+i+'.png'; CAR_IMGS.push(im); }
+const GRAIN = (()=>{
+  const gcv = document.createElement('canvas'); gcv.width = 1600; gcv.height = 860;
+  const g = gcv.getContext('2d');
+  const id = g.createImageData(1600, 860), d = id.data;
+  for (let i=0;i<d.length;i+=4){
+    const n = (Math.random()-0.5)*22;
+    d[i] = d[i+1] = d[i+2] = n > 0 ? 255 : 0;
+    d[i+3] = Math.abs(n);
+  }
+  g.putImageData(id, 0, 0);
+  const vg = g.createRadialGradient(800, 430, 361, 800, 430, 992);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.20)');
+  g.fillStyle = vg; g.fillRect(0, 0, 1600, 860);
+  return gcv;
+})();
 
 // ---------------- drawing ----------------
 function roundRect(x,y,w,h,r){
@@ -135,109 +136,75 @@ function pill(x,y,w,h,fill){
   ctx.fillStyle = fill; roundRect(x,y,w,h,16); ctx.fill();
 }
 function drawSignalBox(x, y, roadId, opts){
-  // opts: {countdown: string|null, sub: string|null}
-  const w = 116, h = 226;
-  ctx.fillStyle = 'rgba(4,10,8,0.96)'; roundRect(x,y,w,h,14); ctx.fill();
-  ctx.strokeStyle = '#39423c'; ctx.lineWidth = 2; roundRect(x,y,w,h,14); ctx.stroke();
+  const w = 97, h = 188;
+  ctx.fillStyle = 'rgba(4,10,8,0.96)'; roundRect(x,y,w,h,12); ctx.fill();
+  ctx.strokeStyle = '#39423c'; ctx.lineWidth = 2; roundRect(x,y,w,h,12); ctx.stroke();
   const lamp = (yy, col, on)=>{
-    if (on){ ctx.shadowColor = col; ctx.shadowBlur = 26; }
+    if (on){ ctx.shadowColor = col; ctx.shadowBlur = 22; }
     ctx.fillStyle = on ? col : '#232a26';
-    ctx.beginPath(); ctx.arc(x+w/2, yy, 27, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+w/2, yy, 22, 0, 7); ctx.fill();
     ctx.shadowBlur = 0;
-    if (on){ ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.beginPath(); ctx.arc(x+w/2-8, yy-8, 9, 0, 7); ctx.fill(); }
+    if (on){ ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.beginPath(); ctx.arc(x+w/2-7, yy-7, 7, 0, 7); ctx.fill(); }
   };
   const l = opts.light;
-  lamp(y+42, RED, l==='r'); lamp(y+113, AMBER, l==='a'); lamp(y+184, GREEN, l==='g');
+  lamp(y+35, RED, l==='r'); lamp(y+94, AMBER, l==='a'); lamp(y+153, GREEN, l==='g');
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#eaf3ec'; ctx.font = '700 30px "Space Grotesk", sans-serif';
-  ctx.fillText(roadId, x+w/2, y+h+36);
-  // countdown / wait line goes ABOVE the box (clean grass), never below
-  // where it would collide with the road edge or the bottom HUD cards.
+  ctx.fillStyle = '#eaf3ec'; ctx.font = '700 25px "Space Grotesk", sans-serif';
+  ctx.fillText(roadId, x+w/2, y+h+30);
   if (opts.countdown){
-    ctx.fillStyle = l==='g' ? GREEN : AMBER; ctx.font = '700 40px "Space Grotesk", sans-serif';
-    ctx.fillText(opts.countdown, x+w/2, y-16);
+    ctx.fillStyle = l==='g' ? GREEN : AMBER; ctx.font = '700 33px "Space Grotesk", sans-serif';
+    ctx.fillText(opts.countdown, x+w/2, y-14);
   } else if (opts.sub){
-    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 26px "Space Grotesk", sans-serif';
-    ctx.fillText(opts.sub, x+w/2, y-14);
+    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 22px "Space Grotesk", sans-serif';
+    ctx.fillText(opts.sub, x+w/2, y-12);
   }
   ctx.textAlign = 'left';
 }
-function drawScene(){
-  // grass
-  ctx.fillStyle = '#1d3a26'; ctx.fillRect(0, 72, W, 900);
-  // sidewalks
-  ctx.fillStyle = '#596066';
-  ctx.fillRect(ROAD_V.x0-14, 72, (ROAD_V.x1-ROAD_V.x0)+28, 900);
-  ctx.fillRect(0, ROAD_H.y0-14, W, (ROAD_H.y1-ROAD_H.y0)+28);
-  // asphalt
-  ctx.fillStyle = '#26292e';
-  ctx.fillRect(ROAD_V.x0, 72, ROAD_V.x1-ROAD_V.x0, 900);
-  ctx.fillRect(0, ROAD_H.y0, W, ROAD_H.y1-ROAD_H.y0);
-  ctx.fillStyle = '#2a2e34';
-  ctx.fillRect(ROAD_V.x0, ROAD_H.y0, ROAD_V.x1-ROAD_V.x0, ROAD_H.y1-ROAD_H.y0);
-  // edge lines
-  ctx.fillStyle = 'rgba(225,232,238,0.42)';
-  ctx.fillRect(ROAD_V.x0+2, 72, 2, ROAD_H.y0-72); ctx.fillRect(ROAD_V.x1-4, 72, 2, ROAD_H.y0-72);
-  ctx.fillRect(ROAD_V.x0+2, ROAD_H.y1, 2, 972-ROAD_H.y1); ctx.fillRect(ROAD_V.x1-4, ROAD_H.y1, 2, 972-ROAD_H.y1);
-  ctx.fillRect(0, ROAD_H.y0+2, ROAD_V.x0, 2); ctx.fillRect(ROAD_V.x1, ROAD_H.y0+2, W-ROAD_V.x1, 2);
-  ctx.fillRect(0, ROAD_H.y1-4, ROAD_V.x0, 2); ctx.fillRect(ROAD_V.x1, ROAD_H.y1-4, W-ROAD_V.x1, 2);
-  // centre dashes
-  ctx.fillStyle = 'rgba(235,240,245,0.55)';
-  for (let y=80; y<ROAD_H.y0-16; y+=30) ctx.fillRect(CX-2, y, 4, 16);
-  for (let y=ROAD_H.y1+8; y<960; y+=30) ctx.fillRect(CX-2, y, 4, 16);
-  for (let x=8; x<ROAD_V.x0-16; x+=30) ctx.fillRect(x, CY-2, 16, 4);
-  for (let x=ROAD_V.x1+8; x<W-8; x+=30) ctx.fillRect(x, CY-2, 16, 4);
-  // zebra crossings (all four entries)
-  ctx.fillStyle = 'rgba(228,233,238,0.78)';
-  for (let x=ROAD_V.x0+8; x<ROAD_V.x1-10; x+=17){ ctx.fillRect(x, ROAD_H.y0-34, 9, 24); ctx.fillRect(x, ROAD_H.y1+10, 9, 24); }
-  for (let y=ROAD_H.y0+8; y<ROAD_H.y1-10; y+=17){ ctx.fillRect(ROAD_V.x0-34, y, 24, 9); ctx.fillRect(ROAD_V.x1+10, y, 24, 9); }
-  // stop lines (entry lanes only)
-  ctx.fillStyle = 'rgba(240,244,248,0.95)';
-  ctx.fillRect(ROAD_V.x0+3, ROAD_H.y0-4, 100, 5);    // N entry lane
-  ctx.fillRect(ROAD_V.x1-103, ROAD_H.y1-1, 100, 5); // S entry lane
-  ctx.fillRect(ROAD_V.x0-4, ROAD_H.y0+3, 5, 100);   // W entry lane
-  ctx.fillRect(ROAD_V.x1-1, ROAD_H.y1-103, 5, 100); // E entry lane
-  // corner trees (simple, dark style)
-  const treeSpots = [[180,180],[1740,180],[180,820],[1740,820],[420,180],[1500,820],[180,300],[1740,700]];
-  treeSpots.forEach(([tx,ty])=>{
-    ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(tx+5, ty+7, 34, 28, 0, 0, 7); ctx.fill();
-    const g = ctx.createRadialGradient(tx-10, ty-10, 5, tx, ty, 36);
-    g.addColorStop(0, '#4d8c46'); g.addColorStop(1, '#1c3f22');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(tx, ty, 34, 0, 7); ctx.fill();
-  });
-}
-function drawCar(x, y, heading, sprite){
+function drawCar(x, y, heading, sprite, stopped, L){
   const img = CAR_IMGS[sprite || 0];
+  const len = L || (CAR_L + 5);
   ctx.save(); ctx.translate(x, y);
-  ctx.fillStyle = 'rgba(0,0,0,0.4)';
-  ctx.beginPath(); ctx.ellipse(-3, 4, 30, 15, heading, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,0.38)';
+  ctx.beginPath(); ctx.ellipse(-3, 4, len/2+4, len*0.23+3, heading, 0, 7); ctx.fill();
   if (img && img.complete && img.naturalWidth){
     ctx.rotate(heading + Math.PI/2);
-    const L = 52, wdt = L * img.naturalWidth / img.naturalHeight;
-    ctx.drawImage(img, -wdt/2, -L/2, wdt, L);
+    const wdt = len * img.naturalWidth / img.naturalHeight;
+    ctx.drawImage(img, -wdt/2, -len/2, wdt, len);
+    if (stopped){
+      ctx.fillStyle = '#ff2d2d'; ctx.shadowColor = '#ff2d2d'; ctx.shadowBlur = 8;
+      ctx.fillRect(-wdt/2+2.5, len/2-3.6, 4.6, 2.6); ctx.fillRect(wdt/2-7.1, len/2-3.6, 4.6, 2.6);
+      ctx.shadowBlur = 0;
+    } else {
+      ctx.fillStyle = 'rgba(255,244,200,0.85)';
+      ctx.fillRect(-wdt/2+2.5, -len/2+0.8, 4, 2); ctx.fillRect(wdt/2-6.5, -len/2+0.8, 4, 2);
+    }
   } else {
     ctx.rotate(heading);
-    ctx.fillStyle = '#c7ccd1'; roundRect(-11, -26, 22, 52, 6); ctx.fill();
+    ctx.fillStyle = '#c7ccd1'; roundRect(-9, -len/2, 18, len, 5); ctx.fill();
   }
   ctx.restore();
 }
-function drawCycle(){
-  drawScene();
+function drawPhotoScene(){
+  if (BGIMG.complete && BGIMG.naturalWidth) ctx.drawImage(BGIMG, 0, 60, 1600, 860);
+  else { ctx.fillStyle = '#1d3a26'; ctx.fillRect(0, 60, 1600, 860); }
+}
+function drawCycleCars(){
   ROADS.forEach(a=>{
     const heading = Math.atan2(a.dy, a.dx);
     a.cars.forEach(c=>{
-      drawCar(a.sx + a.dx*c.s, a.sy + a.dy*c.s, heading, c.sprite);
+      drawCar(a.sx + a.dx*c.s, a.sy + a.dy*c.s, heading, c.sprite, c.v < 0.3);
     });
   });
-  // four corner signals
+}
+function drawCornerSignals(){
   const greenId = currentRoad();
   const remain = S.phaseState === 'green' ? Math.ceil((GREEN_TICKS - S.phaseT)/60)
                                           : Math.ceil((AMBER_TICKS - S.phaseT)/60);
   const spec = {
-    N: { x: 56,  y: 108, light: roadLight(roadById('N')) },
-    E: { x: 1748, y: 108, light: roadLight(roadById('E')) },
-    S: { x: 1748, y: 700, light: roadLight(roadById('S')) },
-    W: { x: 56,  y: 700, light: roadLight(roadById('W')) },
+    N: { x: 47,   y: 90,  light: roadLight(roadById('N')) },
+    E: { x: 1456, y: 90,  light: roadLight(roadById('E')) },
+    S: { x: 1456, y: 650, light: roadLight(roadById('S')) },
+    W: { x: 47,   y: 650, light: roadLight(roadById('W')) },
   };
   Object.entries(spec).forEach(([id, sp])=>{
     const a = roadById(id);
@@ -248,156 +215,163 @@ function drawCycle(){
       sub: active ? null : 'WAIT ' + waitingOf(a),
     });
   });
-  // center timer pill
+  return { greenId, remain };
+}
+function drawCenterPill(label, col){
+  ctx.font = '700 38px "Space Grotesk", sans-serif';
+  const tw = ctx.measureText(label).width + 54;
+  pill(CX - tw/2, 72, tw, 54, col);
+  ctx.fillStyle = '#06130c'; ctx.textAlign = 'center';
+  ctx.fillText(label, CX, 109);
+  ctx.textAlign = 'left';
+}
+function drawRoadCards(){
+  const cw = 363, ch = 68, gap = 22, y = 924;
+  ROADS.forEach((a, i)=>{
+    const x = 40 + i*(cw+gap);
+    ctx.fillStyle = 'rgba(0,0,0,0.55)'; roundRect(x, y, cw, ch, 10); ctx.fill();
+    ctx.strokeStyle = '#2a3a5f'; ctx.lineWidth = 1.5; roundRect(x, y, cw, ch, 10); ctx.stroke();
+    const l = roadLight(a);
+    const col = l==='g' ? GREEN : (l==='a' ? AMBER : RED);
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x+23, y+25, 10, 0, 7); ctx.fill();
+    ctx.fillStyle = '#eaf3ec'; ctx.font = '700 25px "Space Grotesk", sans-serif';
+    ctx.fillText(a.name, x+43, y+33);
+    ctx.fillStyle = col; ctx.font = '700 20px "Space Grotesk", sans-serif';
+    ctx.fillText(l==='g' ? 'GREEN' : (l==='a' ? 'AMBER' : 'RED'), x+43, y+60);
+    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 18px "Space Grotesk", sans-serif';
+    ctx.fillText('WAITING', x+208, y+28);
+    ctx.fillStyle = '#ffffff'; ctx.font = '700 33px "Space Grotesk", sans-serif';
+    ctx.fillText(String(waitingOf(a)), x+208, y+61);
+    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 18px "Space Grotesk", sans-serif';
+    ctx.fillText('PASSED', x+300, y+28);
+    ctx.fillStyle = '#ffffff'; ctx.font = '700 33px "Space Grotesk", sans-serif';
+    ctx.fillText(String(a.passed), x+300, y+61);
+  });
+}
+function drawTopBar(){
+  ctx.fillStyle = INK; ctx.fillRect(0, 0, W, 60);
+  if (LOGO.complete && LOGO.naturalWidth){
+    const h = 46, w = h * LOGO.naturalWidth / LOGO.naturalHeight;
+    ctx.drawImage(LOGO, 20, 7, w, h);
+  }
+  ctx.fillStyle = '#eaf3ec'; ctx.font = '700 32px "Space Grotesk", sans-serif';
+  ctx.fillText('SABZ SIGNAL CYCLE', 175, 40);
+  ctx.fillStyle = '#9fb4a7'; ctx.font = '600 20px "Space Grotesk", sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('FOUR ROADS. FOUR SIGNALS. ONE GREEN AT A TIME.', W-24, 38);
+  ctx.textAlign = 'left';
+}
+function drawCycle(){
+  drawPhotoScene();
+  drawCycleCars();
+  ctx.drawImage(GRAIN, 0, 60);
+  const { greenId, remain } = drawCornerSignals();
   const road = roadById(greenId);
   const label = S.phaseState === 'green'
     ? road.name + ' GREEN ' + String(remain).padStart(2,'0') + 's'
     : road.name + ' AMBER ' + String(remain).padStart(2,'0') + 's';
-  ctx.font = '700 46px "Space Grotesk", sans-serif';
-  const tw = ctx.measureText(label).width + 64;
-  pill(CX - tw/2, 88, tw, 64, S.phaseState === 'green' ? GREEN : AMBER);
-  ctx.fillStyle = '#06130c'; ctx.textAlign = 'center';
-  ctx.fillText(label, CX, 132);
-  ctx.textAlign = 'left';
+  drawCenterPill(label, S.phaseState === 'green' ? GREEN : AMBER);
   drawRoadCards();
 }
-function drawRoadCards(){
-  const cw = 440, ch = 92, gap = 27, y = 976;
-  ROADS.forEach((a, i)=>{
-    const x = 40 + i*(cw+gap);
-    ctx.fillStyle = 'rgba(0,0,0,0.55)'; roundRect(x, y, cw, ch, 12); ctx.fill();
-    ctx.strokeStyle = '#2a3a5f'; ctx.lineWidth = 1.5; roundRect(x, y, cw, ch, 12); ctx.stroke();
-    const l = roadLight(a);
-    const col = l==='g' ? GREEN : (l==='a' ? AMBER : RED);
-    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x+28, y+30, 12, 0, 7); ctx.fill();
-    ctx.fillStyle = '#eaf3ec'; ctx.font = '700 30px "Space Grotesk", sans-serif';
-    ctx.fillText(a.name, x+52, y+40);
-    ctx.fillStyle = col; ctx.font = '700 24px "Space Grotesk", sans-serif';
-    ctx.fillText(l==='g' ? 'GREEN' : (l==='a' ? 'AMBER' : 'RED'), x+52, y+72);
-    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 22px "Space Grotesk", sans-serif';
-    ctx.fillText('WAITING', x+250, y+34);
-    ctx.fillStyle = '#ffffff'; ctx.font = '700 40px "Space Grotesk", sans-serif';
-    ctx.fillText(String(waitingOf(a)), x+250, y+74);
-    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 22px "Space Grotesk", sans-serif';
-    ctx.fillText('PASSED', x+360, y+34);
-    ctx.fillStyle = '#ffffff'; ctx.font = '700 40px "Space Grotesk", sans-serif';
-    ctx.fillText(String(a.passed), x+360, y+74);
-  });
-}
-function drawTopBar(){
-  ctx.fillStyle = INK; ctx.fillRect(0, 0, W, 72);
-  if (LOGO.complete && LOGO.naturalWidth){
-    const h = 56, w = h * LOGO.naturalWidth / LOGO.naturalHeight;
-    ctx.drawImage(LOGO, 24, 8, w, h);
-  }
-  ctx.fillStyle = '#eaf3ec'; ctx.font = '700 38px "Space Grotesk", sans-serif';
-  ctx.fillText('SABZ SIGNAL CYCLE', 210, 48);
-  ctx.fillStyle = '#9fb4a7'; ctx.font = '600 24px "Space Grotesk", sans-serif';
-  ctx.textAlign = 'right';
-  ctx.fillText('FOUR ROADS. FOUR SIGNALS. ONE GREEN AT A TIME.', W-28, 46);
-  ctx.textAlign = 'left';
-}
 
-// ---------------- safety scene (70m dilemma zone) ----------------
-// Road: vertical, x 810..1110. Stop line y=700. Zone top y=80 => 620px = 70m.
-// Car speed 62 px/s => 70m in ~10s.
-const SAF = { top: 80, stop: 700, pxPerM: 620/70, speed: 62 };
+// ---------------- safety scene (70m dilemma zone, photoreal zoom) ----------------
+// Zoomed crop of the photo's north approach: src (600,0,360,380) -> dest (350,60,900,860).
+// Road in dest: x 565..1057, lane x 750, stop line y 465. Zone 60..465 = 405px = 70m.
+const SAF = { destX: 350, destY: 60, destW: 900, destH: 860, laneX: 750, stopY: 465, topY: 60, pxPerM: 405/70, speed: 40.5 };
 function safetyState(t){
-  // t = seconds since safety segment started (video time - 81)
   if (t < 5) return { phase:'ending', endIn: Math.ceil(5 - t) };
   if (t < 10) return { phase:'held' };
   if (t < 11) return { phase:'switching' };
   return { phase:'eastgreen' };
 }
 function drawSafety(t){
-  // background
-  ctx.fillStyle = '#1d3a26'; ctx.fillRect(0, 72, W, 900);
-  ctx.fillStyle = '#26292e'; ctx.fillRect(810, 72, 300, 900);
-  // 70m zone shading
-  ctx.fillStyle = 'rgba(0,230,118,0.10)'; ctx.fillRect(810, SAF.top, 300, SAF.stop - SAF.top);
-  ctx.strokeStyle = GREEN; ctx.lineWidth = 3; ctx.setLineDash([18, 14]);
-  ctx.strokeRect(810, SAF.top, 300, SAF.stop - SAF.top);
+  if (BGIMG.complete && BGIMG.naturalWidth) ctx.drawImage(BGIMG, 600, 0, 360, 380, SAF.destX, SAF.destY, SAF.destW, SAF.destH);
+  else { ctx.fillStyle = '#1d3a26'; ctx.fillRect(0, 60, 1600, 860); }
+  // 70m zone shading + dashed border over the road
+  ctx.fillStyle = 'rgba(0,230,118,0.10)'; ctx.fillRect(565, SAF.topY, 492, SAF.stopY - SAF.topY);
+  ctx.strokeStyle = GREEN; ctx.lineWidth = 3; ctx.setLineDash([16, 12]);
+  ctx.strokeRect(565, SAF.topY, 492, SAF.stopY - SAF.topY);
   ctx.setLineDash([]);
-  // lane dashes
-  ctx.fillStyle = 'rgba(235,240,245,0.55)';
-  for (let y=90; y<SAF.stop-20; y+=30) ctx.fillRect(958, y, 4, 16);
-  // stop line + crosswalk
-  ctx.fillStyle = 'rgba(240,244,248,0.95)'; ctx.fillRect(810, SAF.stop-4, 300, 5);
-  ctx.fillStyle = 'rgba(228,233,238,0.78)';
-  for (let x=820; x<1100; x+=17) ctx.fillRect(x, SAF.stop+12, 9, 24);
-  // zone label
-  pill(830, 96, 420, 48, 'rgba(4,10,8,0.85)');
-  ctx.fillStyle = GREEN; ctx.font = '700 26px "Space Grotesk", sans-serif';
-  ctx.fillText('70m DILEMMA ZONE', 850, 128);
+  // bright stop line
+  ctx.fillStyle = 'rgba(240,244,248,0.95)'; ctx.fillRect(565, SAF.stopY - 2, 492, 4);
+  // zone label, vertical along the left edge of the zone (keeps it clear
+  // of the center pill, which spans the top of the frame)
+  ctx.save();
+  ctx.translate(548, 490);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillStyle = 'rgba(4,10,8,0.85)';
+  roundRect(-115, -17, 230, 34, 10); ctx.fill();
+  ctx.fillStyle = GREEN; ctx.font = '700 22px "Space Grotesk", sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('70m DILEMMA ZONE', 0, 7);
+  ctx.restore();
+  ctx.textAlign = 'left';
   // the chasing car
-  const carY = SAF.top + SAF.speed * Math.min(t, 10);
-  const dist = Math.max(0, (SAF.stop - carY) / SAF.pxPerM);
+  const carY = SAF.topY + SAF.speed * Math.min(t, 10);
+  const dist = Math.max(0, (SAF.stopY - carY) / SAF.pxPerM);
   const cleared = t >= 10;
-  drawCar(960, carY, Math.PI/2, 2);
+  drawCar(SAF.laneX, carY, Math.PI/2, 2, false, 82);
   // distance readout above the car
   const dLabel = cleared ? 'CLEAR' : Math.round(dist) + 'm';
-  ctx.font = '700 72px "Space Grotesk", sans-serif';
-  const dw = ctx.measureText(dLabel).width + 56;
-  const dy = Math.max(150, carY - 110);
-  pill(960 - dw/2, dy, dw, 88, cleared ? GREEN : 'rgba(4,10,8,0.9)');
+  ctx.font = '700 60px "Space Grotesk", sans-serif';
+  const dw = ctx.measureText(dLabel).width + 48;
+  const dy = Math.max(150, carY - 100);
+  pill(SAF.laneX - dw/2, dy, dw, 76, cleared ? GREEN : 'rgba(4,10,8,0.9)');
   ctx.fillStyle = cleared ? '#06130c' : '#ffffff'; ctx.textAlign = 'center';
-  ctx.fillText(dLabel, 960, dy + 62);
+  ctx.fillText(dLabel, SAF.laneX, dy + 54);
   ctx.textAlign = 'left';
-  // signals: N big at top-left, E at top-right
+  // signals (same corner boxes as cycle)
   const st = safetyState(t);
   const nLight = st.phase === 'switching' ? 'a' : (st.phase === 'eastgreen' ? 'r' : 'g');
   const eLight = st.phase === 'eastgreen' ? 'g' : 'r';
-  drawSignalBox(56, 108, 'N', { light: nLight, countdown: null, sub: nLight==='g' ? 'HELD' : null });
-  drawSignalBox(1748, 108, 'E', { light: eLight, countdown: null, sub: eLight==='g' ? 'GO' : null });
-  drawSignalBox(1748, 700, 'S', { light: 'r', countdown: null, sub: null });
-  drawSignalBox(56, 700, 'W', { light: 'r', countdown: null, sub: null });
+  drawSignalBox(47, 90, 'N', { light: nLight, countdown: null, sub: nLight==='g' ? 'HELD' : null });
+  drawSignalBox(1456, 90, 'E', { light: eLight, countdown: null, sub: eLight==='g' ? 'GO' : null });
+  drawSignalBox(1456, 650, 'S', { light: 'r', countdown: null, sub: null });
+  drawSignalBox(47, 650, 'W', { light: 'r', countdown: null, sub: null });
   // center pill
   let pillText, pillCol;
   if (st.phase === 'ending'){ pillText = 'GREEN ENDING IN 0' + st.endIn + 's'; pillCol = AMBER; }
   else if (st.phase === 'held'){ pillText = 'CAR IN 70m ZONE: GREEN HELD'; pillCol = GREEN; }
   else if (st.phase === 'switching'){ pillText = 'CAR CLEAR: SWITCHING NOW'; pillCol = AMBER; }
   else { pillText = 'EAST GREEN'; pillCol = GREEN; }
-  ctx.font = '700 46px "Space Grotesk", sans-serif';
-  const tw = ctx.measureText(pillText).width + 64;
-  pill(CX - tw/2, 88, tw, 64, pillCol);
-  ctx.fillStyle = '#06130c'; ctx.textAlign = 'center';
-  ctx.fillText(pillText, CX, 132);
-  ctx.textAlign = 'left';
-  // safety footer line
-  ctx.fillStyle = '#eaf3ec'; ctx.font = '600 28px "Space Grotesk", sans-serif'; ctx.textAlign = 'center';
+  drawCenterPill(pillText, pillCol);
+  // footer line
+  ctx.fillStyle = '#eaf3ec'; ctx.font = '600 23px "Space Grotesk", sans-serif'; ctx.textAlign = 'center';
   ctx.fillText(st.phase === 'held'
     ? 'The signal must not switch while a car is inside the 70m zone.'
     : (st.phase === 'switching' ? 'The car crossed the line. Only now may the signal switch.' : ''),
-    CX, 940);
+    CX, 890);
   ctx.textAlign = 'left';
   drawRoadCards();
 }
 function drawTitle(main, sub){
   ctx.fillStyle = 'rgba(7,12,10,0.97)'; ctx.fillRect(0, 0, W, H);
   if (LOGO.complete && LOGO.naturalWidth){
-    const w = 620, h = w * LOGO.naturalHeight / LOGO.naturalWidth;
-    ctx.drawImage(LOGO, CX - w/2, 260, w, h);
+    const w = 516, h = w * LOGO.naturalHeight / LOGO.naturalWidth;
+    ctx.drawImage(LOGO, CX - w/2, 241, w, h);
   }
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#ffffff'; ctx.font = '700 76px "Space Grotesk", sans-serif';
-  ctx.fillText(main, CX, 640);
-  ctx.fillStyle = GREEN; ctx.font = '600 34px "Space Grotesk", sans-serif';
-  ctx.fillText(sub, CX, 710);
+  ctx.fillStyle = '#ffffff'; ctx.font = '700 63px "Space Grotesk", sans-serif';
+  ctx.fillText(main, CX, 593);
+  ctx.fillStyle = GREEN; ctx.font = '600 28px "Space Grotesk", sans-serif';
+  ctx.fillText(sub, CX, 657);
   ctx.textAlign = 'left';
 }
 
 // ---------------- main loop: video time = sim time ----------------
+const MANUAL = new URLSearchParams(location.search).get('manual') === '1';
 let startT = null, started = false;
 window.__ready = false;
-Promise.race([
-  Promise.all([document.fonts.ready]),
-  new Promise(r => setTimeout(r, 1500)),
-]).then(()=>{ started = true; startT = performance.now(); window.__ready = true; });
-
+window.__frameCount = 0;
+if (MANUAL){ started = true; startT = 0; window.__ready = true; }
+else {
+  Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))])
+    .then(()=>{ started = true; startT = performance.now(); window.__ready = true; });
+}
 function frame(){
   requestAnimationFrame(frame);
+  window.__frameCount++;
   if (!started) { ctx.fillStyle = INK; ctx.fillRect(0,0,W,H); return; }
-  const t = (performance.now() - startT) / 1000;  // video seconds
+  const t = (window.__manualT !== undefined) ? window.__manualT : (performance.now() - startT) / 1000;
   ctx.clearRect(0, 0, W, H);
   drawTopBar();
   if (t < 3){
@@ -405,7 +379,9 @@ function frame(){
     return;
   }
   if (t < 81){
-    // advance cycle sim to match video time (3s title offset)
+    // cycle segment: make sure the light logic follows the cycle, even if
+    // time was scrubbed backwards out of the safety segment
+    S.mode = 'cycle';
     const targetTicks = Math.floor((t - 3) * 60);
     let guard = 0;
     while (S.cycleTicks < targetTicks && guard++ < 400) stepCycle();
@@ -423,7 +399,6 @@ function frame(){
   }
   drawTitle('GREEN MEANS SMART.', 'SABZ - AI-ADAPTIVE TRAFFIC SIGNALS');
 }
-// manual stepping hook for headless tuning tests
 window.__S = S;
 window.__stepCycle = stepCycle;
 window.__waitingOf = waitingOf;

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SABZ Signal Cycle v2 - Photoreal</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  html, body { margin:0; padding:0; background:#0B1220; overflow:hidden; }
+  canvas { display:block; }
+</style>
+</head>
+<body>
+<canvas id="cv" width="1600" height="1000"></canvas>
+<script>
+// SABZ signal-cycle v2: SAME logic/timing/HUD as v1, but the scene is the
+// PHOTOREAL plate from battle-live (scene_bg.jpg) with photo car sprites,
+// soft shadows, grain and vignette. Canvas 1600x1000; cars at battle-live
+// absolute scale so 15+ queues fit (spawn extends past the frame edge).
+// Four roads, four signals, exactly ONE green at a time. Cycle N -> E -> S -> W,
+// green 12s, amber 1s. Then the 70m dilemma-zone safety scene.
+const GREEN = '#00E676', AMBER = '#ffb020', RED = '#ff3b3b', INK = '#0B1220';
+const W = 1600, H = 1000;
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+
+// photo plate geometry, calibrated from battle-live (780x380) to this canvas:
+// photo drawn at (0,60,1600,860); x scale 1600/780, y scale 860/380, y offset 60.
+const CX = 800, CY = 490;
+const CAR_L = 36, CAR_W = 18, GAP = 12, VMAX = 3.2;
+const GREEN_TICKS = 720, AMBER_TICKS = 60;  // 12s green, 1s amber
+const SPAWN_CLEAR = 54; // CAR_L+GAP+6, battle-live spawn rule
+
+function lcg(seed){ let s = seed; return ()=>{ s = (s*1103515245 + 12345) % 2147483648; return s/2147483648; }; }
+const rnd = lcg(20241024);
+
+const ROADS = [
+  { id:'N', name:'NORTH', sx:780,  sy:-240, dx:0,  dy:1,  stop:252,  rate:0.0050 },
+  { id:'E', name:'EAST',  sx:1900, sy:467,  dx:-1, dy:0,  stop:1038, rate:0.0085 },
+  { id:'S', name:'SOUTH', sx:823,  sy:1220, dx:0,  dy:-1, stop:728,  rate:0.0042 },
+  { id:'W', name:'WEST',  sx:-300, sy:513,  dx:1,  dy:0,  stop:564,  rate:0.0075 },
+];
+ROADS.forEach(a=>{
+  a.sStop = Math.abs(a.stop - (a.dx!==0 ? a.sx : a.sy));
+  a.sExit = (a.dx!==0 ? 1900 : 1220) + 60;
+  a.cars = []; a.passed = 0;
+});
+const ORDER = ['N','E','S','W'];
+const roadById = id => ROADS.find(r=>r.id===id);
+
+const S = { phaseIdx: 0, phaseState: 'green', phaseT: 0, cycleTicks: 0, mode: 'cycle' };
+function currentRoad(){ return ORDER[S.phaseIdx]; }
+function roadLight(a){
+  if (S.mode === 'safety'){
+    const st = safetyState(safetyClock);
+    if (a.id === 'N') return st.phase === 'switching' ? 'a' : (st.phase === 'eastgreen' ? 'r' : 'g');
+    if (a.id === 'E') return st.phase === 'eastgreen' ? 'g' : 'r';
+    return 'r';
+  }
+  if (a.id === currentRoad()) return S.phaseState === 'green' ? 'g' : 'a';
+  return 'r';
+}
+let safetyClock = 0;
+function waitingOf(a){ return a.cars.filter(c => (c.s + CAR_L/2) < a.sStop).length; }
+
+function stepCycle(){
+  S.cycleTicks++;
+  S.phaseT++;
+  if (S.phaseState === 'green' && S.phaseT >= GREEN_TICKS){ S.phaseState = 'amber'; S.phaseT = 0; }
+  else if (S.phaseState === 'amber' && S.phaseT >= AMBER_TICKS){
+    S.phaseState = 'green'; S.phaseT = 0; S.phaseIdx = (S.phaseIdx + 1) % 4;
+  }
+  ROADS.forEach(a=>{
+    if (rnd() < a.rate && !a.cars.some(c => c.s < SPAWN_CLEAR)){
+      a.cars.push({ s:0, v:0, sprite:(rnd()*6)|0 });
+    }
+    a.cars.sort((p,q)=>q.s-p.s);
+    const light = roadLight(a);
+    for (let i=0;i<a.cars.length;i++){
+      const c = a.cars[i];
+      let wantV = VMAX;
+      const front = c.s + CAR_L/2;
+      const crossed = front >= a.sStop;
+      if (!crossed && light !== 'g'){
+        // RED ROAD RULE (v1, unchanged): drive only up to the back of your
+        // own queue, then freeze solid. Never cross the line on red/amber.
+        const dLine = a.sStop - front;
+        if (dLine < 120) wantV = 0;
+      }
+      if (i>0){
+        const ahead = a.cars[i-1];
+        const gap = (ahead.s - CAR_L/2) - (c.s + CAR_L/2) - GAP;
+        if (gap < 40) wantV = Math.min(wantV, Math.max(0, gap*0.3));
+      }
+      if (c.v < wantV) c.v = Math.min(wantV, c.v + 0.14);
+      else c.v = Math.max(wantV, c.v - 0.6);
+      c.s += c.v;
+      if (light !== 'g' && front < a.sStop && (c.s + CAR_L/2) > a.sStop){
+        c.s = a.sStop - CAR_L/2; c.v = 0;
+      }
+    }
+    const before = a.cars.length;
+    a.cars = a.cars.filter(c => c.s < a.sExit);
+    a.passed += before - a.cars.length;
+  });
+}
+
+// ---------------- assets ----------------
+const LOGO = new Image(); LOGO.src = 'logo.png';
+const BGIMG = new Image(); BGIMG.src = 'scene_bg.jpg';
+const CAR_IMGS = [];
+for (let i=0;i<6;i++){ const im = new Image(); im.src = 'car'+i+'.png'; CAR_IMGS.push(im); }
+const GRAIN = (()=>{
+  const gcv = document.createElement('canvas'); gcv.width = 1600; gcv.height = 860;
+  const g = gcv.getContext('2d');
+  const id = g.createImageData(1600, 860), d = id.data;
+  for (let i=0;i<d.length;i+=4){
+    const n = (Math.random()-0.5)*22;
+    d[i] = d[i+1] = d[i+2] = n > 0 ? 255 : 0;
+    d[i+3] = Math.abs(n);
+  }
+  g.putImageData(id, 0, 0);
+  const vg = g.createRadialGradient(800, 430, 361, 800, 430, 992);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.20)');
+  g.fillStyle = vg; g.fillRect(0, 0, 1600, 860);
+  return gcv;
+})();
+
+// ---------------- drawing ----------------
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function pill(x,y,w,h,fill){
+  ctx.fillStyle = fill; roundRect(x,y,w,h,16); ctx.fill();
+}
+function drawSignalBox(x, y, roadId, opts){
+  const w = 97, h = 188;
+  ctx.fillStyle = 'rgba(4,10,8,0.96)'; roundRect(x,y,w,h,12); ctx.fill();
+  ctx.strokeStyle = '#39423c'; ctx.lineWidth = 2; roundRect(x,y,w,h,12); ctx.stroke();
+  const lamp = (yy, col, on)=>{
+    if (on){ ctx.shadowColor = col; ctx.shadowBlur = 22; }
+    ctx.fillStyle = on ? col : '#232a26';
+    ctx.beginPath(); ctx.arc(x+w/2, yy, 22, 0, 7); ctx.fill();
+    ctx.shadowBlur = 0;
+    if (on){ ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.beginPath(); ctx.arc(x+w/2-7, yy-7, 7, 0, 7); ctx.fill(); }
+  };
+  const l = opts.light;
+  lamp(y+35, RED, l==='r'); lamp(y+94, AMBER, l==='a'); lamp(y+153, GREEN, l==='g');
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#eaf3ec'; ctx.font = '700 25px "Space Grotesk", sans-serif';
+  ctx.fillText(roadId, x+w/2, y+h+30);
+  if (opts.countdown){
+    ctx.fillStyle = l==='g' ? GREEN : AMBER; ctx.font = '700 33px "Space Grotesk", sans-serif';
+    ctx.fillText(opts.countdown, x+w/2, y-14);
+  } else if (opts.sub){
+    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 22px "Space Grotesk", sans-serif';
+    ctx.fillText(opts.sub, x+w/2, y-12);
+  }
+  ctx.textAlign = 'left';
+}
+function drawCar(x, y, heading, sprite, stopped, L){
+  const img = CAR_IMGS[sprite || 0];
+  const len = L || (CAR_L + 5);
+  ctx.save(); ctx.translate(x, y);
+  ctx.fillStyle = 'rgba(0,0,0,0.38)';
+  ctx.beginPath(); ctx.ellipse(-3, 4, len/2+4, len*0.23+3, heading, 0, 7); ctx.fill();
+  if (img && img.complete && img.naturalWidth){
+    ctx.rotate(heading + Math.PI/2);
+    const wdt = len * img.naturalWidth / img.naturalHeight;
+    ctx.drawImage(img, -wdt/2, -len/2, wdt, len);
+    if (stopped){
+      ctx.fillStyle = '#ff2d2d'; ctx.shadowColor = '#ff2d2d'; ctx.shadowBlur = 8;
+      ctx.fillRect(-wdt/2+2.5, len/2-3.6, 4.6, 2.6); ctx.fillRect(wdt/2-7.1, len/2-3.6, 4.6, 2.6);
+      ctx.shadowBlur = 0;
+    } else {
+      ctx.fillStyle = 'rgba(255,244,200,0.85)';
+      ctx.fillRect(-wdt/2+2.5, -len/2+0.8, 4, 2); ctx.fillRect(wdt/2-6.5, -len/2+0.8, 4, 2);
+    }
+  } else {
+    ctx.rotate(heading);
+    ctx.fillStyle = '#c7ccd1'; roundRect(-9, -len/2, 18, len, 5); ctx.fill();
+  }
+  ctx.restore();
+}
+function drawPhotoScene(){
+  if (BGIMG.complete && BGIMG.naturalWidth) ctx.drawImage(BGIMG, 0, 60, 1600, 860);
+  else { ctx.fillStyle = '#1d3a26'; ctx.fillRect(0, 60, 1600, 860); }
+}
+function drawCycleCars(){
+  ROADS.forEach(a=>{
+    const heading = Math.atan2(a.dy, a.dx);
+    a.cars.forEach(c=>{
+      drawCar(a.sx + a.dx*c.s, a.sy + a.dy*c.s, heading, c.sprite, c.v < 0.3);
+    });
+  });
+}
+function drawCornerSignals(){
+  const greenId = currentRoad();
+  const remain = S.phaseState === 'green' ? Math.ceil((GREEN_TICKS - S.phaseT)/60)
+                                          : Math.ceil((AMBER_TICKS - S.phaseT)/60);
+  const spec = {
+    N: { x: 47,   y: 90,  light: roadLight(roadById('N')) },
+    E: { x: 1456, y: 90,  light: roadLight(roadById('E')) },
+    S: { x: 1456, y: 650, light: roadLight(roadById('S')) },
+    W: { x: 47,   y: 650, light: roadLight(roadById('W')) },
+  };
+  Object.entries(spec).forEach(([id, sp])=>{
+    const a = roadById(id);
+    const active = id === greenId;
+    drawSignalBox(sp.x, sp.y, id, {
+      light: sp.light,
+      countdown: active ? String(remain).padStart(2,'0') + 's' : null,
+      sub: active ? null : 'WAIT ' + waitingOf(a),
+    });
+  });
+  return { greenId, remain };
+}
+function drawCenterPill(label, col){
+  ctx.font = '700 38px "Space Grotesk", sans-serif';
+  const tw = ctx.measureText(label).width + 54;
+  pill(CX - tw/2, 72, tw, 54, col);
+  ctx.fillStyle = '#06130c'; ctx.textAlign = 'center';
+  ctx.fillText(label, CX, 109);
+  ctx.textAlign = 'left';
+}
+function drawRoadCards(){
+  const cw = 363, ch = 68, gap = 22, y = 924;
+  ROADS.forEach((a, i)=>{
+    const x = 40 + i*(cw+gap);
+    ctx.fillStyle = 'rgba(0,0,0,0.55)'; roundRect(x, y, cw, ch, 10); ctx.fill();
+    ctx.strokeStyle = '#2a3a5f'; ctx.lineWidth = 1.5; roundRect(x, y, cw, ch, 10); ctx.stroke();
+    const l = roadLight(a);
+    const col = l==='g' ? GREEN : (l==='a' ? AMBER : RED);
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x+23, y+25, 10, 0, 7); ctx.fill();
+    ctx.fillStyle = '#eaf3ec'; ctx.font = '700 25px "Space Grotesk", sans-serif';
+    ctx.fillText(a.name, x+43, y+33);
+    ctx.fillStyle = col; ctx.font = '700 20px "Space Grotesk", sans-serif';
+    ctx.fillText(l==='g' ? 'GREEN' : (l==='a' ? 'AMBER' : 'RED'), x+43, y+60);
+    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 18px "Space Grotesk", sans-serif';
+    ctx.fillText('WAITING', x+208, y+28);
+    ctx.fillStyle = '#ffffff'; ctx.font = '700 33px "Space Grotesk", sans-serif';
+    ctx.fillText(String(waitingOf(a)), x+208, y+61);
+    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 18px "Space Grotesk", sans-serif';
+    ctx.fillText('PASSED', x+300, y+28);
+    ctx.fillStyle = '#ffffff'; ctx.font = '700 33px "Space Grotesk", sans-serif';
+    ctx.fillText(String(a.passed), x+300, y+61);
+  });
+}
+function drawTopBar(){
+  ctx.fillStyle = INK; ctx.fillRect(0, 0, W, 60);
+  if (LOGO.complete && LOGO.naturalWidth){
+    const h = 46, w = h * LOGO.naturalWidth / LOGO.naturalHeight;
+    ctx.drawImage(LOGO, 20, 7, w, h);
+  }
+  ctx.fillStyle = '#eaf3ec'; ctx.font = '700 32px "Space Grotesk", sans-serif';
+  ctx.fillText('SABZ SIGNAL CYCLE', 175, 40);
+  ctx.fillStyle = '#9fb4a7'; ctx.font = '600 20px "Space Grotesk", sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('FOUR ROADS. FOUR SIGNALS. ONE GREEN AT A TIME.', W-24, 38);
+  ctx.textAlign = 'left';
+}
+function drawCycle(){
+  drawPhotoScene();
+  drawCycleCars();
+  ctx.drawImage(GRAIN, 0, 60);
+  const { greenId, remain } = drawCornerSignals();
+  const road = roadById(greenId);
+  const label = S.phaseState === 'green'
+    ? road.name + ' GREEN ' + String(remain).padStart(2,'0') + 's'
+    : road.name + ' AMBER ' + String(remain).padStart(2,'0') + 's';
+  drawCenterPill(label, S.phaseState === 'green' ? GREEN : AMBER);
+  drawRoadCards();
+}
+
+// ---------------- safety scene (70m dilemma zone, photoreal zoom) ----------------
+// Zoomed crop of the photo's north approach: src (600,0,360,380) -> dest (350,60,900,860).
+// Road in dest: x 565..1057, lane x 750, stop line y 465. Zone 60..465 = 405px = 70m.
+const SAF = { destX: 350, destY: 60, destW: 900, destH: 860, laneX: 750, stopY: 465, topY: 60, pxPerM: 405/70, speed: 40.5 };
+function safetyState(t){
+  if (t < 5) return { phase:'ending', endIn: Math.ceil(5 - t) };
+  if (t < 10) return { phase:'held' };
+  if (t < 11) return { phase:'switching' };
+  return { phase:'eastgreen' };
+}
+function drawSafety(t){
+  if (BGIMG.complete && BGIMG.naturalWidth) ctx.drawImage(BGIMG, 600, 0, 360, 380, SAF.destX, SAF.destY, SAF.destW, SAF.destH);
+  else { ctx.fillStyle = '#1d3a26'; ctx.fillRect(0, 60, 1600, 860); }
+  // 70m zone shading + dashed border over the road
+  ctx.fillStyle = 'rgba(0,230,118,0.10)'; ctx.fillRect(565, SAF.topY, 492, SAF.stopY - SAF.topY);
+  ctx.strokeStyle = GREEN; ctx.lineWidth = 3; ctx.setLineDash([16, 12]);
+  ctx.strokeRect(565, SAF.topY, 492, SAF.stopY - SAF.topY);
+  ctx.setLineDash([]);
+  // bright stop line
+  ctx.fillStyle = 'rgba(240,244,248,0.95)'; ctx.fillRect(565, SAF.stopY - 2, 492, 4);
+  // zone label, vertical along the left edge of the zone (keeps it clear
+  // of the center pill, which spans the top of the frame)
+  ctx.save();
+  ctx.translate(548, 490);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillStyle = 'rgba(4,10,8,0.85)';
+  roundRect(-115, -17, 230, 34, 10); ctx.fill();
+  ctx.fillStyle = GREEN; ctx.font = '700 22px "Space Grotesk", sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('70m DILEMMA ZONE', 0, 7);
+  ctx.restore();
+  ctx.textAlign = 'left';
+  // the chasing car
+  const carY = SAF.topY + SAF.speed * Math.min(t, 10);
+  const dist = Math.max(0, (SAF.stopY - carY) / SAF.pxPerM);
+  const cleared = t >= 10;
+  drawCar(SAF.laneX, carY, Math.PI/2, 2, false, 82);
+  // distance readout above the car
+  const dLabel = cleared ? 'CLEAR' : Math.round(dist) + 'm';
+  ctx.font = '700 60px "Space Grotesk", sans-serif';
+  const dw = ctx.measureText(dLabel).width + 48;
+  const dy = Math.max(150, carY - 100);
+  pill(SAF.laneX - dw/2, dy, dw, 76, cleared ? GREEN : 'rgba(4,10,8,0.9)');
+  ctx.fillStyle = cleared ? '#06130c' : '#ffffff'; ctx.textAlign = 'center';
+  ctx.fillText(dLabel, SAF.laneX, dy + 54);
+  ctx.textAlign = 'left';
+  // signals (same corner boxes as cycle)
+  const st = safetyState(t);
+  const nLight = st.phase === 'switching' ? 'a' : (st.phase === 'eastgreen' ? 'r' : 'g');
+  const eLight = st.phase === 'eastgreen' ? 'g' : 'r';
+  drawSignalBox(47, 90, 'N', { light: nLight, countdown: null, sub: nLight==='g' ? 'HELD' : null });
+  drawSignalBox(1456, 90, 'E', { light: eLight, countdown: null, sub: eLight==='g' ? 'GO' : null });
+  drawSignalBox(1456, 650, 'S', { light: 'r', countdown: null, sub: null });
+  drawSignalBox(47, 650, 'W', { light: 'r', countdown: null, sub: null });
+  // center pill
+  let pillText, pillCol;
+  if (st.phase === 'ending'){ pillText = 'GREEN ENDING IN 0' + st.endIn + 's'; pillCol = AMBER; }
+  else if (st.phase === 'held'){ pillText = 'CAR IN 70m ZONE: GREEN HELD'; pillCol = GREEN; }
+  else if (st.phase === 'switching'){ pillText = 'CAR CLEAR: SWITCHING NOW'; pillCol = AMBER; }
+  else { pillText = 'EAST GREEN'; pillCol = GREEN; }
+  drawCenterPill(pillText, pillCol);
+  // footer line
+  ctx.fillStyle = '#eaf3ec'; ctx.font = '600 23px "Space Grotesk", sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText(st.phase === 'held'
+    ? 'The signal must not switch while a car is inside the 70m zone.'
+    : (st.phase === 'switching' ? 'The car crossed the line. Only now may the signal switch.' : ''),
+    CX, 890);
+  ctx.textAlign = 'left';
+  drawRoadCards();
+}
+function drawTitle(main, sub){
+  ctx.fillStyle = 'rgba(7,12,10,0.97)'; ctx.fillRect(0, 0, W, H);
+  if (LOGO.complete && LOGO.naturalWidth){
+    const w = 516, h = w * LOGO.naturalHeight / LOGO.naturalWidth;
+    ctx.drawImage(LOGO, CX - w/2, 241, w, h);
+  }
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ffffff'; ctx.font = '700 63px "Space Grotesk", sans-serif';
+  ctx.fillText(main, CX, 593);
+  ctx.fillStyle = GREEN; ctx.font = '600 28px "Space Grotesk", sans-serif';
+  ctx.fillText(sub, CX, 657);
+  ctx.textAlign = 'left';
+}
+
+// ---------------- main loop: video time = sim time ----------------
+const MANUAL = new URLSearchParams(location.search).get('manual') === '1';
+let startT = null, started = false;
+window.__ready = false;
+window.__frameCount = 0;
+if (MANUAL){ started = true; startT = 0; window.__ready = true; }
+else {
+  Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))])
+    .then(()=>{ started = true; startT = performance.now(); window.__ready = true; });
+}
+function frame(){
+  requestAnimationFrame(frame);
+  window.__frameCount++;
+  if (!started) { ctx.fillStyle = INK; ctx.fillRect(0,0,W,H); return; }
+  const t = (window.__manualT !== undefined) ? window.__manualT : (performance.now() - startT) / 1000;
+  ctx.clearRect(0, 0, W, H);
+  drawTopBar();
+  if (t < 3){
+    drawTitle('FOUR ROADS. FOUR SIGNALS. ONE GREEN AT A TIME.', 'SABZ - AI-ADAPTIVE TRAFFIC SIGNALS');
+    return;
+  }
+  if (t < 81){
+    // cycle segment: make sure the light logic follows the cycle, even if
+    // time was scrubbed backwards out of the safety segment
+    S.mode = 'cycle';
+    const targetTicks = Math.floor((t - 3) * 60);
+    let guard = 0;
+    while (S.cycleTicks < targetTicks && guard++ < 400) stepCycle();
+    drawCycle();
+    return;
+  }
+  if (t < 96){
+    if (S.mode !== 'safety'){
+      S.mode = 'safety';
+      ROADS.forEach(a=>{ a.cars = []; });
+    }
+    safetyClock = t - 81;
+    drawSafety(t - 81);
+    return;
+  }
+  drawTitle('GREEN MEANS SMART.', 'SABZ - AI-ADAPTIVE TRAFFIC SIGNALS');
+}
+window.__S = S;
+window.__stepCycle = stepCycle;
+window.__waitingOf = waitingOf;
+window.__ROADS = ROADS;
+frame();
+</script>
+</body>
+</html>
