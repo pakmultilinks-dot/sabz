@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SABZ Signal Cycle v3 - Adaptive</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  html, body { margin:0; padding:0; background:#0B1220; overflow:hidden; }
+  canvas { display:block; }
+</style>
+</head>
+<body>
+<canvas id="cv" width="1600" height="1000"></canvas>
+<script>
+// SABZ signal-cycle v3: ADAPTIVE, not fixed. Same photoreal plate, same HUD,
+// same timing skeleton as v2, but the controller is the SABZ brain logic:
+// every second it picks the road with the LONGEST waiting queue. It holds
+// green while a car is inside the 70m dilemma zone on the open road, even
+// past max green. It switches when the open queue clears, at max green
+// (20s), or when another road's queue grows much longer (starvation guard).
+// Every switch is explained on screen in the BRAIN line.
+// Timeline: title 0-3s, adaptive cycle 3-63s, 70m Case A 63-76s,
+// 70m Case B 76-89s, closing 89-93s. Whole video stays on the full top-down
+// photo plate; the 70m zone corridor is drawn on the north road itself.
+const GREEN = '#00E676', AMBER = '#ffb020', RED = '#ff3b3b', INK = '#0B1220';
+const W = 1600, H = 1000;
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+
+// photo plate geometry (battle-live calibration): photo at (0,60,1600,860)
+const CX = 800, CY = 490;
+const CAR_L = 36, CAR_W = 18, GAP = 12, VMAX = 3.2;
+const MIN_GREEN_TICKS = 360, MAX_GREEN_TICKS = 1200, AMBER_TICKS = 60; // 6s min, 20s max, 1s amber
+const DILEMMA_PX = 170; // 70m zone length on this plate (matches the v2 zoom scene scale)
+const STARVE_GAP = 4;
+const SPAWN_CLEAR = 54;
+
+function lcg(seed){ let s = seed; return ()=>{ s = (s*1103515245 + 12345) % 2147483648; return s/2147483648; }; }
+const rnd = lcg(20241024);
+
+const ROADS = [
+  { id:'N', name:'NORTH', sx:780,  sy:-240, dx:0,  dy:1,  stop:252,  rate:0.0050 },
+  { id:'E', name:'EAST',  sx:1900, sy:467,  dx:-1, dy:0,  stop:1038, rate:0.0085 },
+  { id:'S', name:'SOUTH', sx:823,  sy:1220, dx:0,  dy:-1, stop:728,  rate:0.0042 },
+  { id:'W', name:'WEST',  sx:-300, sy:513,  dx:1,  dy:0,  stop:564,  rate:0.0075 },
+];
+ROADS.forEach(a=>{
+  a.sStop = Math.abs(a.stop - (a.dx!==0 ? a.sx : a.sy));
+  a.sExit = (a.dx!==0 ? 1900 : 1220) + 60;
+  a.cars = []; a.passed = 0;
+});
+const roadById = id => ROADS.find(r=>r.id===id);
+
+const S = {
+  open: 'N', phaseState: 'green', greenT: 0, amberT: 0, target: null,
+  decision: 'SABZ BRAIN: green follows the longest queue. NORTH starts.',
+  decisions: [], cycleTicks: 0, mode: 'cycle',
+};
+function waitingOf(a){ return a.cars.filter(c => (c.s + CAR_L/2) < a.sStop).length; }
+function dilemmaOf(a){
+  // closest uncrossed car on this road within the 70m zone, distance in px, or null
+  let best = null;
+  a.cars.forEach(c=>{
+    const front = c.s + CAR_L/2;
+    const d = a.sStop - front;
+    if (d > 0 && d <= DILEMMA_PX && (best === null || d < best)) best = d;
+  });
+  return best;
+}
+function argmaxOther(){
+  let best = null, bestW = -1;
+  ROADS.forEach(a=>{
+    if (a.id === S.open) return;
+    const w = waitingOf(a);
+    if (w > bestW){ bestW = w; best = a; }
+  });
+  return { road: best, w: bestW };
+}
+function switchTo(target, reason){
+  S.phaseState = 'amber'; S.amberT = 0; S.target = target.id;
+  S.decision = reason;
+  S.decisions.push({ t: S.cycleTicks / 60, from: S.open, to: target.id, reason });
+}
+function decide(){
+  const open = roadById(S.open);
+  const wo = waitingOf(open);
+  const dz = dilemmaOf(open);
+  if (dz !== null){
+    const m = Math.round(dz / DILEMMA_PX * 70);
+    const nd = 'HOLD: car at ' + m + 'm in 70m zone, green extended';
+    if (S.decision !== nd) S.decision = nd;
+    return; // dilemma hold overrides max green, clear, and starvation
+  }
+  if (S.greenT >= MAX_GREEN_TICKS){
+    const b = argmaxOther();
+    switchTo(b.road, 'MAX GREEN 20s reached. Switching to ' + b.road.name + ': queue ' + b.w + ', longest.');
+    return;
+  }
+  if (S.greenT < MIN_GREEN_TICKS) return;
+  if (wo === 0){
+    const b = argmaxOther();
+    switchTo(b.road, S.open + ' queue cleared. Switching to ' + b.road.name + ': queue ' + b.w + ', longest.');
+    return;
+  }
+  const b = argmaxOther();
+  if (b.w >= wo + STARVE_GAP){
+    switchTo(b.road, b.road.name + ' queue ' + b.w + ', longest. Switching from ' + S.open + '.');
+  }
+}
+function roadLight(a){
+  if (S.mode !== 'cycle') return 'r';
+  if (a.id === S.open) return S.phaseState === 'green' ? 'g' : 'a';
+  return 'r';
+}
+function stepCycle(){
+  S.cycleTicks++;
+  if (S.phaseState === 'green'){
+    S.greenT++;
+    if (S.greenT % 60 === 0) decide();
+  } else {
+    S.amberT++;
+    if (S.amberT >= AMBER_TICKS){
+      S.open = S.target; S.target = null;
+      S.phaseState = 'green'; S.greenT = 0; S.amberT = 0;
+    }
+  }
+  ROADS.forEach(a=>{
+    if (rnd() < a.rate && !a.cars.some(c => c.s < SPAWN_CLEAR)){
+      a.cars.push({ s:0, v:0, sprite:(rnd()*6)|0 });
+    }
+    a.cars.sort((p,q)=>q.s-p.s);
+    const light = roadLight(a);
+    for (let i=0;i<a.cars.length;i++){
+      const c = a.cars[i];
+      let wantV = VMAX;
+      const front = c.s + CAR_L/2;
+      const crossed = front >= a.sStop;
+      if (!crossed && light !== 'g'){
+        const dLine = a.sStop - front;
+        if (dLine < 120) wantV = 0;
+      }
+      if (i>0){
+        const ahead = a.cars[i-1];
+        const gap = (ahead.s - CAR_L/2) - (c.s + CAR_L/2) - GAP;
+        if (gap < 40) wantV = Math.min(wantV, Math.max(0, gap*0.3));
+      }
+      if (c.v < wantV) c.v = Math.min(wantV, c.v + 0.14);
+      else c.v = Math.max(wantV, c.v - 0.6);
+      c.s += c.v;
+      if (light !== 'g' && front < a.sStop && (c.s + CAR_L/2) > a.sStop){
+        c.s = a.sStop - CAR_L/2; c.v = 0;
+      }
+    }
+    const before = a.cars.length;
+    a.cars = a.cars.filter(c => c.s < a.sExit);
+    a.passed += before - a.cars.length;
+  });
+}
+
+// ---------------- assets ----------------
+const LOGO = new Image(); LOGO.src = 'logo.png';
+const BGIMG = new Image(); BGIMG.src = 'scene_bg.jpg';
+const CAR_IMGS = [];
+for (let i=0;i<6;i++){ const im = new Image(); im.src = 'car'+i+'.png'; CAR_IMGS.push(im); }
+const GRAIN = (()=>{
+  const gcv = document.createElement('canvas'); gcv.width = 1600; gcv.height = 860;
+  const g = gcv.getContext('2d');
+  const id = g.createImageData(1600, 860), d = id.data;
+  for (let i=0;i<d.length;i+=4){
+    const n = (Math.random()-0.5)*22;
+    d[i] = d[i+1] = d[i+2] = n > 0 ? 255 : 0;
+    d[i+3] = Math.abs(n);
+  }
+  g.putImageData(id, 0, 0);
+  const vg = g.createRadialGradient(800, 430, 361, 800, 430, 992);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.20)');
+  g.fillStyle = vg; g.fillRect(0, 0, 1600, 860);
+  return gcv;
+})();
+
+// ---------------- drawing ----------------
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function pill(x,y,w,h,fill){
+  ctx.fillStyle = fill; roundRect(x,y,w,h,16); ctx.fill();
+}
+function drawSignalBox(x, y, roadId, opts){
+  const w = 97, h = 188;
+  ctx.fillStyle = 'rgba(4,10,8,0.96)'; roundRect(x,y,w,h,12); ctx.fill();
+  ctx.strokeStyle = '#39423c'; ctx.lineWidth = 2; roundRect(x,y,w,h,12); ctx.stroke();
+  const lamp = (yy, col, on)=>{
+    if (on){ ctx.shadowColor = col; ctx.shadowBlur = 22; }
+    ctx.fillStyle = on ? col : '#232a26';
+    ctx.beginPath(); ctx.arc(x+w/2, yy, 22, 0, 7); ctx.fill();
+    ctx.shadowBlur = 0;
+    if (on){ ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.beginPath(); ctx.arc(x+w/2-7, yy-7, 7, 0, 7); ctx.fill(); }
+  };
+  const l = opts.light;
+  lamp(y+35, RED, l==='r'); lamp(y+94, AMBER, l==='a'); lamp(y+153, GREEN, l==='g');
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#eaf3ec'; ctx.font = '700 25px "Space Grotesk", sans-serif';
+  ctx.fillText(roadId, x+w/2, y+h+30);
+  if (opts.countdown){
+    ctx.fillStyle = l==='g' ? GREEN : AMBER; ctx.font = '700 33px "Space Grotesk", sans-serif';
+    ctx.fillText(opts.countdown, x+w/2, y-14);
+  } else if (opts.sub){
+    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 22px "Space Grotesk", sans-serif';
+    ctx.fillText(opts.sub, x+w/2, y-12);
+  }
+  ctx.textAlign = 'left';
+}
+function drawCar(x, y, heading, sprite, stopped, L){
+  const img = CAR_IMGS[sprite || 0];
+  const len = L || (CAR_L + 5);
+  ctx.save(); ctx.translate(x, y);
+  ctx.fillStyle = 'rgba(0,0,0,0.38)';
+  ctx.beginPath(); ctx.ellipse(-3, 4, len/2+4, len*0.23+3, heading, 0, 7); ctx.fill();
+  if (img && img.complete && img.naturalWidth){
+    ctx.rotate(heading + Math.PI/2);
+    const wdt = len * img.naturalWidth / img.naturalHeight;
+    ctx.drawImage(img, -wdt/2, -len/2, wdt, len);
+    if (stopped){
+      ctx.fillStyle = '#ff2d2d'; ctx.shadowColor = '#ff2d2d'; ctx.shadowBlur = 8;
+      ctx.fillRect(-wdt/2+2.5, len/2-3.6, 4.6, 2.6); ctx.fillRect(wdt/2-7.1, len/2-3.6, 4.6, 2.6);
+      ctx.shadowBlur = 0;
+    } else {
+      ctx.fillStyle = 'rgba(255,244,200,0.85)';
+      ctx.fillRect(-wdt/2+2.5, -len/2+0.8, 4, 2); ctx.fillRect(wdt/2-6.5, -len/2+0.8, 4, 2);
+    }
+  } else {
+    ctx.rotate(heading);
+    ctx.fillStyle = '#c7ccd1'; roundRect(-9, -len/2, 18, len, 5); ctx.fill();
+  }
+  ctx.restore();
+}
+function drawPhotoScene(){
+  if (BGIMG.complete && BGIMG.naturalWidth) ctx.drawImage(BGIMG, 0, 60, 1600, 860);
+  else { ctx.fillStyle = '#1d3a26'; ctx.fillRect(0, 60, 1600, 860); }
+}
+function drawCycleCars(){
+  ROADS.forEach(a=>{
+    const heading = Math.atan2(a.dy, a.dx);
+    a.cars.forEach(c=>{
+      drawCar(a.sx + a.dx*c.s, a.sy + a.dy*c.s, heading, c.sprite, c.v < 0.3);
+    });
+  });
+}
+function drawCornerSignals(lights){
+  // lights: {N,E,S,W} of 'g'/'a'/'r'; activeId + countdown shown on active box
+  const spec = {
+    N: { x: 47,   y: 90,  light: lights.N },
+    E: { x: 1456, y: 90,  light: lights.E },
+    S: { x: 1456, y: 650, light: lights.S },
+    W: { x: 47,   y: 650, light: lights.W },
+  };
+  Object.entries(spec).forEach(([id, sp])=>{
+    const a = roadById(id);
+    const active = lights.activeId === id;
+    drawSignalBox(sp.x, sp.y, id, {
+      light: sp.light,
+      countdown: active ? lights.countdown : null,
+      sub: active ? null : 'WAIT ' + (lights.waitOverride ? lights.waitOverride[id] : waitingOf(a)),
+    });
+  });
+}
+function drawCenterPill(label, col){
+  ctx.font = '700 38px "Space Grotesk", sans-serif';
+  const tw = ctx.measureText(label).width + 54;
+  pill(CX - tw/2, 72, tw, 54, col);
+  ctx.fillStyle = '#06130c'; ctx.textAlign = 'center';
+  ctx.fillText(label, CX, 109);
+  ctx.textAlign = 'left';
+}
+function drawBrainLine(text){
+  ctx.font = '700 24px "Space Grotesk", sans-serif';
+  const tw = ctx.measureText(text).width + 44;
+  pill(CX - tw/2, 136, tw, 44, 'rgba(4,10,8,0.92)');
+  ctx.fillStyle = GREEN; ctx.textAlign = 'center';
+  ctx.fillText(text, CX, 166);
+  ctx.textAlign = 'left';
+}
+function drawRoadCards(override){
+  const cw = 363, ch = 68, gap = 22, y = 924;
+  ROADS.forEach((a, i)=>{
+    const x = 40 + i*(cw+gap);
+    const wait = override ? override[a.id].waiting : waitingOf(a);
+    const passed = override ? override[a.id].passed : a.passed;
+    const l = override ? override[a.id].light : roadLight(a);
+    ctx.fillStyle = 'rgba(0,0,0,0.55)'; roundRect(x, y, cw, ch, 10); ctx.fill();
+    ctx.strokeStyle = '#2a3a5f'; ctx.lineWidth = 1.5; roundRect(x, y, cw, ch, 10); ctx.stroke();
+    const col = l==='g' ? GREEN : (l==='a' ? AMBER : RED);
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x+23, y+25, 10, 0, 7); ctx.fill();
+    ctx.fillStyle = '#eaf3ec'; ctx.font = '700 25px "Space Grotesk", sans-serif';
+    ctx.fillText(a.name, x+43, y+33);
+    ctx.fillStyle = col; ctx.font = '700 20px "Space Grotesk", sans-serif';
+    ctx.fillText(l==='g' ? 'GREEN' : (l==='a' ? 'AMBER' : 'RED'), x+43, y+60);
+    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 18px "Space Grotesk", sans-serif';
+    ctx.fillText('WAITING', x+208, y+28);
+    ctx.fillStyle = '#ffffff'; ctx.font = '700 33px "Space Grotesk", sans-serif';
+    ctx.fillText(String(wait), x+208, y+61);
+    ctx.fillStyle = '#9fb4a7'; ctx.font = '600 18px "Space Grotesk", sans-serif';
+    ctx.fillText('PASSED', x+300, y+28);
+    ctx.fillStyle = '#ffffff'; ctx.font = '700 33px "Space Grotesk", sans-serif';
+    ctx.fillText(String(passed), x+300, y+61);
+  });
+}
+function drawTopBar(){
+  ctx.fillStyle = INK; ctx.fillRect(0, 0, W, 60);
+  if (LOGO.complete && LOGO.naturalWidth){
+    const h = 46, w = h * LOGO.naturalWidth / LOGO.naturalHeight;
+    ctx.drawImage(LOGO, 20, 7, w, h);
+  }
+  ctx.fillStyle = '#eaf3ec'; ctx.font = '700 32px "Space Grotesk", sans-serif';
+  ctx.fillText('SABZ SIGNAL CYCLE', 175, 40);
+  ctx.fillStyle = '#9fb4a7'; ctx.font = '600 20px "Space Grotesk", sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('ADAPTIVE: GREEN FOLLOWS THE LONGEST QUEUE.', W-24, 38);
+  ctx.textAlign = 'left';
+}
+function drawCycle(){
+  drawPhotoScene();
+  drawCycleCars();
+  ctx.drawImage(GRAIN, 0, 60);
+  const open = roadById(S.open);
+  const dz = S.phaseState === 'green' ? dilemmaOf(open) : null;
+  const held = dz !== null;
+  const remain = S.phaseState === 'green'
+    ? (held ? 'HELD' : String(Math.ceil((MAX_GREEN_TICKS - S.greenT)/60)).padStart(2,'0') + 's')
+    : String(Math.ceil((AMBER_TICKS - S.amberT)/60)).padStart(2,'0') + 's';
+  const lights = { N:'r', E:'r', S:'r', W:'r', activeId: S.open, countdown: remain };
+  lights[S.open] = S.phaseState === 'green' ? 'g' : 'a';
+  drawCornerSignals(lights);
+  const label = S.phaseState === 'green'
+    ? open.name + ' GREEN ' + remain
+    : open.name + ' AMBER ' + remain;
+  drawCenterPill(label, S.phaseState === 'green' ? GREEN : AMBER);
+  drawBrainLine('BRAIN: ' + S.decision);
+  drawRoadCards(null);
+}
+
+// ---------------- 70m safety scenes, FULL top-down plate ----------------
+// North road on the plate: lane x 780, stop line y 252 (canvas coords).
+// 70m zone: y 86..252 (166px). Car travels 86 -> 252.
+const ZONE = { x0: 700, x1: 900, y0: 86, y1: 252, laneX: 780 };
+function drawZoneCorridor(){
+  ctx.fillStyle = 'rgba(0,230,118,0.10)'; ctx.fillRect(ZONE.x0, ZONE.y0, ZONE.x1 - ZONE.x0, ZONE.y1 - ZONE.y0);
+  ctx.strokeStyle = GREEN; ctx.lineWidth = 3; ctx.setLineDash([16, 12]);
+  ctx.strokeRect(ZONE.x0, ZONE.y0, ZONE.x1 - ZONE.x0, ZONE.y1 - ZONE.y0);
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(240,244,248,0.95)'; ctx.fillRect(ZONE.x0, ZONE.y1 - 2, ZONE.x1 - ZONE.x0, 4);
+  ctx.save();
+  ctx.translate(ZONE.x0 - 22, 400);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillStyle = 'rgba(4,10,8,0.85)';
+  roundRect(-115, -17, 230, 34, 10); ctx.fill();
+  ctx.fillStyle = GREEN; ctx.font = '700 22px "Space Grotesk", sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('70m DILEMMA ZONE', 0, 7);
+  ctx.restore();
+  ctx.textAlign = 'left';
+}
+function drawSafetySignals(nLight, eLight){
+  drawCornerSignals({ N: nLight, E: eLight, S: 'r', W: 'r', activeId: null,
+    waitOverride: { N: 0, E: 0, S: 0, W: 0 } });
+}
+function drawSafetyA(t){
+  // Case A: car approaches from 70m. 0-3s green ending, 3-10s HELD, 10-11s switch, 11-13s EAST GREEN.
+  drawPhotoScene();
+  ctx.drawImage(GRAIN, 0, 60);
+  drawZoneCorridor();
+  const carY = ZONE.y0 + (ZONE.y1 - ZONE.y0) * Math.min(t / 10, 1);
+  const dist = Math.max(0, Math.round((ZONE.y1 - carY) / (ZONE.y1 - ZONE.y0) * 70));
+  const cleared = t >= 10;
+  drawCar(ZONE.laneX, carY, Math.PI/2, 2, false, 64);
+  const dLabel = cleared ? 'CAR: CLEAR' : 'CAR: ' + dist + 'm';
+  let nLight = 'g', eLight = 'r', pillText, pillCol, brain;
+  if (t < 3){
+    const endIn = 3 - Math.floor(t);
+    pillText = 'GREEN ENDING IN 0' + endIn + 's'; pillCol = AMBER;
+    brain = 'BRAIN: car approaching in 70m zone';
+  } else if (t < 10){
+    pillText = 'CAR IN 70m ZONE: GREEN HELD'; pillCol = GREEN;
+    brain = 'BRAIN: holding green, car at ' + dist + 'm in zone';
+  } else if (t < 11){
+    nLight = 'a'; pillText = 'CAR CLEAR: SWITCHING NOW'; pillCol = AMBER;
+    brain = 'BRAIN: car cleared the line, switching now';
+  } else {
+    nLight = 'r'; eLight = 'g'; pillText = 'EAST GREEN'; pillCol = GREEN;
+    brain = 'BRAIN: switched to EAST after the car cleared';
+  }
+  drawSafetySignals(nLight, eLight);
+  drawCenterPill(pillText, pillCol);
+  drawBrainLine('BRAIN: ' + brain.replace(/^BRAIN: /, ''));
+  drawRoadCards({ N:{waiting:0,passed:0,light:nLight}, E:{waiting:0,passed:0,light:eLight}, S:{waiting:0,passed:0,light:'r'}, W:{waiting:0,passed:0,light:'r'} });
+  // distance readout LAST, fixed top-right pill so the center pills and the
+  // car can never cover it. Labelled standalone so it reads on its own.
+  ctx.font = '700 44px "Space Grotesk", sans-serif';
+  const dw = ctx.measureText(dLabel).width + 44;
+  pill(1150, 210, dw, 68, cleared ? GREEN : 'rgba(4,10,8,0.92)');
+  ctx.fillStyle = cleared ? '#06130c' : '#ffffff'; ctx.textAlign = 'center';
+  ctx.fillText(dLabel, 1150 + dw/2, 210 + 46);
+  ctx.textAlign = 'left';
+}
+function drawSafetyB(t){
+  // Case B: zone EMPTY. 0-3s countdown, 3-4s switch, 4-13s EAST GREEN (queue 14, longest).
+  drawPhotoScene();
+  ctx.drawImage(GRAIN, 0, 60);
+  drawZoneCorridor();
+  // static queued cars on the east road (lane y 467, heading west), the visible part of the 14 queue
+  const qx = [1560, 1500, 1440, 1380, 1320, 1260, 1200, 1140];
+  qx.forEach((x, i)=> drawCar(x, 467, Math.PI, i % 6, true, 41));
+  let nLight = 'g', eLight = 'r', pillText, pillCol, brain;
+  if (t < 3){
+    const endIn = 3 - Math.floor(t);
+    pillText = 'ZONE EMPTY: NO CAR IN 70m'; pillCol = GREEN;
+    brain = 'GREEN ENDS IN 0' + endIn + 's, nothing approaching';
+  } else if (t < 4){
+    nLight = 'a'; pillText = 'SWITCHING TO EAST: QUEUE 14, LONGEST'; pillCol = AMBER;
+    brain = 'ZONE EMPTY: switching immediately to longest queue';
+  } else {
+    nLight = 'r'; eLight = 'g'; pillText = 'EAST GREEN: QUEUE 14, LONGEST'; pillCol = GREEN;
+    brain = 'Switched at once: zone empty, EAST queue 14 longest';
+  }
+  drawSafetySignals(nLight, eLight);
+  drawCenterPill(pillText, pillCol);
+  drawBrainLine('BRAIN: ' + brain);
+  drawRoadCards({ N:{waiting:0,passed:7,light:nLight}, E:{waiting:14,passed:25,light:eLight}, S:{waiting:5,passed:4,light:'r'}, W:{waiting:9,passed:16,light:'r'} });
+}
+function drawTitle(main, sub){
+  ctx.fillStyle = 'rgba(7,12,10,0.97)'; ctx.fillRect(0, 0, W, H);
+  if (LOGO.complete && LOGO.naturalWidth){
+    const w = 516, h = w * LOGO.naturalHeight / LOGO.naturalWidth;
+    ctx.drawImage(LOGO, CX - w/2, 241, w, h);
+  }
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ffffff'; ctx.font = '700 63px "Space Grotesk", sans-serif';
+  ctx.fillText(main, CX, 593);
+  ctx.fillStyle = GREEN; ctx.font = '600 28px "Space Grotesk", sans-serif';
+  ctx.fillText(sub, CX, 657);
+  ctx.textAlign = 'left';
+}
+
+// ---------------- main loop: video time = sim time ----------------
+const MANUAL = new URLSearchParams(location.search).get('manual') === '1';
+let startT = null, started = false;
+window.__ready = false;
+window.__frameCount = 0;
+if (MANUAL){ started = true; startT = 0; window.__ready = true; }
+else {
+  Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))])
+    .then(()=>{ started = true; startT = performance.now(); window.__ready = true; });
+}
+function frame(){
+  requestAnimationFrame(frame);
+  window.__frameCount++;
+  if (!started) { ctx.fillStyle = INK; ctx.fillRect(0,0,W,H); return; }
+  const t = (window.__manualT !== undefined) ? window.__manualT : (performance.now() - startT) / 1000;
+  ctx.clearRect(0, 0, W, H);
+  drawTopBar();
+  if (t < 3){
+    drawTitle('FOUR ROADS. FOUR SIGNALS. ONE GREEN AT A TIME.', 'SABZ ADAPTIVE: THE BRAIN PICKS THE LONGEST QUEUE.');
+    return;
+  }
+  if (t < 63){
+    S.mode = 'cycle';
+    const targetTicks = Math.floor((t - 3) * 60);
+    let guard = 0;
+    while (S.cycleTicks < targetTicks && guard++ < 500) stepCycle();
+    drawCycle();
+    return;
+  }
+  if (t < 76){
+    if (S.mode !== 'safety'){ S.mode = 'safety'; ROADS.forEach(a=>{ a.cars = []; }); }
+    drawSafetyA(t - 63);
+    return;
+  }
+  if (t < 89){
+    if (S.mode !== 'safetyB'){ S.mode = 'safetyB'; }
+    drawSafetyB(t - 76);
+    return;
+  }
+  drawTitle('GREEN MEANS SMART.', 'SABZ - AI-ADAPTIVE TRAFFIC SIGNALS');
+}
+window.__S = S;
+window.__stepCycle = stepCycle;
+window.__waitingOf = waitingOf;
+window.__ROADS = ROADS;
+frame();
+</script>
+</body>
+</html>
