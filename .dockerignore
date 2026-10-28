@@ -1,0 +1,12 @@
+.git
+.env*
+data
+deploy/tls
+**/__pycache__
+*.npz
+models
+*.mp4
+sabz_cinematic
+judge_prep
+showcase
+poster

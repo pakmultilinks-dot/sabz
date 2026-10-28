@@ -1,143 +1,33 @@
-"""SABZ Live: end-to-end live video traffic control.
+"""Camera producer for SABZ edge. Counts alone never assert conflict clearance.
 
-Connects live camera footage directly to the intelligence layer.
-No simulation. No historical data. Live video in, signal decisions out.
-
-Pipeline:
-    Live video -> YOLO detect -> track -> count per approach
-    -> Intelligence Layer (DQN + actuated + fixed) -> Safety -> Decision
-    -> Accident Prevention (runner detection, adaptive timing)
-
-Usage:
-    python3 sabz_live.py <video_source>
-    python3 sabz_live.py 0                    # webcam
-    python3 sabz_live.py rtsp://cam/stream    # network camera
-    python3 sabz_live.py traffic.mp4          # video file
+Run the edge service first; set SABZ_CAMERA_TOKEN and optionally SABZ_ENDPOINT.
+This producer does not control lamps. Camera calibration and conflict-zone
+sensing remain separate integration requirements.
 """
+import argparse
+import os
 import time
-import sys
 
-from sabz_intelligence import IntelligenceLayer
-
-try:
-    from sabz_safety import AccidentPrevention
-    _SAFETY_OK = True
-except ImportError:
-    _SAFETY_OK = False
+from sabz_edge.client import CameraClient
 
 
-class SabzLive:
-    """Full live pipeline: camera -> brain -> accident prevention -> decision."""
-
-    def __init__(self, dqn_path="sabz_dqn_capable.npz"):
-        # Intelligence layer with real trained brain
-        self.brain = IntelligenceLayer(dqn_path=dqn_path)
-        # Accident prevention
-        self.safety = AccidentPrevention() if _SAFETY_OK else None
-        # Camera (imported lazily so module loads without ultralytics)
-        self.camera = None
-        self.phase = "NS"
-        self.green_elapsed = 0.0
-        self.decisions = []
-        self.yellow_remaining = 3.0
-
-    def _get_camera(self):
-        if self.camera is None:
-            from sabz_camera import LiveCameraSystem
-            self.camera = LiveCameraSystem(frame_skip=3)
-        return self.camera
-
-    def counts_to_state(self, counts):
-        """Convert live camera counts to 16-dim state vector."""
-        q = [float(counts[a]) for a in ["N", "S", "E", "W"]]
-        # Approaching estimated as half of queue (conservative)
-        app = [c * 0.5 for c in q]
-        hour = time.localtime().tm_hour + time.localtime().tm_min / 60.0
-        # [queues(4), approaching(4), phase, green_elapsed,
-        #  near_school, near_mosque, near_office, near_hospital,
-        #  friday, hour]
-        # Friday check: Monday=0 ... Sunday=6, Friday=4
-        import datetime
-        friday = 1.0 if datetime.datetime.now().weekday() == 4 else 0.0
-        state = (q + app +
-                 [1.0 if self.phase == "NS" else 0.0,
-                  min(self.green_elapsed / 60.0, 1.0),
-                  0.0, 0.0, 0.0, 0.0,  # location: neutral for live
-                  friday, hour])
-        return state
-
-    def on_frame_counts(self, counts, vehicles=None):
-        """Called with live counts each second. Returns decision.
-
-        vehicles: optional list of (approach, speed_m_s, dist_m) for
-        accident prevention. If provided, runner detection is active.
-        """
-        state = self.counts_to_state(counts)
-        action, ctrl, regime = self.brain.decide(state)
-
-        # Accident prevention: check for red-light runners
-        extra_all_red = 0.0
-        if self.safety and vehicles:
-            extra_all_red = self.safety.check_all_red_extension(
-                vehicles, self.yellow_remaining)
-
-        # Update signal phase tracking
-        if action == "switch":
-            self.phase = "EW" if self.phase == "NS" else "NS"
-            self.green_elapsed = 0.0
-            self.yellow_remaining = 3.0
-        else:
-            self.green_elapsed += 1.0
-
-        result = {
-            "action": action,
-            "controller": ctrl,
-            "regime": regime,
-            "phase": self.phase,
-            "counts": dict(counts),
-            "extra_all_red": round(extra_all_red, 1),
-            "safety_stats": self.safety.stats() if self.safety else {},
-            "ts": time.time(),
-        }
-        self.decisions.append(result)
-        return result
-
-    def run(self, source, max_seconds=0):
-        """Run live on a video source."""
-        cam = self._get_camera()
-        print(f"SABZ LIVE: processing {source}")
-        print("Press Ctrl+C to stop.\n")
-
-        start = time.time()
-        try:
-            def on_counts(counts):
-                result = self.on_frame_counts(counts)
-                elapsed = time.time() - start
-                print(f"[{elapsed:5.0f}s] {counts} -> "
-                      f"{result['action'].upper()} "
-                      f"via {result['controller']} "
-                      f"({result['regime']}, phase={result['phase']})",
-                      flush=True)
-                if max_seconds and elapsed >= max_seconds:
-                    raise StopIteration
-
-            cam.run_stream(source, on_counts=on_counts)
-        except StopIteration:
-            pass
-        except KeyboardInterrupt:
-            print("\nstopped")
-
-        print(f"\nDone. {len(self.decisions)} decisions made.")
-        print(f"Routing: {self.brain.stats()['routed']}")
-        return self.decisions
-
-
-if __name__ == "__main__":
-    src = sys.argv[1] if len(sys.argv) > 1 else 0
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('source', nargs='?', default='0')
+    parser.add_argument('--endpoint', default=os.environ.get('SABZ_ENDPOINT', 'http://127.0.0.1:8099'))
+    parser.add_argument('--state', default='data/live-camera.sqlite3')
+    args = parser.parse_args()
+    from sabz_camera import LiveCameraSystem
+    source = int(args.source) if args.source.isdigit() else args.source
+    client = CameraClient(args.endpoint, os.environ['SABZ_CAMERA_TOKEN'], args.state)
+    camera = LiveCameraSystem()
     try:
-        src = int(src)
-    except ValueError:
-        pass
-    secs = int(sys.argv[2]) if len(sys.argv) > 2 else 0
-    live = SabzLive()
-    live.run(src, max_seconds=secs)
+        def on_counts(counts):
+            print(client.send(counts, conflict_clear=False, captured_at=time.time()), flush=True)
+        camera.run_stream(source, on_counts=on_counts)
+    finally:
+        client.close()
+
+
+if __name__ == '__main__':
+    main()

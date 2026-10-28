@@ -1,0 +1,1302 @@
+{
+  "schema_version": 1,
+  "mode": "bench",
+  "input": "synthetic",
+  "time_basis": "real monotonic seconds",
+  "physical_hardware": false,
+  "passed": true,
+  "journal_events": 89,
+  "transitions": [
+    {
+      "schema_version": 1,
+      "stage": "ALL_RED",
+      "phase": "NS",
+      "elapsed_s": 0.13999999999998636,
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "RED",
+        "W": "RED"
+      },
+      "reason": "sensor_unavailable",
+      "fault": null,
+      "command_sequence": 3,
+      "lease_s": 0.5,
+      "adapter": "independent-bench-cabinet",
+      "since_start_s": 0.015,
+      "cabinet_readback": {
+        "stage": "ALL_RED",
+        "phase": "NS",
+        "lamps": {
+          "N": "RED",
+          "S": "RED",
+          "E": "RED",
+          "W": "RED"
+        },
+        "elapsed_s": 0.2340000000000373,
+        "fault": null,
+        "reason": "startup",
+        "acknowledged_sequence": 3,
+        "physical_hardware": false
+      }
+    },
+    {
+      "schema_version": 1,
+      "stage": "GREEN",
+      "phase": "NS",
+      "elapsed_s": 0.10900000000003729,
+      "lamps": {
+        "N": "GREEN",
+        "S": "GREEN",
+        "E": "RED",
+        "W": "RED"
+      },
+      "reason": "clearance_complete",
+      "fault": null,
+      "command_sequence": 21,
+      "lease_s": 0.5,
+      "adapter": "independent-bench-cabinet",
+      "since_start_s": 2.015,
+      "cabinet_readback": {
+        "stage": "GREEN",
+        "phase": "NS",
+        "lamps": {
+          "N": "GREEN",
+          "S": "GREEN",
+          "E": "RED",
+          "W": "RED"
+        },
+        "elapsed_s": 0.1710000000000491,
+        "fault": null,
+        "reason": "clearance_complete",
+        "acknowledged_sequence": 21,
+        "physical_hardware": false
+      }
+    },
+    {
+      "schema_version": 1,
+      "stage": "YELLOW",
+      "phase": "NS",
+      "elapsed_s": 0.0,
+      "lamps": {
+        "N": "YELLOW",
+        "S": "YELLOW",
+        "E": "RED",
+        "W": "RED"
+      },
+      "reason": "opposing_demand",
+      "fault": null,
+      "command_sequence": 94,
+      "lease_s": 0.5,
+      "adapter": "independent-bench-cabinet",
+      "since_start_s": 9.937,
+      "cabinet_readback": {
+        "stage": "YELLOW",
+        "phase": "NS",
+        "lamps": {
+          "N": "YELLOW",
+          "S": "YELLOW",
+          "E": "RED",
+          "W": "RED"
+        },
+        "elapsed_s": 0.03099999999994907,
+        "fault": null,
+        "reason": "edge_transition",
+        "acknowledged_sequence": 94,
+        "physical_hardware": false
+      }
+    },
+    {
+      "schema_version": 1,
+      "stage": "ALL_RED",
+      "phase": "EW",
+      "elapsed_s": 0.0,
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "RED",
+        "W": "RED"
+      },
+      "reason": "clearance",
+      "fault": null,
+      "command_sequence": 122,
+      "lease_s": 0.5,
+      "adapter": "independent-bench-cabinet",
+      "since_start_s": 13.0,
+      "cabinet_readback": {
+        "stage": "ALL_RED",
+        "phase": "EW",
+        "lamps": {
+          "N": "RED",
+          "S": "RED",
+          "E": "RED",
+          "W": "RED"
+        },
+        "elapsed_s": 0.06200000000001182,
+        "fault": null,
+        "reason": "edge_transition",
+        "acknowledged_sequence": 122,
+        "physical_hardware": false
+      }
+    },
+    {
+      "schema_version": 1,
+      "stage": "GREEN",
+      "phase": "EW",
+      "elapsed_s": 0.10900000000003729,
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "GREEN",
+        "W": "GREEN"
+      },
+      "reason": "clearance_complete",
+      "fault": null,
+      "command_sequence": 142,
+      "lease_s": 0.5,
+      "adapter": "independent-bench-cabinet",
+      "since_start_s": 15.156,
+      "cabinet_readback": {
+        "stage": "GREEN",
+        "phase": "EW",
+        "lamps": {
+          "N": "RED",
+          "S": "RED",
+          "E": "GREEN",
+          "W": "GREEN"
+        },
+        "elapsed_s": 0.125,
+        "fault": null,
+        "reason": "clearance_complete",
+        "acknowledged_sequence": 142,
+        "physical_hardware": false
+      }
+    },
+    {
+      "schema_version": 1,
+      "stage": "YELLOW",
+      "phase": "EW",
+      "elapsed_s": 0.10900000000003729,
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "YELLOW",
+        "W": "YELLOW"
+      },
+      "reason": "sensor_unavailable",
+      "fault": null,
+      "command_sequence": 177,
+      "lease_s": 0.5,
+      "adapter": "independent-bench-cabinet",
+      "since_start_s": 19.031,
+      "cabinet_readback": {
+        "stage": "YELLOW",
+        "phase": "EW",
+        "lamps": {
+          "N": "RED",
+          "S": "RED",
+          "E": "YELLOW",
+          "W": "YELLOW"
+        },
+        "elapsed_s": 0.18700000000001182,
+        "fault": null,
+        "reason": "edge_transition",
+        "acknowledged_sequence": 177,
+        "physical_hardware": false
+      }
+    },
+    {
+      "schema_version": 1,
+      "stage": "ALL_RED",
+      "phase": "NS",
+      "elapsed_s": 0.10999999999989996,
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "RED",
+        "W": "RED"
+      },
+      "reason": "sensor_unavailable",
+      "fault": null,
+      "command_sequence": 205,
+      "lease_s": 0.5,
+      "adapter": "independent-bench-cabinet",
+      "since_start_s": 22.062,
+      "cabinet_readback": {
+        "stage": "ALL_RED",
+        "phase": "NS",
+        "lamps": {
+          "N": "RED",
+          "S": "RED",
+          "E": "RED",
+          "W": "RED"
+        },
+        "elapsed_s": 0.2179999999999609,
+        "fault": null,
+        "reason": "edge_transition",
+        "acknowledged_sequence": 205,
+        "physical_hardware": false
+      }
+    }
+  ],
+  "cabinet_events": [
+    {
+      "stage": "ALL_RED",
+      "phase": "NS",
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "RED",
+        "W": "RED"
+      },
+      "elapsed_s": 0,
+      "fault": null,
+      "reason": "startup",
+      "acknowledged_sequence": -1,
+      "physical_hardware": false,
+      "monotonic": 750.562
+    },
+    {
+      "stage": "GREEN",
+      "phase": "NS",
+      "lamps": {
+        "N": "GREEN",
+        "S": "GREEN",
+        "E": "RED",
+        "W": "RED"
+      },
+      "elapsed_s": 0,
+      "fault": null,
+      "reason": "clearance_complete",
+      "acknowledged_sequence": 20,
+      "physical_hardware": false,
+      "monotonic": 752.625
+    },
+    {
+      "stage": "YELLOW",
+      "phase": "NS",
+      "lamps": {
+        "N": "YELLOW",
+        "S": "YELLOW",
+        "E": "RED",
+        "W": "RED"
+      },
+      "elapsed_s": 0,
+      "fault": null,
+      "reason": "edge_transition",
+      "acknowledged_sequence": 94,
+      "physical_hardware": false,
+      "monotonic": 760.687
+    },
+    {
+      "stage": "ALL_RED",
+      "phase": "EW",
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "RED",
+        "W": "RED"
+      },
+      "elapsed_s": 0.031000000000062755,
+      "fault": null,
+      "reason": "edge_transition",
+      "acknowledged_sequence": 121,
+      "physical_hardware": false,
+      "monotonic": 763.734
+    },
+    {
+      "stage": "GREEN",
+      "phase": "EW",
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "GREEN",
+        "W": "GREEN"
+      },
+      "elapsed_s": 0,
+      "fault": null,
+      "reason": "clearance_complete",
+      "acknowledged_sequence": 141,
+      "physical_hardware": false,
+      "monotonic": 765.812
+    },
+    {
+      "stage": "YELLOW",
+      "phase": "EW",
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "YELLOW",
+        "W": "YELLOW"
+      },
+      "elapsed_s": 0,
+      "fault": null,
+      "reason": "edge_transition",
+      "acknowledged_sequence": 176,
+      "physical_hardware": false,
+      "monotonic": 769.625
+    },
+    {
+      "stage": "ALL_RED",
+      "phase": "NS",
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "RED",
+        "W": "RED"
+      },
+      "elapsed_s": 0.014999999999986358,
+      "fault": null,
+      "reason": "edge_transition",
+      "acknowledged_sequence": 203,
+      "physical_hardware": false,
+      "monotonic": 772.64
+    }
+  ],
+  "samples": [
+    {
+      "since_start_s": 0.015,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.006149768829345703,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 0.234,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.0050389766693115234,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 0.469,
+      "cycle_latency_s": 0.032,
+      "sensor_age_s": 0.02785038948059082,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 0.687,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.004300117492675781,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 0.906,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004065275192260742,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 1.14,
+      "cycle_latency_s": 0.031,
+      "sensor_age_s": 0.022593975067138672,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 1.359,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.005753755569458008,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 1.578,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.00447845458984375,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 1.797,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004446268081665039,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 2.015,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.004019498825073242,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 2.25,
+      "cycle_latency_s": 0.031,
+      "sensor_age_s": 0.023621797561645508,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 2.469,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0037622451782226562,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 2.687,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.019086971282945342,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 2.922,
+      "cycle_latency_s": 0.032,
+      "sensor_age_s": 0.025879621505737305,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 3.14,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.005260944366455078,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 3.359,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.019001855850206084,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 3.578,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.020851818084793194,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 3.797,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.020024028778038883,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 4.015,
+      "cycle_latency_s": 0.031,
+      "sensor_age_s": 0.00502467155456543,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 4.25,
+      "cycle_latency_s": 0.047,
+      "sensor_age_s": 0.028204679489135742,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 4.484,
+      "cycle_latency_s": 0.031,
+      "sensor_age_s": 0.02044057846069336,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 4.703,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.020008293151931866,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 4.922,
+      "cycle_latency_s": 0.032,
+      "sensor_age_s": 0.004024505615234375,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 5.156,
+      "cycle_latency_s": 0.047,
+      "sensor_age_s": 0.0412513885497674,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 5.375,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.020517316818200015,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 5.578,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004032611846923828,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 5.797,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004071474075317383,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 6.015,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.004210948944091797,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 6.234,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.004708766937255859,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 6.453,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004263401031494141,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 6.672,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004598140716552734,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 6.906,
+      "cycle_latency_s": 0.031,
+      "sensor_age_s": 0.020138708114586734,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 7.125,
+      "cycle_latency_s": 0.031,
+      "sensor_age_s": 0.004918098449707031,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 7.328,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.005033016204833984,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 7.547,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0042531490325927734,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 7.765,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.0039103031158447266,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 7.984,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.0038716793060302734,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 8.203,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.02001806831367503,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 8.406,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.004062175750732422,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 8.625,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.003999233245849609,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 8.844,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0043256282806396484,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 9.062,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.0043582916259765625,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 9.281,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0040476322174072266,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 9.5,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0041120052337646484,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 9.719,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.02152344322200861,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 9.937,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.019476070404039092,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 10.156,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.01962706184383478,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 10.375,
+      "cycle_latency_s": 0.031,
+      "sensor_age_s": 0.005412101745605469,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 10.578,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.003267049789428711,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 10.797,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004832267761230469,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 11.015,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.005056858062744141,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 11.234,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.0039174556732177734,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 11.453,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004060506820678711,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 11.672,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0040056705474853516,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 11.89,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.01937855720530024,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 12.125,
+      "cycle_latency_s": 0.031,
+      "sensor_age_s": 0.025745868682861328,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 12.344,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.005836963653564453,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 12.562,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.019964828491197295,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 12.781,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.020122495651207828,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 13.0,
+      "cycle_latency_s": 0.031,
+      "sensor_age_s": 0.004843950271606445,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 13.203,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.005102396011352539,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 13.422,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004816770553588867,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 13.64,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.004811525344848633,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 13.859,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.003999233245849609,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 14.078,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004359245300292969,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 14.297,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0044519901275634766,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 14.515,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.0035543441772460938,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 14.719,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0039043426513671875,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 14.937,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.003937482833862305,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 15.156,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0056836605072021484,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 15.375,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004294872283935547,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 15.594,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0036835670471191406,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 15.812,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.004185914993286133,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 16.015,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.20718591499337435,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 16.219,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.41118591499332524,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 16.422,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.6141859149932998,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 16.625,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.8171859149932743,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 16.812,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 1.0041859149932861,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 17.015,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 1.2071859149933744,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 17.219,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 1.4111859149933252,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 17.422,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 1.6141859149932998,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 17.625,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 1.8171859149932743,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 17.828,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 2.0201859149933625,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 18.031,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 2.223185914993337,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 18.234,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 2.4261859149933116,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 18.437,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 2.629185914993286,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 18.625,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 2.8171859149932743,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 18.828,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 3.0201859149933625,
+      "ready": false,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 19.031,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 3.223185914993337,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 19.234,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 3.4261859149933116,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 19.437,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 3.629185914993286,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 19.64,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 3.8321859149933744,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 19.844,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 4.036185914993325,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 20.047,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 4.2391859149933,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 20.25,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 4.442185914993274,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 20.453,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 4.6451859149933625,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 20.64,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 4.832185914993374,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 20.844,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 5.036185914993325,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 21.047,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 5.2391859149933,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 21.25,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 5.442185914993274,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 21.453,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 5.6451859149933625,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 21.656,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 5.848185914993337,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 21.859,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 6.051185914993312,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 22.062,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 6.254185914993286,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 22.265,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 6.442185914993274,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 22.453,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 6.6451859149933625,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 22.656,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 6.848185914993337,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 22.859,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 7.051185914993312,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 23.062,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 7.254185914993286,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 23.265,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 7.457185914993374,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 23.469,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 7.661185914993325,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 23.672,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 7.8641859149933,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 23.875,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 8.067185914993274,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 24.062,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 8.254185914993286,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 24.265,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 8.457185914993374,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 24.469,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 8.661185914993325,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 24.672,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 8.8641859149933,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 24.875,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 9.067185914993274,
+      "ready": false,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    }
+  ]
+}

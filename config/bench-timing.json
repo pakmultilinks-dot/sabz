@@ -1,0 +1,9 @@
+{
+  "min_green": 8.0,
+  "max_green": 60.0,
+  "yellow": 3.0,
+  "all_red": 2.0,
+  "stale_after": 3.0,
+  "max_tick_gap": 1.0,
+  "demand_margin": 2.0
+}

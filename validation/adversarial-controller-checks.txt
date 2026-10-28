@@ -1,0 +1,19 @@
+test_clearance_and_local_minimum (test_firmware.FirmwareTests.test_clearance_and_local_minimum) ... ok
+test_corrupt_reply_and_gpio_mismatch_rejected (test_firmware.FirmwareTests.test_corrupt_reply_and_gpio_mismatch_rejected) ... ok
+test_direct_conflicting_green_faults_and_clears (test_firmware.FirmwareTests.test_direct_conflicting_green_faults_and_clears) ... ok
+test_lease_expiry_cannot_be_reset_by_queries_or_fresh_commands (test_firmware.FirmwareTests.test_lease_expiry_cannot_be_reset_by_queries_or_fresh_commands) ... ok
+test_local_maximum_with_continuous_green_proposals (test_firmware.FirmwareTests.test_local_maximum_with_continuous_green_proposals) ... ok
+test_malformed_command_fields_fail_closed_on_fresh_controller (test_firmware.FirmwareTests.test_malformed_command_fields_fail_closed_on_fresh_controller) ... ok
+test_manual_loop_break_and_replay_latch (test_firmware.FirmwareTests.test_manual_loop_break_and_replay_latch) ... ok
+test_measurements_scheduler_and_compiled_board_as_one_path (test_firmware.FirmwareTests.test_measurements_scheduler_and_compiled_board_as_one_path) ... ok
+test_old_session_rejected (test_firmware.FirmwareTests.test_old_session_rejected) ... ok
+test_python_adapter_to_compiled_firmware (test_firmware.FirmwareTests.test_python_adapter_to_compiled_firmware) ... ok
+test_random_hostile_frames_never_produce_conflicting_outputs (test_firmware.FirmwareTests.test_random_hostile_frames_never_produce_conflicting_outputs) ... ok
+test_replayed_command_is_fault (test_firmware.FirmwareTests.test_replayed_command_is_fault) ... ok
+test_required_metric_fault_reaches_compiled_board_before_minimum (test_firmware.FirmwareTests.test_required_metric_fault_reaches_compiled_board_before_minimum) ... ok
+test_unsigned_clock_wrap_keeps_lease_and_clearance (test_firmware.FirmwareTests.test_unsigned_clock_wrap_keeps_lease_and_clearance) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 2.093s
+
+OK

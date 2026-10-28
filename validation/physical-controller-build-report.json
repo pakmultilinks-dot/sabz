@@ -1,0 +1,21 @@
+{
+  "native_cpp_core_compiled": true,
+  "native_core_and_adapter_tests_passed": 12,
+  "source_suite_passed": 82,
+  "installed_package_suite_passed": 82,
+  "serial_dependency": "pyserial 3.5 installed in .venv-edge-test",
+  "serial_devices_checked": "COM3/COM4 identify as Bluetooth links; neither was opened. No ESP32 detected.",
+  "esp32_target_compilation_verified": false,
+  "firmware_flashed": false,
+  "electrical_io_verified": false,
+  "physical_lamp_verified": false,
+  "road_ready": false,
+  "test_transport": "Compiled native process running the shared C++ parser/state machine. No GPIO/USB/UART electrical test.",
+  "files": {
+    "firmware/esp32s3_bench/bench_core.h": "0bcd77751b21a58e2ef700fb5661a35dd3d99641a17b538e7f7bb3de9d9e1b5c",
+    "firmware/esp32s3_bench/esp32s3_bench.ino": "0901c2f5df73a3d77edc36e8f09f5b5e77c347cdd75403b3178c0f2fc82b6a87",
+    "firmware/native/controller_host.cpp": "f00ad23bcf4e7de8126b096a2c139ea852929602b69f769e70cd7bae8135a375",
+    "sabz_edge/serial_bench.py": "7f5fa2c8f330b80bba75c2e241caac4fec4acdea94cab72f7d45c02855eab1d4",
+    "sabz_edge/hardware_bench.py": "ea9f1521384c722080c9118ed2ce80629cae6ea3735a22d0247ee2db1a465c27"
+  }
+}

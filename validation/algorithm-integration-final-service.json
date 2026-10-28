@@ -1,0 +1,508 @@
+{
+  "passed": true,
+  "endpoint": "https://127.0.0.1:18099",
+  "tls_verified": true,
+  "physical_hardware": false,
+  "synthetic_input": true,
+  "checks": {
+    "green_observed": true,
+    "unauthorized_rejected": true,
+    "reader_cannot_publish": true,
+    "malformed_observation_rejected": true,
+    "replay_rejected": true,
+    "feed_loss_not_ready": true,
+    "feed_loss_all_red": true,
+    "feed_loss_yellow_observed": true,
+    "feed_recovery": true
+  },
+  "samples": [
+    {
+      "software_api_to_observed_command_ack_ms": 150.237,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 4.805600001418497,
+        "serialization_ms": 0.8178999996744096,
+        "http_acceptance_ms": 29.370999996899627,
+        "submission_total_ms": 34.994499997992534
+      },
+      "post_acceptance_poll_ms": 115.231
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 22.766,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.6489000045112334,
+        "serialization_ms": 0.243800001044292,
+        "http_acceptance_ms": 10.098799997649621,
+        "submission_total_ms": 11.991500003205147
+      },
+      "post_acceptance_poll_ms": 10.746
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 113.739,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.7598999984329566,
+        "serialization_ms": 0.40469999657943845,
+        "http_acceptance_ms": 12.672000004386064,
+        "submission_total_ms": 14.836599999398459
+      },
+      "post_acceptance_poll_ms": 98.852
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 171.671,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.2639999986276962,
+        "serialization_ms": 0.149200001033023,
+        "http_acceptance_ms": 32.22230000392301,
+        "submission_total_ms": 33.63550000358373
+      },
+      "post_acceptance_poll_ms": 138.022
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 119.286,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.2824000004911795,
+        "serialization_ms": 0.1412999990861863,
+        "http_acceptance_ms": 22.485099994810298,
+        "submission_total_ms": 23.908799994387664
+      },
+      "post_acceptance_poll_ms": 95.375
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 145.19,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 0.8568999983253889,
+        "serialization_ms": 0.1497999983257614,
+        "http_acceptance_ms": 22.9239000036614,
+        "submission_total_ms": 23.930600000312552
+      },
+      "post_acceptance_poll_ms": 121.22
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 142.578,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 6.115600001066923,
+        "serialization_ms": 0.134599999000784,
+        "http_acceptance_ms": 30.103900004178286,
+        "submission_total_ms": 36.35410000424599
+      },
+      "post_acceptance_poll_ms": 106.204
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 18.762,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.206699998874683,
+        "serialization_ms": 0.14820000069448724,
+        "http_acceptance_ms": 8.323900001414586,
+        "submission_total_ms": 9.678800000983756
+      },
+      "post_acceptance_poll_ms": 9.036
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 41.039,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.4349000048241578,
+        "serialization_ms": 0.14099999680183828,
+        "http_acceptance_ms": 8.818000002065673,
+        "submission_total_ms": 10.39390000369167
+      },
+      "post_acceptance_poll_ms": 30.623
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 115.019,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.0535000037634745,
+        "serialization_ms": 0.22760000138077885,
+        "http_acceptance_ms": 12.016099994070828,
+        "submission_total_ms": 13.297199999215081
+      },
+      "post_acceptance_poll_ms": 101.689
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 131.043,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.2542999975266866,
+        "serialization_ms": 0.18599999748403206,
+        "http_acceptance_ms": 23.374900003545918,
+        "submission_total_ms": 24.815199998556636
+      },
+      "post_acceptance_poll_ms": 106.086
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 131.091,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.4787000036449172,
+        "serialization_ms": 0.24709999706828967,
+        "http_acceptance_ms": 15.819400003238115,
+        "submission_total_ms": 17.545200003951322
+      },
+      "post_acceptance_poll_ms": 113.514
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 132.258,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 6.098699996073265,
+        "serialization_ms": 0.3571999986888841,
+        "http_acceptance_ms": 12.517000002844725,
+        "submission_total_ms": 18.972899997606874
+      },
+      "post_acceptance_poll_ms": 113.255
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 110.852,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 5.235500000708271,
+        "serialization_ms": 0.27409999893279746,
+        "http_acceptance_ms": 10.050299999420531,
+        "submission_total_ms": 15.5598999990616
+      },
+      "post_acceptance_poll_ms": 95.269
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 132.76,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.3584000043920241,
+        "serialization_ms": 0.30359999800566584,
+        "http_acceptance_ms": 14.760199999727774,
+        "submission_total_ms": 16.422200002125464
+      },
+      "post_acceptance_poll_ms": 116.295
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 113.219,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 5.292199995892588,
+        "serialization_ms": 0.21570000535575673,
+        "http_acceptance_ms": 8.656599995447323,
+        "submission_total_ms": 14.164499996695668
+      },
+      "post_acceptance_poll_ms": 99.028
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 118.465,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.0161999962292612,
+        "serialization_ms": 0.19780000002356246,
+        "http_acceptance_ms": 17.350500005704816,
+        "submission_total_ms": 18.56450000195764
+      },
+      "post_acceptance_poll_ms": 99.869
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 161.688,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.7253999976674095,
+        "serialization_ms": 0.21779999951831996,
+        "http_acceptance_ms": 36.79769999871496,
+        "submission_total_ms": 38.74089999590069
+      },
+      "post_acceptance_poll_ms": 122.921
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 115.364,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.8320000017411076,
+        "serialization_ms": 0.28929999825777486,
+        "http_acceptance_ms": 10.177900003327522,
+        "submission_total_ms": 12.299200003326405
+      },
+      "post_acceptance_poll_ms": 103.03
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 147.249,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.2695000041276217,
+        "serialization_ms": 0.2513999934308231,
+        "http_acceptance_ms": 34.81650000321679,
+        "submission_total_ms": 36.33740000077523
+      },
+      "post_acceptance_poll_ms": 110.897
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 32.033,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.3336999982129782,
+        "serialization_ms": 0.1444000008632429,
+        "http_acceptance_ms": 22.44570000038948,
+        "submission_total_ms": 23.9237999994657
+      },
+      "post_acceptance_poll_ms": 8.081
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 135.382,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.069999998435378,
+        "serialization_ms": 0.12820000119972974,
+        "http_acceptance_ms": 11.995000000752043,
+        "submission_total_ms": 13.19320000038715
+      },
+      "post_acceptance_poll_ms": 122.165
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 116.883,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.9194000051356852,
+        "serialization_ms": 0.25209999876096845,
+        "http_acceptance_ms": 11.885499996424187,
+        "submission_total_ms": 14.05700000032084
+      },
+      "post_acceptance_poll_ms": 102.805
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 52.78,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 2.698299998883158,
+        "serialization_ms": 0.3842999940388836,
+        "http_acceptance_ms": 15.518500003963709,
+        "submission_total_ms": 18.60109999688575
+      },
+      "post_acceptance_poll_ms": 34.148
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 112.684,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.2706999987130985,
+        "serialization_ms": 0.1221999991685152,
+        "http_acceptance_ms": 10.7304999983171,
+        "submission_total_ms": 12.123399996198714
+      },
+      "post_acceptance_poll_ms": 100.532
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 128.879,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.104700000723824,
+        "serialization_ms": 0.2139000062015839,
+        "http_acceptance_ms": 16.349699995771516,
+        "submission_total_ms": 17.668300002696924
+      },
+      "post_acceptance_poll_ms": 111.19
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 146.302,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 0.8885999995982274,
+        "serialization_ms": 0.16029999824240804,
+        "http_acceptance_ms": 10.636999999405816,
+        "submission_total_ms": 11.685899997246452
+      },
+      "post_acceptance_poll_ms": 134.598
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 119.467,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.098900000215508,
+        "serialization_ms": 0.18490000366000459,
+        "http_acceptance_ms": 7.0625000007567,
+        "submission_total_ms": 8.346300004632212
+      },
+      "post_acceptance_poll_ms": 111.093
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 119.218,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.1949000036111102,
+        "serialization_ms": 0.283800000033807,
+        "http_acceptance_ms": 10.777800001960713,
+        "submission_total_ms": 12.25650000560563
+      },
+      "post_acceptance_poll_ms": 106.933
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 123.711,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.0400000028312206,
+        "serialization_ms": 0.10990000009769574,
+        "http_acceptance_ms": 23.18799999920884,
+        "submission_total_ms": 24.337900002137758
+      },
+      "post_acceptance_poll_ms": 99.358
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 63.876,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.4385999966179952,
+        "serialization_ms": 0.3327000013086945,
+        "http_acceptance_ms": 32.141600000613835,
+        "submission_total_ms": 33.912899998540524
+      },
+      "post_acceptance_poll_ms": 29.937
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 33.976,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.2514000045484863,
+        "serialization_ms": 0.3155999947921373,
+        "http_acceptance_ms": 22.632899999734946,
+        "submission_total_ms": 24.19989999907557
+      },
+      "post_acceptance_poll_ms": 9.742
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 148.373,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.287199993385002,
+        "serialization_ms": 0.13470000703819096,
+        "http_acceptance_ms": 23.521899995103013,
+        "submission_total_ms": 24.943799995526206
+      },
+      "post_acceptance_poll_ms": 123.398
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 125.521,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 0.8124000014504418,
+        "serialization_ms": 0.16039999900385737,
+        "http_acceptance_ms": 10.327700001653284,
+        "submission_total_ms": 11.300500002107583
+      },
+      "post_acceptance_poll_ms": 114.193
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 20.816,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.9603000037022866,
+        "serialization_ms": 0.3023000026587397,
+        "http_acceptance_ms": 8.929799994803034,
+        "submission_total_ms": 11.19240000116406
+      },
+      "post_acceptance_poll_ms": 9.593
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 53.189,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.0529999999562278,
+        "serialization_ms": 0.22020000324118882,
+        "http_acceptance_ms": 18.404399997962173,
+        "submission_total_ms": 19.67760000115959
+      },
+      "post_acceptance_poll_ms": 33.502
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 19.194,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 0.8919000028981827,
+        "serialization_ms": 0.19359999714652076,
+        "http_acceptance_ms": 9.350699998321943,
+        "submission_total_ms": 10.436199998366646
+      },
+      "post_acceptance_poll_ms": 8.729
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 111.855,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.2863000010838732,
+        "serialization_ms": 0.16319999849656597,
+        "http_acceptance_ms": 12.060399996698834,
+        "submission_total_ms": 13.509899996279273
+      },
+      "post_acceptance_poll_ms": 98.319
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 22.799,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.6288999977405183,
+        "serialization_ms": 0.2714000002015382,
+        "http_acceptance_ms": 10.618500004056841,
+        "submission_total_ms": 12.518800001998898
+      },
+      "post_acceptance_poll_ms": 10.256
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 122.104,
+      "stage": "GREEN",
+      "ready": true,
+      "submission": {
+        "sequence_reservation_ms": 1.556199997139629,
+        "serialization_ms": 0.5109999983687885,
+        "http_acceptance_ms": 15.95870000164723,
+        "submission_total_ms": 18.025899997155648
+      },
+      "post_acceptance_poll_ms": 104.094
+    }
+  ],
+  "software_latency_ms": {
+    "p50": 118.465,
+    "p95": 150.237,
+    "p99": 171.671,
+    "max": 171.671,
+    "over_200_ms": 0
+  },
+  "measurement_scope": "Client POST start to polled acknowledgement of the corresponding controller command, including TLS/SQLite/control scheduling/polling. Excludes camera capture, physical lamps and external network. A command acknowledgement is not proof of a lamp transition."
+}

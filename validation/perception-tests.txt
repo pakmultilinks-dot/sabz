@@ -1,0 +1,19 @@
+test_calibrated_aggregates_reach_api_policy_and_minimized_audit (test_perception.PerceptionHTTPTests.test_calibrated_aggregates_reach_api_policy_and_minimized_audit) ... ok
+test_250_vehicle_queue_is_not_clipped_in_metric_path (test_perception.PerceptionTests.test_250_vehicle_queue_is_not_clipped_in_metric_path) ... ok
+test_aggregates_feed_real_schema_and_control_kernel (test_perception.PerceptionTests.test_aggregates_feed_real_schema_and_control_kernel) ... ok
+test_arrival_rate_measures_upstream_line_crossing_once (test_perception.PerceptionTests.test_arrival_rate_measures_upstream_line_crossing_once) ... ok
+test_blocked_current_phase_terminates_even_if_other_is_blocked (test_perception.PerceptionTests.test_blocked_current_phase_terminates_even_if_other_is_blocked) ... ok
+test_duplicate_or_unsupported_detection_rejected (test_perception.PerceptionTests.test_duplicate_or_unsupported_detection_rejected) ... ok
+test_large_queue_uses_bounded_budget_then_serves_bike (test_perception.PerceptionTests.test_large_queue_uses_bounded_budget_then_serves_bike) ... ok
+test_missing_track_and_stale_frame_are_unhealthy (test_perception.PerceptionTests.test_missing_track_and_stale_frame_are_unhealthy) ... ok
+test_new_track_uses_conservative_speed_without_stopping_every_arrival (test_perception.PerceptionTests.test_new_track_uses_conservative_speed_without_stopping_every_arrival) ... ok
+test_no_clearance_inference_and_arrivals_not_queue_deltas (test_perception.PerceptionTests.test_no_clearance_inference_and_arrivals_not_queue_deltas) ... ok
+test_one_blocked_member_blocks_shared_phase (test_perception.PerceptionTests.test_one_blocked_member_blocks_shared_phase) ... ok
+test_speed_queue_motorcycle_and_privacy (test_perception.PerceptionTests.test_speed_queue_motorcycle_and_privacy) ... ok
+test_survey_projection_and_degenerate_rejection (test_perception.PerceptionTests.test_survey_projection_and_degenerate_rejection) ... ok
+test_contended_sequence_store_fails_before_network_submission (test_perception.SenderDurabilityTests.test_contended_sequence_store_fails_before_network_submission) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.397s
+
+OK

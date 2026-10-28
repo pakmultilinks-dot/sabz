@@ -1,0 +1,46 @@
+{
+  "source_tests_passed": 96,
+  "installed_package_tests_passed": 96,
+  "virtual_runs_passed": 105,
+  "compiled_cpp_firmware_tests_passed": 13,
+  "integrated_measurement_to_compiled_board_test": true,
+  "authenticated_running_service_qualification": {
+    "green_observed": true,
+    "unauthorized_rejected": true,
+    "reader_cannot_publish": true,
+    "malformed_observation_rejected": true,
+    "replay_rejected": true,
+    "feed_loss_not_ready": true,
+    "feed_loss_all_red": true,
+    "feed_loss_yellow_observed": true,
+    "feed_recovery": true
+  },
+  "latest_software_latency_ms": {
+    "p50": 118.465,
+    "p95": 150.237,
+    "p99": 171.671,
+    "max": 171.671,
+    "over_200_ms": 0
+  },
+  "earlier_first_sample_outlier_ms": 1169.747,
+  "hard_latency_bound_proven": false,
+  "current_installation": "Private loopback HTTPS; outputs emulated; idle ALL_RED without sensor feed",
+  "not_verified": [
+    "Trained image detector/tracker accuracy on local traffic",
+    "Real surveyed calibration",
+    "ESP32 target compilation/flashing",
+    "Physical electrical/lamp behaviour",
+    "Public-road commissioning"
+  ],
+  "legacy_dqn_or_online_learning_controls_signals": false,
+  "source_sha256": {
+    "sabz_edge/perception.py": "c7ca816ca6d151f9740affe738e85d56d5b5775482cc63334d2859baf480beb5",
+    "sabz_edge/sensor_ingest.py": "ce215bbb3cc82c22399b3576c86a5791006e521148697256f6e2ff555a2b74fb",
+    "sabz_edge/adaptive.py": "13cc2eda618a85917ffe111f5c8945a183a9e3bc12d74a6664bd15719604f8ee",
+    "sabz_edge/core.py": "e6010eec7d5993c00fbc4cd391b66f4e1b992b59cf1e252a9420bdbc8ef6483c",
+    "sabz_edge/runtime.py": "a763f6fbc94d7efc41a78435557a171168ba98d82a8bf78cfbdc9e201eef4aef",
+    "sabz_edge/client.py": "bbdbd703bc434a5455e52ebda64ca79e3f0f21a38518d91d0239c06549c898af",
+    "sabz_edge/serial_bench.py": "7f5fa2c8f330b80bba75c2e241caac4fec4acdea94cab72f7d45c02855eab1d4",
+    "firmware/esp32s3_bench/bench_core.h": "0bcd77751b21a58e2ef700fb5661a35dd3d99641a17b538e7f7bb3de9d9e1b5c"
+  }
+}

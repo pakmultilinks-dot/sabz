@@ -1,0 +1,7 @@
+Collecting imageio-ffmpeg
+  Downloading imageio_ffmpeg-0.6.0-py3-none-win_amd64.whl.metadata (1.5 kB)
+Downloading imageio_ffmpeg-0.6.0-py3-none-win_amd64.whl (31.2 MB)
+   -                                        0.8/31.2 MB 12.1 kB/s eta 0:41:59
+WARNING: Connection interrupted while downloading.
+WARNING: Attempting to resume incomplete download (786 kB/31.2 MB, attempt 1)
+Resuming download imageio_ffmpeg-0.6.0-py3-none-win_amd64.whl (786 kB/31.2 MB)

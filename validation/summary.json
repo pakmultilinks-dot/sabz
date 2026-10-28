@@ -1,0 +1,41 @@
+{
+  "recorded_at_utc": "2026-10-27T05:45:31.118941+00:00",
+  "scope": "Synthetic adaptive signal demonstration and two-phase integration bench",
+  "field_ready": false,
+  "source-tests": {
+    "tests": 58,
+    "passed": true
+  },
+  "isolated-wheel-tests": {
+    "tests": 58,
+    "passed": true
+  },
+  "benchmark": {
+    "controller_runs": 105,
+    "scenarios": 7,
+    "seeds": [
+      41,
+      83,
+      119,
+      211,
+      307
+    ],
+    "duration_s": 600,
+    "better_than_actuated_scenario_means": 6,
+    "better_than_fixed_scenario_means": 4
+  },
+  "browser_check": {
+    "tested_at": "local preview",
+    "runtime": "Self-hosted Pyodide 314.0.7",
+    "fresh_seed": 2026,
+    "demand_scale": 1.2,
+    "visible_final_delay_s": {
+      "fixed": 52.9,
+      "actuated": 14.1,
+      "adaptive": 15.6
+    },
+    "matches_native_at_display_precision": true,
+    "hosted_gate": "Account sign-in required; authenticated hosted computation not inspected"
+  },
+  "private_url": "https://sabz-adaptive-signal-lab.jovialfrost33.chatgpt.site"
+}

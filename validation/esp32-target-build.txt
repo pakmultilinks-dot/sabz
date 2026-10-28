@@ -1,0 +1,6 @@
+In file included from C:\Users\Lenovo\Documents\Code_PlayGround\SABZ\sabz\data\firmware-tools\packages\packages\esp32\hardware\esp32\3.3.0\cores\esp32\esp32-hal-touch.c:19:
+C:\Users\Lenovo\Documents\Code_PlayGround\SABZ\sabz\data\firmware-tools\packages\packages\esp32\tools\esp32-arduino-libs\idf-release_v5.5-b66b5448-v1\esp32s3/include/driver/touch_sensor/esp32s3/include/driver/touch_sensor.h:13:2: warning: #warning "This set of Touch APIs has been deprecated, please include 'driver/touch_sens.h' instead. if you want to keep using the old APIs and ignore this warning, you can enable 'Suppress legacy driver deprecated warning' option under 'Touch Configuration' menu in Kconfig" [-Wcpp]
+   13 | #warning "This set of Touch APIs has been deprecated, \
+      |  ^~~~~~~
+Sketch uses 309315 bytes (23%) of program storage space. Maximum is 1310720 bytes.
+Global variables use 20720 bytes (6%) of dynamic memory, leaving 306960 bytes for local variables. Maximum is 327680 bytes.

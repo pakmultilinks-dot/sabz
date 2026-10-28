@@ -1,0 +1,93 @@
+{
+  "Fast approach / bounded extension": {
+    "frames": 210,
+    "transitions": [
+      {
+        "t": 7.0,
+        "stage": "GREEN",
+        "phase": "NS",
+        "reason": "approach_protection_70m"
+      },
+      {
+        "t": 12.0,
+        "stage": "YELLOW",
+        "phase": "NS",
+        "reason": "pressure_difference"
+      },
+      {
+        "t": 15.0,
+        "stage": "ALL_RED",
+        "phase": "EW",
+        "reason": "clearance"
+      },
+      {
+        "t": 17.0,
+        "stage": "GREEN",
+        "phase": "EW",
+        "reason": "clearance_complete"
+      }
+    ]
+  },
+  "Slow approach / no indefinite hold": {
+    "frames": 210,
+    "transitions": [
+      {
+        "t": 7.0,
+        "stage": "GREEN",
+        "phase": "NS",
+        "reason": "minimum_green"
+      },
+      {
+        "t": 10.0,
+        "stage": "YELLOW",
+        "phase": "NS",
+        "reason": "pressure_difference"
+      },
+      {
+        "t": 13.0,
+        "stage": "ALL_RED",
+        "phase": "EW",
+        "reason": "clearance"
+      },
+      {
+        "t": 15.0,
+        "stage": "GREEN",
+        "phase": "EW",
+        "reason": "clearance_complete"
+      }
+    ]
+  },
+  "70 vehicles / one waiting bike": {
+    "frames": 300,
+    "transitions": [
+      {
+        "t": 55.0,
+        "stage": "GREEN",
+        "phase": "NS",
+        "reason": "approach_protection_70m"
+      },
+      {
+        "t": 62.0,
+        "stage": "YELLOW",
+        "phase": "NS",
+        "reason": "maximum_green"
+      },
+      {
+        "t": 65.0,
+        "stage": "ALL_RED",
+        "phase": "EW",
+        "reason": "clearance"
+      },
+      {
+        "t": 67.0,
+        "stage": "GREEN",
+        "phase": "EW",
+        "reason": "clearance_complete"
+      }
+    ]
+  },
+  "video": {
+    "decoded_frames": 720,
+    "seconds": 48.0
+  }
+}

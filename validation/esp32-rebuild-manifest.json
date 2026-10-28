@@ -1,0 +1,39 @@
+{
+  "target_build_passed": true,
+  "road_ready": false,
+  "flashed": false,
+  "sources": {
+    "bench_core.h": "0bcd77751b21a58e2ef700fb5661a35dd3d99641a17b538e7f7bb3de9d9e1b5c",
+    "esp32s3_bench.ino": "0901c2f5df73a3d77edc36e8f09f5b5e77c347cdd75403b3178c0f2fc82b6a87"
+  },
+  "arduino_core": "esp32:esp32@3.3.0",
+  "artifacts": {
+    "esp32s3_bench.ino.bootloader.bin": {
+      "sha256": "e678e8195c799dc5d28359717fb3b90eedaac62e530b266adf84762ae589018e",
+      "bytes": 20256
+    },
+    "esp32s3_bench.ino.map": {
+      "sha256": "587a843986c4ef672b4d639ee382daaeae8c9bb5c903653b6f055b34f4aa4bcf",
+      "bytes": 10446457
+    },
+    "esp32s3_bench.ino.merged.bin": {
+      "sha256": "c13e750e3673a1c1956daca5dbbad5138903a8c3f5ca94bc0c6cdfa2fbd34a07",
+      "bytes": 4194304
+    },
+    "esp32s3_bench.ino.elf": {
+      "sha256": "811d66d61fb40afcacdff8b35e5740e329b2dd847088b99ce0fcab491a65b94c",
+      "bytes": 6279908
+    },
+    "esp32s3_bench.ino.partitions.bin": {
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1",
+      "bytes": 3072
+    },
+    "esp32s3_bench.ino.bin": {
+      "sha256": "902ef64338a6c35ebcba5c97a3a6ce844449c66c97ed03b8ac0c84f6553d0e09",
+      "bytes": 309456
+    }
+  },
+  "electrical_verification": false,
+  "fqbn": "esp32:esp32:esp32s3",
+  "build_utc": "2026-10-27T16:41:51.3250510Z"
+}

@@ -1,0 +1,9 @@
+{
+  "path": "data\\firmware-release\\sabz-esp32s3-low-voltage-bench.zip",
+  "bytes": 375111,
+  "sha256": "23f39fe633bd982ea29aef1e7133857aae83f465d8f2f923a34425811da1a549",
+  "target_build_verified": true,
+  "flashed": false,
+  "electrical_verified": false,
+  "road_ready": false
+}

@@ -1,0 +1,28 @@
+Installed package hashes match; running tests outside checkout
+Run 1/1
+test_delayed_tick_does_not_skip_clearance (test_edge.CoreTests.test_delayed_tick_does_not_skip_clearance) ... ok
+test_fault_latches_across_fresh_camera_packets (test_edge.CoreTests.test_fault_latches_across_fresh_camera_packets) ... ok
+test_maximum_green_and_clearance (test_edge.CoreTests.test_maximum_green_and_clearance) ... ok
+test_randomized_transition_invariants (test_edge.CoreTests.test_randomized_transition_invariants) ... ok
+test_request_frequency_cannot_accelerate_time (test_edge.CoreTests.test_request_frequency_cannot_accelerate_time) ... ok
+test_stale_sensor_terminates_through_yellow (test_edge.CoreTests.test_stale_sensor_terminates_through_yellow) ... ok
+test_startup_and_minimum_green (test_edge.CoreTests.test_startup_and_minimum_green) ... ok
+test_auth_roles_replay_and_old_routes (test_edge.HTTPTests.test_auth_roles_replay_and_old_routes) ... ok
+test_bad_payload_and_body_limit (test_edge.HTTPTests.test_bad_payload_and_body_limit) ... ok
+test_camera_sdk_and_persistent_sequence (test_edge.HTTPTests.test_camera_sdk_and_persistent_sequence) ... ok
+test_rate_limiter (test_edge.HTTPTests.test_rate_limiter) ... ok
+test_root_explains_api_without_exposing_operational_status (test_edge.HTTPTests.test_root_explains_api_without_exposing_operational_status) ... ok
+test_sdk_rejects_remote_plaintext_and_embedded_credentials (test_edge.HTTPTests.test_sdk_rejects_remote_plaintext_and_embedded_credentials) ... ok
+test_audit_failure_latches_and_prevents_green_output (test_edge.RuntimeTests.test_audit_failure_latches_and_prevents_green_output) ... ok
+test_observation_submission_does_not_advance_control (test_edge.RuntimeTests.test_observation_submission_does_not_advance_control) ... ok
+test_only_one_owner_per_state_directory (test_edge.RuntimeTests.test_only_one_owner_per_state_directory) ... ok
+test_replay_watermark_survives_restart (test_edge.RuntimeTests.test_replay_watermark_survives_restart) ... ok
+test_bad_numbers_types_and_shapes (test_edge.ValidationTests.test_bad_numbers_types_and_shapes) ... ok
+test_json_duplicates_and_nonfinite_rejected (test_edge.ValidationTests.test_json_duplicates_and_nonfinite_rejected) ... ok
+test_unsafe_configuration_rejected (test_edge.ValidationTests.test_unsafe_configuration_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 1.318s
+
+OK
+

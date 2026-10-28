@@ -1,0 +1,228 @@
+{
+  "passed": true,
+  "endpoint": "https://127.0.0.1:18099",
+  "tls_verified": true,
+  "physical_hardware": false,
+  "synthetic_input": true,
+  "checks": {
+    "green_observed": true,
+    "unauthorized_rejected": true,
+    "reader_cannot_publish": true,
+    "malformed_observation_rejected": true,
+    "replay_rejected": true,
+    "feed_loss_not_ready": true,
+    "feed_loss_all_red": true,
+    "feed_loss_yellow_observed": true,
+    "feed_recovery": true
+  },
+  "samples": [
+    {
+      "software_api_to_observed_command_ack_ms": 188.88,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 143.55,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 48.246,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 71.178,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 157.215,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 141.468,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 55.881,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 143.034,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 46.54,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 143.374,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 151.91,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 148.949,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 51.28,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 139.042,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 162.335,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 159.906,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 146.545,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 138.312,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 151.719,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 43.114,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 45.67,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 140.014,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 142.656,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 142.863,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 143.011,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 45.527,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 44.944,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 141.855,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 56.478,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 42.537,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 157.115,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 150.223,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 59.506,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 156.922,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 138.837,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 138.813,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 77.286,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 176.868,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 135.588,
+      "stage": "GREEN",
+      "ready": true
+    },
+    {
+      "software_api_to_observed_command_ack_ms": 47.567,
+      "stage": "GREEN",
+      "ready": true
+    }
+  ],
+  "software_latency_ms": {
+    "p50": 140.014,
+    "p95": 162.335,
+    "p99": 188.88,
+    "max": 188.88,
+    "over_200_ms": 0
+  },
+  "measurement_scope": "Client POST start to polled acknowledgement of the corresponding controller command, including TLS/SQLite/control scheduling/polling. Excludes camera capture, physical lamps and external network. A command acknowledgement is not proof of a lamp transition."
+}

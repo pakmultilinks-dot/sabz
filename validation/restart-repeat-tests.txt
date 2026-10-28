@@ -1,0 +1,41 @@
+Installed wheel verified against source SHA-256 hashes. Tests run outside checkout with Python -I.
+
+Run 1/5
+test_kill_restart_replay_protection_and_readback (test_service_process.ServiceProcessTests.test_kill_restart_replay_protection_and_readback) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.458s
+
+OK
+
+Run 2/5
+test_kill_restart_replay_protection_and_readback (test_service_process.ServiceProcessTests.test_kill_restart_replay_protection_and_readback) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.321s
+
+OK
+
+Run 3/5
+test_kill_restart_replay_protection_and_readback (test_service_process.ServiceProcessTests.test_kill_restart_replay_protection_and_readback) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.406s
+
+OK
+
+Run 4/5
+test_kill_restart_replay_protection_and_readback (test_service_process.ServiceProcessTests.test_kill_restart_replay_protection_and_readback) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.361s
+
+OK
+
+Run 5/5
+test_kill_restart_replay_protection_and_readback (test_service_process.ServiceProcessTests.test_kill_restart_replay_protection_and_readback) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 4.383s
+
+OK

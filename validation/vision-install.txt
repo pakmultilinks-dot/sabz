@@ -1,0 +1,22 @@
+Processing c:\users\lenovo\documents\code_playground\sabz\sabz
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: sabz-edge
+  Building wheel for sabz-edge (pyproject.toml): started
+  Building wheel for sabz-edge (pyproject.toml): finished with status 'done'
+  Created wheel for sabz-edge: filename=sabz_edge-0.1.0-py3-none-any.whl size=46677 sha256=5cc09e056b00294a4180cc8bc36b35f233ccd1c839dbda1553ece33c708bb42f
+  Stored in directory: C:\Users\Lenovo\AppData\Local\Temp\pip-ephem-wheel-cache-r4ojf553\wheels\5e\f3\c3\5d908b457b06cb52edf0746aa8880f258a912be2bb1916d63d
+Successfully built sabz-edge
+Installing collected packages: sabz-edge
+  Attempting uninstall: sabz-edge
+    Found existing installation: sabz-edge 0.1.0
+    Uninstalling sabz-edge-0.1.0:
+      Successfully uninstalled sabz-edge-0.1.0
+Successfully installed sabz-edge-0.1.0
+
+[notice] A new release of pip is available: 24.0 -> 26.2.2
+[notice] To update, run: C:\Users\Lenovo\Documents\Code_PlayGround\SABZ\sabz\.venv-vision-test\Scripts\python.exe -m pip install --upgrade pip

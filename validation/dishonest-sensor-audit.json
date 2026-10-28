@@ -1,0 +1,78 @@
+{
+  "audit_completed": true,
+  "physical_hardware": false,
+  "inputs": "Synthetic valid-but-dishonest observations; no network/camera/port accessed",
+  "security_qualified": false,
+  "road_release_blocked": true,
+  "results": [
+    {
+      "case": "phantom_500_NS_hidden_EW",
+      "valid_schema_packets": true,
+      "assumed_real_EW_demand": 1,
+      "assumed_real_conflict_zone_occupied": false,
+      "duration_s": 180,
+      "first_green_s": {
+        "NS": 2.0,
+        "EW": null
+      },
+      "max_completed_green_s": 60.0,
+      "conflict_and_fault_checks_passed": true,
+      "violations": [],
+      "unresolved_hazards": [
+        "Real EW demand hidden by a compromised/mistaken sensor can be starved; max-green alone does not guarantee an EW turn."
+      ]
+    },
+    {
+      "case": "forged_near_vehicle_stream",
+      "valid_schema_packets": true,
+      "assumed_real_EW_demand": 1,
+      "assumed_real_conflict_zone_occupied": false,
+      "duration_s": 180,
+      "first_green_s": {
+        "NS": 2.0,
+        "EW": null
+      },
+      "max_completed_green_s": 60.0,
+      "conflict_and_fault_checks_passed": true,
+      "violations": [],
+      "unresolved_hazards": [
+        "Real EW demand hidden by a compromised/mistaken sensor can be starved; max-green alone does not guarantee an EW turn."
+      ]
+    },
+    {
+      "case": "false_conflict_clearance",
+      "valid_schema_packets": true,
+      "assumed_real_EW_demand": 1,
+      "assumed_real_conflict_zone_occupied": true,
+      "duration_s": 180,
+      "first_green_s": {
+        "NS": 2.0,
+        "EW": 15.0
+      },
+      "max_completed_green_s": 8.0,
+      "conflict_and_fault_checks_passed": true,
+      "violations": [],
+      "unresolved_hazards": [
+        "A falsely asserted conflict_clear allows a requested/emulated green despite assumed physical occupancy. Actual occupancy is not observable from this packet."
+      ]
+    },
+    {
+      "case": "forged_receiving_blockage",
+      "valid_schema_packets": true,
+      "assumed_real_EW_demand": 1,
+      "assumed_real_conflict_zone_occupied": false,
+      "duration_s": 180,
+      "first_green_s": {
+        "NS": null,
+        "EW": null
+      },
+      "max_completed_green_s": null,
+      "conflict_and_fault_checks_passed": true,
+      "violations": [],
+      "unresolved_hazards": [
+        "A forged full-receiving-road report can deny all service. It cannot safely be overridden without independent evidence."
+      ]
+    }
+  ],
+  "conclusion": "Authentication/freshness/schema checks do not establish truth. Timing bounds contain some effects; independent sensing, electrical protection and an engineered fallback are still required."
+}

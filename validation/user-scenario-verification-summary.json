@@ -1,0 +1,31 @@
+{
+  "named_cases_passed": 36,
+  "queue_value_combinations_passed": 256,
+  "new_scenario_total": 292,
+  "source_tests_passed": 102,
+  "installed_package_tests_passed": 102,
+  "fixed": [
+    "Overdue individual queues repeatedly shortened greens despite recent phase service.",
+    "Metric input/producer silently capped demand at 100; schema 3 now supports 500 per approach with explicit overflow handling."
+  ],
+  "high_demand_running_api_check": {
+    "passed": true,
+    "queued_north": 250,
+    "ns_score": 251.0,
+    "clearance_asserted": false,
+    "actual_stage": "ALL_RED",
+    "physical_hardware": false
+  },
+  "source_sha256": {
+    "sabz_edge/core.py": "8c0fdddd88455b760fe97d238ef2facb6fcf8cd6afb6a11c3dd086279764d662",
+    "sabz_edge/adaptive.py": "38423d15c555f8414d90393e8b8619004ab19f94509cecc6a29089849598a540",
+    "sabz_edge/perception.py": "be55c5bb96cbcad9ad6171f8eb38f5da7e0ae306e4ad7e2cafe260d1b28a5fc6",
+    "sabz_edge/scenario_matrix.py": "991f6e20837ad5d9dbdaa8f344e89fc3665249fc8d6f91fe540a9615c26a0d95"
+  },
+  "limitations": [
+    "Point queues; ideal synthetic measurements; no collisions, turns or pedestrians.",
+    "Counts above 500 are capped at the observation boundary; simulator retains true queues and records saturation.",
+    "Five-arm junctions and independent four-phase control are unsupported.",
+    "Fixed 70m detections test bounds, not real vehicle trajectories."
+  ]
+}

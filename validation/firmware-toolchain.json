@@ -1,0 +1,7 @@
+{
+  "cli_version": "1.5.1",
+  "archive_sha256": "fabe42e0eb04d00e776a66178299ff95a46c623dbc260f997e58fd514853dd40",
+  "official_url": "https://github.com/arduino/arduino-cli/releases/download/v1.5.1/arduino-cli_1.5.1_Windows_64bit.zip",
+  "verified": true,
+  "target_core": "esp32:esp32@3.3.0"
+}

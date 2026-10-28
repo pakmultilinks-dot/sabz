@@ -1,0 +1,16 @@
+usage: detection_eval.py [-h] --dataset DATASET --model MODEL --model-sha256
+                         MODEL_SHA256 --requirements REQUIREMENTS --output
+                         OUTPUT
+
+Offline detector acceptance on authorized labelled images. No control outputs.
+Reports aggregate metrics; requirements must come from the reviewed
+deployment.
+
+options:
+  -h, --help            show this help message and exit
+  --dataset DATASET     JSONL of image-relative path and annotations;
+                        authorized local files only
+  --model MODEL
+  --model-sha256 MODEL_SHA256
+  --requirements REQUIREMENTS
+  --output OUTPUT

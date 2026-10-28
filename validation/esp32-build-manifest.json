@@ -1,0 +1,44 @@
+{
+  "target_build_passed": true,
+  "flashed": false,
+  "electrical_verification": false,
+  "road_ready": false,
+  "fqbn": "esp32:esp32:esp32s3",
+  "arduino_core": "esp32:esp32@3.3.0",
+  "arduino_cli": "1.5.1",
+  "program_storage_bytes": 309315,
+  "program_storage_max_bytes": 1310720,
+  "static_ram_bytes": 20720,
+  "static_ram_max_bytes": 327680,
+  "warnings": "One Espressif core legacy touch API deprecation warning; no application compile errors.",
+  "artifacts": {
+    "esp32s3_bench.ino.bin": {
+      "bytes": 309456,
+      "sha256": "902ef64338a6c35ebcba5c97a3a6ce844449c66c97ed03b8ac0c84f6553d0e09"
+    },
+    "esp32s3_bench.ino.bootloader.bin": {
+      "bytes": 20256,
+      "sha256": "e678e8195c799dc5d28359717fb3b90eedaac62e530b266adf84762ae589018e"
+    },
+    "esp32s3_bench.ino.elf": {
+      "bytes": 6279908,
+      "sha256": "811d66d61fb40afcacdff8b35e5740e329b2dd847088b99ce0fcab491a65b94c"
+    },
+    "esp32s3_bench.ino.map": {
+      "bytes": 10446457,
+      "sha256": "587a843986c4ef672b4d639ee382daaeae8c9bb5c903653b6f055b34f4aa4bcf"
+    },
+    "esp32s3_bench.ino.merged.bin": {
+      "bytes": 4194304,
+      "sha256": "c13e750e3673a1c1956daca5dbbad5138903a8c3f5ca94bc0c6cdfa2fbd34a07"
+    },
+    "esp32s3_bench.ino.partitions.bin": {
+      "bytes": 3072,
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1"
+    }
+  },
+  "sources": {
+    "firmware\\esp32s3_bench\\bench_core.h": "0bcd77751b21a58e2ef700fb5661a35dd3d99641a17b538e7f7bb3de9d9e1b5c",
+    "firmware\\esp32s3_bench\\esp32s3_bench.ino": "0901c2f5df73a3d77edc36e8f09f5b5e77c347cdd75403b3178c0f2fc82b6a87"
+  }
+}

@@ -1,0 +1,28 @@
+usage: camera_sensor.py [-h] --device DEVICE --model MODEL --model-sha256
+                        MODEL_SHA256 --calibration CALIBRATION --sensor-state
+                        SENSOR_STATE --capture-age-bound-ms
+                        CAPTURE_AGE_BOUND_MS [--publish] [--endpoint ENDPOINT]
+                        [--ca-file CA_FILE] [--sequence-state SEQUENCE_STATE]
+                        [--seconds SECONDS]
+
+Explicit local-camera sensor runner. Observe-only unless --publish is set.
+Requires an approved local model and surveyed calibration; no model downloads.
+
+options:
+  -h, --help            show this help message and exit
+  --device DEVICE       Explicit authorized LOCAL camera index; no default
+                        webcam access
+  --model MODEL
+  --model-sha256 MODEL_SHA256
+  --calibration CALIBRATION
+  --sensor-state SENSOR_STATE
+                        Fresh independently produced clearance/receiving-state
+                        JSON
+  --capture-age-bound-ms CAPTURE_AGE_BOUND_MS
+                        Externally measured worst-case exposure-to-read-return
+                        age, not an assumed zero
+  --publish
+  --endpoint ENDPOINT
+  --ca-file CA_FILE
+  --sequence-state SEQUENCE_STATE
+  --seconds SECONDS

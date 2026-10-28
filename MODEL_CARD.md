@@ -1,3 +1,5 @@
+> ARCHIVED RESEARCH MODEL CARD: these weights and claims are not validated for the v0.1 edge release. The integration service does not load a DQN. See docs/ROADMAP.md for known training and architecture blockers.
+
 # SABZ Brain - Model Card
 
 ## What this is

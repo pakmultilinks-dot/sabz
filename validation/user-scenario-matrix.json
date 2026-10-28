@@ -1,0 +1,9341 @@
+{
+  "passed": true,
+  "case_count": 36,
+  "additional_queue_grid_cases": 256,
+  "approaches": [
+    "N",
+    "S",
+    "E",
+    "W"
+  ],
+  "phase_groups": {
+    "NS": [
+      "N",
+      "S"
+    ],
+    "EW": [
+      "E",
+      "W"
+    ]
+  },
+  "physical_hardware": false,
+  "limitations": [
+    "Point queues; ideal synthetic measurements; no collisions, turns or pedestrians.",
+    "Counts above 500 are capped at the observation boundary; simulator retains true queues and records saturation.",
+    "Five-arm junctions and independent four-phase control are unsupported.",
+    "Fixed 70m detections test bounds, not real vehicle trajectories."
+  ],
+  "cases": [
+    {
+      "name": "empty",
+      "initial": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "duration_s": 300,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "served": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "peak_queue": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 197.0,
+          "end_s": 257.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 257.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 260.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 262.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "15ecdc3e9b8b622055ad2ec035163b8aab8991433cff63a727029acdb395e275"
+    },
+    {
+      "name": "one_each",
+      "initial": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "duration_s": 300,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "served": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        15.9,
+        15.9
+      ],
+      "max_observed_wait_s": [
+        2.9,
+        2.9,
+        15.9,
+        15.9
+      ],
+      "peak_queue": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 10.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "EW",
+          "start_s": 15.0,
+          "end_s": 75.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 80.0,
+          "end_s": 140.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 145.0,
+          "end_s": 205.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 210.0,
+          "end_s": 270.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 10.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "passage_gap",
+          "queues": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 13.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 15.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 75.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 78.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 80.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 140.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 143.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 145.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 205.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 208.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 210.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 270.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 273.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 275.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "ac28d3a2d9acfdd3b5726e05abfa4ab2fe0ccf503d9c58e6b324ae1e02726ead"
+    },
+    {
+      "name": "equal_10",
+      "initial": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "duration_s": 300,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "served": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        18.9,
+        18.9
+      ],
+      "max_observed_wait_s": [
+        40.9,
+        40.9,
+        53.9,
+        53.9
+      ],
+      "peak_queue": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 13.0,
+          "duration_s": 11.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 18.0,
+          "end_s": 29.0,
+          "duration_s": 11.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 34.0,
+          "end_s": 42.0,
+          "duration_s": 8.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 47.0,
+          "end_s": 107.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 112.0,
+          "end_s": 172.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 177.0,
+          "end_s": 237.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            10,
+            10,
+            10,
+            10
+          ]
+        },
+        {
+          "t": 13.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            4,
+            4,
+            10,
+            10
+          ]
+        },
+        {
+          "t": 16.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            4,
+            4,
+            10,
+            10
+          ]
+        },
+        {
+          "t": 18.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            4,
+            4,
+            10,
+            10
+          ]
+        },
+        {
+          "t": 29.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            4,
+            4,
+            4,
+            4
+          ]
+        },
+        {
+          "t": 32.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            4,
+            4,
+            4,
+            4
+          ]
+        },
+        {
+          "t": 34.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            4,
+            4,
+            4,
+            4
+          ]
+        },
+        {
+          "t": 42.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        {
+          "t": 45.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        {
+          "t": 107.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 110.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 112.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 172.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 175.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 177.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 237.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 240.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 242.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "bae30c99ab17863fe7ca1d802b4ee027449543a8f7146d6a82f9f835cf3addfe"
+    },
+    {
+      "name": "equal_50",
+      "initial": [
+        50,
+        50,
+        50,
+        50
+      ],
+      "duration_s": 300,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        50,
+        50,
+        50,
+        50
+      ],
+      "served": [
+        50,
+        50,
+        50,
+        50
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        52.9,
+        52.9
+      ],
+      "max_observed_wait_s": [
+        234.9,
+        234.9,
+        247.9,
+        247.9
+      ],
+      "peak_queue": [
+        50,
+        50,
+        50,
+        50
+      ],
+      "maximum_green_seen": false,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 97.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 102.0,
+          "end_s": 130.0,
+          "duration_s": 28.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 135.0,
+          "end_s": 163.0,
+          "duration_s": 28.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 168.0,
+          "end_s": 182.0,
+          "duration_s": 14.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 187.0,
+          "end_s": 201.0,
+          "duration_s": 14.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 206.0,
+          "end_s": 214.0,
+          "duration_s": 8.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 219.0,
+          "end_s": 227.0,
+          "duration_s": 8.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 232.0,
+          "end_s": 240.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            50,
+            50,
+            50,
+            50
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            27,
+            27,
+            50,
+            50
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            27,
+            27,
+            50,
+            50
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            27,
+            27,
+            50,
+            50
+          ]
+        },
+        {
+          "t": 97.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            27,
+            27,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 100.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            27,
+            27,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 102.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            27,
+            27,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            13,
+            13,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 133.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            13,
+            13,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 135.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            13,
+            13,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 163.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            13,
+            13,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 166.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            13,
+            13,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 168.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            13,
+            13,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 182.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            6,
+            6,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 185.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            6,
+            6,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 187.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            6,
+            6,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 201.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "t": 204.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "t": 206.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            6,
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "t": 214.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            2,
+            2,
+            6,
+            6
+          ]
+        },
+        {
+          "t": 217.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            2,
+            2,
+            6,
+            6
+          ]
+        },
+        {
+          "t": 219.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            2,
+            2,
+            6,
+            6
+          ]
+        },
+        {
+          "t": 227.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        {
+          "t": 230.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        {
+          "t": 232.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        {
+          "t": 240.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "passage_gap",
+          "queues": [
+            0,
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "t": 243.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "t": 245.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            2,
+            2
+          ]
+        }
+      ],
+      "input_sha256": "44c0399d5147b65310e0961e91f4c87d749a89ab3c73e44e5b72ba6f6fd33766"
+    },
+    {
+      "name": "equal_100",
+      "initial": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "duration_s": 300,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "served": [
+        69,
+        69,
+        69,
+        69
+      ],
+      "remaining": [
+        31,
+        31,
+        31,
+        31
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        52.9,
+        52.9
+      ],
+      "max_observed_wait_s": [
+        300.0,
+        300.0,
+        300.0,
+        300.0
+      ],
+      "peak_queue": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "maximum_green_seen": false,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 97.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 102.0,
+          "end_s": 147.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 152.0,
+          "end_s": 197.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 202.0,
+          "end_s": 247.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 252.0,
+          "end_s": 297.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            100,
+            100,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            77,
+            77,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            77,
+            77,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            77,
+            77,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 97.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            77,
+            77,
+            77,
+            77
+          ]
+        },
+        {
+          "t": 100.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            77,
+            77,
+            77,
+            77
+          ]
+        },
+        {
+          "t": 102.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            77,
+            77,
+            77,
+            77
+          ]
+        },
+        {
+          "t": 147.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            54,
+            54,
+            77,
+            77
+          ]
+        },
+        {
+          "t": 150.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            54,
+            54,
+            77,
+            77
+          ]
+        },
+        {
+          "t": 152.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            54,
+            54,
+            77,
+            77
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            54,
+            54,
+            54,
+            54
+          ]
+        },
+        {
+          "t": 200.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            54,
+            54,
+            54,
+            54
+          ]
+        },
+        {
+          "t": 202.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            54,
+            54,
+            54,
+            54
+          ]
+        },
+        {
+          "t": 247.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            31,
+            31,
+            54,
+            54
+          ]
+        },
+        {
+          "t": 250.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            31,
+            31,
+            54,
+            54
+          ]
+        },
+        {
+          "t": 252.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            31,
+            31,
+            54,
+            54
+          ]
+        },
+        {
+          "t": 297.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            31,
+            31,
+            31,
+            31
+          ]
+        },
+        {
+          "t": 300.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            31,
+            31,
+            31,
+            31
+          ]
+        }
+      ],
+      "input_sha256": "b0b1a589d30310ee088bdc29f2745501092d4acf64001b5571702343837e1333"
+    },
+    {
+      "name": "overload_250_each",
+      "initial": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "duration_s": 600,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "served": [
+        138,
+        138,
+        138,
+        138
+      ],
+      "remaining": [
+        112,
+        112,
+        112,
+        112
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        52.9,
+        52.9
+      ],
+      "max_observed_wait_s": [
+        600.0,
+        600.0,
+        600.0,
+        600.0
+      ],
+      "peak_queue": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "maximum_green_seen": false,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 97.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 102.0,
+          "end_s": 147.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 152.0,
+          "end_s": 197.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 202.0,
+          "end_s": 247.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 252.0,
+          "end_s": 297.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 302.0,
+          "end_s": 347.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 352.0,
+          "end_s": 397.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 402.0,
+          "end_s": 447.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 452.0,
+          "end_s": 497.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 502.0,
+          "end_s": 547.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 552.0,
+          "end_s": 597.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            250,
+            250,
+            250,
+            250
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            227,
+            227,
+            250,
+            250
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            227,
+            227,
+            250,
+            250
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            227,
+            227,
+            250,
+            250
+          ]
+        },
+        {
+          "t": 97.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            227,
+            227,
+            227,
+            227
+          ]
+        },
+        {
+          "t": 100.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            227,
+            227,
+            227,
+            227
+          ]
+        },
+        {
+          "t": 102.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            227,
+            227,
+            227,
+            227
+          ]
+        },
+        {
+          "t": 147.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            204,
+            204,
+            227,
+            227
+          ]
+        },
+        {
+          "t": 150.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            204,
+            204,
+            227,
+            227
+          ]
+        },
+        {
+          "t": 152.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            204,
+            204,
+            227,
+            227
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            204,
+            204,
+            204,
+            204
+          ]
+        },
+        {
+          "t": 200.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            204,
+            204,
+            204,
+            204
+          ]
+        },
+        {
+          "t": 202.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            204,
+            204,
+            204,
+            204
+          ]
+        },
+        {
+          "t": 247.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            181,
+            181,
+            204,
+            204
+          ]
+        },
+        {
+          "t": 250.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            181,
+            181,
+            204,
+            204
+          ]
+        },
+        {
+          "t": 252.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            181,
+            181,
+            204,
+            204
+          ]
+        },
+        {
+          "t": 297.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            181,
+            181,
+            181,
+            181
+          ]
+        },
+        {
+          "t": 300.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            181,
+            181,
+            181,
+            181
+          ]
+        },
+        {
+          "t": 302.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            181,
+            181,
+            181,
+            181
+          ]
+        },
+        {
+          "t": 347.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            158,
+            158,
+            181,
+            181
+          ]
+        },
+        {
+          "t": 350.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            158,
+            158,
+            181,
+            181
+          ]
+        },
+        {
+          "t": 352.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            158,
+            158,
+            181,
+            181
+          ]
+        },
+        {
+          "t": 397.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            158,
+            158,
+            158,
+            158
+          ]
+        },
+        {
+          "t": 400.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            158,
+            158,
+            158,
+            158
+          ]
+        },
+        {
+          "t": 402.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            158,
+            158,
+            158,
+            158
+          ]
+        },
+        {
+          "t": 447.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            135,
+            135,
+            158,
+            158
+          ]
+        },
+        {
+          "t": 450.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            135,
+            135,
+            158,
+            158
+          ]
+        },
+        {
+          "t": 452.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            135,
+            135,
+            158,
+            158
+          ]
+        },
+        {
+          "t": 497.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            135,
+            135,
+            135,
+            135
+          ]
+        },
+        {
+          "t": 500.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            135,
+            135,
+            135,
+            135
+          ]
+        },
+        {
+          "t": 502.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            135,
+            135,
+            135,
+            135
+          ]
+        },
+        {
+          "t": 547.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            112,
+            112,
+            135,
+            135
+          ]
+        },
+        {
+          "t": 550.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            112,
+            112,
+            135,
+            135
+          ]
+        },
+        {
+          "t": 552.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            112,
+            112,
+            135,
+            135
+          ]
+        },
+        {
+          "t": 597.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            112,
+            112,
+            112,
+            112
+          ]
+        },
+        {
+          "t": 600.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            112,
+            112,
+            112,
+            112
+          ]
+        }
+      ],
+      "input_sha256": "67055333ef4dc4d279ff11b549f4d864c2fbffd1af7838ca377fbabfda3704a1"
+    },
+    {
+      "name": "1_only_N",
+      "initial": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "served": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        null,
+        null,
+        null
+      ],
+      "max_observed_wait_s": [
+        2.9,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "peak_queue": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "2a02f9c2cb8c0108e0d0f02a4658e05ccc5ed53fb01fee55ba6edd263b3253db"
+    },
+    {
+      "name": "50_only_N",
+      "initial": [
+        50,
+        0,
+        0,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        50,
+        0,
+        0,
+        0
+      ],
+      "served": [
+        50,
+        0,
+        0,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        null,
+        null,
+        null
+      ],
+      "max_observed_wait_s": [
+        105.9,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "peak_queue": [
+        50,
+        0,
+        0,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            50,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            20,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            20,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            20,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "7167603a68a198c003e7dec7a1db8fe263fbd393f508fbd6d0a668a880279139"
+    },
+    {
+      "name": "100_only_N",
+      "initial": [
+        100,
+        0,
+        0,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        100,
+        0,
+        0,
+        0
+      ],
+      "served": [
+        100,
+        0,
+        0,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        null,
+        null,
+        null
+      ],
+      "max_observed_wait_s": [
+        215.9,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "peak_queue": [
+        100,
+        0,
+        0,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            100,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            70,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            70,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            70,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            40,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            40,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            40,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            10,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            10,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            10,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "a0c5ea4ab67c081d88d1305a528aef413154b25aee8f72c1d2a24476f648899f"
+    },
+    {
+      "name": "50_N_others_1",
+      "initial": [
+        50,
+        1,
+        1,
+        1
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        50,
+        1,
+        1,
+        1
+      ],
+      "served": [
+        50,
+        1,
+        1,
+        1
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        52.9,
+        52.9
+      ],
+      "max_observed_wait_s": [
+        117.9,
+        2.9,
+        52.9,
+        52.9
+      ],
+      "peak_queue": [
+        50,
+        1,
+        1,
+        1
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 60.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "NS",
+          "start_s": 65.0,
+          "end_s": 125.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 130.0,
+          "end_s": 190.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            50,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "allocated_green_complete",
+          "queues": [
+            27,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            27,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            27,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "passage_gap",
+          "queues": [
+            27,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            27,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            27,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 128.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 190.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 193.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "e5500a7536e8fd635bcc8a88975a797cb3f73bd04c5e1fa7bd4eff5af31f5702"
+    },
+    {
+      "name": "50_N_one_cross",
+      "initial": [
+        50,
+        0,
+        1,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        50,
+        0,
+        1,
+        0
+      ],
+      "served": [
+        50,
+        0,
+        1,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        null,
+        52.9,
+        null
+      ],
+      "max_observed_wait_s": [
+        117.9,
+        0.0,
+        52.9,
+        0.0
+      ],
+      "peak_queue": [
+        50,
+        0,
+        1,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 60.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "NS",
+          "start_s": 65.0,
+          "end_s": 125.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 130.0,
+          "end_s": 190.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            50,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "allocated_green_complete",
+          "queues": [
+            27,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            27,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            27,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "passage_gap",
+          "queues": [
+            27,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            27,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            27,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 128.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 190.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 193.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "70dc2ecee5f45b37711b0bbe149c5d019b55b6e9c26fab8c46ad0b39f39a9a8e"
+    },
+    {
+      "name": "1_only_S",
+      "initial": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "served": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        2.9,
+        null,
+        null
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        2.9,
+        0.0,
+        0.0
+      ],
+      "peak_queue": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "c73b907e55ee2459ae40713580b6880df5f64bd56db0210332964bcc096ec02f"
+    },
+    {
+      "name": "50_only_S",
+      "initial": [
+        0,
+        50,
+        0,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        50,
+        0,
+        0
+      ],
+      "served": [
+        0,
+        50,
+        0,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        2.9,
+        null,
+        null
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        105.9,
+        0.0,
+        0.0
+      ],
+      "peak_queue": [
+        0,
+        50,
+        0,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            50,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            20,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            20,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            20,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "4f205d54cd1281843c1dfc42b6cbd5120206efba12ee9b03e1552ecac10914a0"
+    },
+    {
+      "name": "100_only_S",
+      "initial": [
+        0,
+        100,
+        0,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        100,
+        0,
+        0
+      ],
+      "served": [
+        0,
+        100,
+        0,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        2.9,
+        null,
+        null
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        215.9,
+        0.0,
+        0.0
+      ],
+      "peak_queue": [
+        0,
+        100,
+        0,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            100,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            70,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            70,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            70,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            40,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            40,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            40,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            10,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            10,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            10,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "58d429b4aa54f996e0749f83946cc6096eac91dd0105bfcf43ee66be89c13828"
+    },
+    {
+      "name": "50_S_others_1",
+      "initial": [
+        1,
+        50,
+        1,
+        1
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        1,
+        50,
+        1,
+        1
+      ],
+      "served": [
+        1,
+        50,
+        1,
+        1
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        52.9,
+        52.9
+      ],
+      "max_observed_wait_s": [
+        2.9,
+        117.9,
+        52.9,
+        52.9
+      ],
+      "peak_queue": [
+        1,
+        50,
+        1,
+        1
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 60.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "NS",
+          "start_s": 65.0,
+          "end_s": 125.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 130.0,
+          "end_s": 190.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            50,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "allocated_green_complete",
+          "queues": [
+            0,
+            27,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            27,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            27,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "passage_gap",
+          "queues": [
+            0,
+            27,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            27,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            27,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 128.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 190.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 193.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "2d32de42ac6b1e2d2c68f53ca3d4caca64152df43e1f6dcaeaaa5b1624dec934"
+    },
+    {
+      "name": "50_S_one_cross",
+      "initial": [
+        0,
+        50,
+        0,
+        1
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        50,
+        0,
+        1
+      ],
+      "served": [
+        0,
+        50,
+        0,
+        1
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        2.9,
+        null,
+        52.9
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        117.9,
+        0.0,
+        52.9
+      ],
+      "peak_queue": [
+        0,
+        50,
+        0,
+        1
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 60.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "NS",
+          "start_s": 65.0,
+          "end_s": 125.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 130.0,
+          "end_s": 190.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            50,
+            0,
+            1
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "allocated_green_complete",
+          "queues": [
+            0,
+            27,
+            0,
+            1
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            27,
+            0,
+            1
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            27,
+            0,
+            1
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "passage_gap",
+          "queues": [
+            0,
+            27,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            27,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            27,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 128.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 190.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 193.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "e4f2d9782ba22de79cf6972f1a71a17a37e9e1ca916ef66bcddc61863ee3ebbd"
+    },
+    {
+      "name": "1_only_E",
+      "initial": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "served": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        null,
+        2.9,
+        null
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        0.0,
+        2.9,
+        0.0
+      ],
+      "peak_queue": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "167a1dab7a6e4857cfb4ef684b2ac0989a115655b365c4ed8389363d082fde02"
+    },
+    {
+      "name": "50_only_E",
+      "initial": [
+        0,
+        0,
+        50,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        0,
+        50,
+        0
+      ],
+      "served": [
+        0,
+        0,
+        50,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        null,
+        2.9,
+        null
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        0.0,
+        105.9,
+        0.0
+      ],
+      "peak_queue": [
+        0,
+        0,
+        50,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            50,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            20,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            20,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            20,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "f3b2807328d01b0e8759250b1fd6d6e012b52173c20ea169df2512778186d905"
+    },
+    {
+      "name": "100_only_E",
+      "initial": [
+        0,
+        0,
+        100,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        0,
+        100,
+        0
+      ],
+      "served": [
+        0,
+        0,
+        100,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        null,
+        2.9,
+        null
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        0.0,
+        215.9,
+        0.0
+      ],
+      "peak_queue": [
+        0,
+        0,
+        100,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            100,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            70,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            70,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            70,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            40,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            40,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            40,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            10,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            10,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            10,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "403cdb7651cc03eeef256628b5e3d8ef34c255365cdbdc6d0bbfe9b8dac91acb"
+    },
+    {
+      "name": "50_E_others_1",
+      "initial": [
+        1,
+        1,
+        50,
+        1
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        1,
+        1,
+        50,
+        1
+      ],
+      "served": [
+        1,
+        1,
+        50,
+        1
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        52.9,
+        52.9,
+        2.9,
+        2.9
+      ],
+      "max_observed_wait_s": [
+        52.9,
+        52.9,
+        117.9,
+        2.9
+      ],
+      "peak_queue": [
+        1,
+        1,
+        50,
+        1
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 52.0,
+          "end_s": 60.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "EW",
+          "start_s": 65.0,
+          "end_s": 125.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 130.0,
+          "end_s": 190.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            1,
+            50,
+            1
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            1,
+            1,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            1,
+            1,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            1,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "passage_gap",
+          "queues": [
+            0,
+            0,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 128.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 190.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 193.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "e6cd4ab24c391013031e10a9040b215d52838abbb3f54eeb83c7e17e11c77b5b"
+    },
+    {
+      "name": "50_E_one_cross",
+      "initial": [
+        1,
+        0,
+        50,
+        0
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        1,
+        0,
+        50,
+        0
+      ],
+      "served": [
+        1,
+        0,
+        50,
+        0
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        52.9,
+        null,
+        2.9,
+        null
+      ],
+      "max_observed_wait_s": [
+        52.9,
+        0.0,
+        117.9,
+        0.0
+      ],
+      "peak_queue": [
+        1,
+        0,
+        50,
+        0
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 52.0,
+          "end_s": 60.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "EW",
+          "start_s": 65.0,
+          "end_s": 125.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 130.0,
+          "end_s": 190.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            0,
+            50,
+            0
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            1,
+            0,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            1,
+            0,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            0,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "passage_gap",
+          "queues": [
+            0,
+            0,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            27,
+            0
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 128.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 190.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 193.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "4f7a02d5805b7caf2d0fdebe4e7564e53c1ecd062a5d07abd029428b37b20247"
+    },
+    {
+      "name": "1_only_W",
+      "initial": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "served": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        null,
+        null,
+        2.9
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        0.0,
+        0.0,
+        2.9
+      ],
+      "peak_queue": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "a5dc6d149da259b629118c4e436a5a9903624035a15c62d0fc84556b19f3fd50"
+    },
+    {
+      "name": "50_only_W",
+      "initial": [
+        0,
+        0,
+        0,
+        50
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        0,
+        0,
+        50
+      ],
+      "served": [
+        0,
+        0,
+        0,
+        50
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        null,
+        null,
+        2.9
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        0.0,
+        0.0,
+        105.9
+      ],
+      "peak_queue": [
+        0,
+        0,
+        0,
+        50
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            50
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            20
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            20
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            20
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "63456d4167501a560fe128cdf2e64c981ec77fa7faf1ad4f1714e0af8b956c13"
+    },
+    {
+      "name": "100_only_W",
+      "initial": [
+        0,
+        0,
+        0,
+        100
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        0,
+        0,
+        100
+      ],
+      "served": [
+        0,
+        0,
+        0,
+        100
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        null,
+        null,
+        2.9
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        0.0,
+        0.0,
+        215.9
+      ],
+      "peak_queue": [
+        0,
+        0,
+        0,
+        100
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            100
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            70
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            70
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            70
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            40
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            40
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            40
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            10
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            10
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            10
+          ]
+        }
+      ],
+      "input_sha256": "b346a11dea1fd1075f5715345109618a6e1b7ea7e7e9a11b489204de2e8c20ac"
+    },
+    {
+      "name": "50_W_others_1",
+      "initial": [
+        1,
+        1,
+        1,
+        50
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        1,
+        1,
+        1,
+        50
+      ],
+      "served": [
+        1,
+        1,
+        1,
+        50
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        52.9,
+        52.9,
+        2.9,
+        2.9
+      ],
+      "max_observed_wait_s": [
+        52.9,
+        52.9,
+        2.9,
+        117.9
+      ],
+      "peak_queue": [
+        1,
+        1,
+        1,
+        50
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 52.0,
+          "end_s": 60.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "EW",
+          "start_s": 65.0,
+          "end_s": 125.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 130.0,
+          "end_s": 190.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            1,
+            1,
+            50
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            1,
+            1,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            1,
+            1,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            1,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "passage_gap",
+          "queues": [
+            0,
+            0,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 128.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 190.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 193.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "bd343e493d36840d05d30b52686221d26e1643ac86a1117f2ff1aa195367d2a8"
+    },
+    {
+      "name": "50_W_one_cross",
+      "initial": [
+        0,
+        1,
+        0,
+        50
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        0,
+        1,
+        0,
+        50
+      ],
+      "served": [
+        0,
+        1,
+        0,
+        50
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        null,
+        52.9,
+        null,
+        2.9
+      ],
+      "max_observed_wait_s": [
+        0.0,
+        52.9,
+        0.0,
+        117.9
+      ],
+      "peak_queue": [
+        0,
+        1,
+        0,
+        50
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 52.0,
+          "end_s": 60.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "EW",
+          "start_s": 65.0,
+          "end_s": 125.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 130.0,
+          "end_s": 190.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            1,
+            0,
+            50
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            0,
+            1,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            1,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            1,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "passage_gap",
+          "queues": [
+            0,
+            0,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            27
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 128.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 190.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 193.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "d22c738c9c9e7c9ca7248ee3f99916a7b5acef1a0f5022d8167449d6f72f4321"
+    },
+    {
+      "name": "sudden_rush",
+      "initial": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "duration_s": 360,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        301,
+        301,
+        301,
+        301
+      ],
+      "served": [
+        83,
+        83,
+        70,
+        70
+      ],
+      "remaining": [
+        218,
+        218,
+        231,
+        231
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        15.9,
+        15.9
+      ],
+      "max_observed_wait_s": [
+        313.7,
+        313.7,
+        316.2,
+        316.2
+      ],
+      "peak_queue": [
+        277,
+        277,
+        298,
+        298
+      ],
+      "maximum_green_seen": false,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 10.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "EW",
+          "start_s": 15.0,
+          "end_s": 30.0,
+          "duration_s": 15.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 35.0,
+          "end_s": 80.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 85.0,
+          "end_s": 130.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 135.0,
+          "end_s": 180.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 185.0,
+          "end_s": 230.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 235.0,
+          "end_s": 280.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 285.0,
+          "end_s": 330.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 10.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "passage_gap",
+          "queues": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 13.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 15.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 30.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 33.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            16,
+            16,
+            16,
+            16
+          ]
+        },
+        {
+          "t": 35.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            26,
+            26,
+            26,
+            26
+          ]
+        },
+        {
+          "t": 80.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            228,
+            228,
+            251,
+            251
+          ]
+        },
+        {
+          "t": 83.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            243,
+            243,
+            266,
+            266
+          ]
+        },
+        {
+          "t": 85.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            253,
+            253,
+            276,
+            276
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            277,
+            277,
+            277,
+            277
+          ]
+        },
+        {
+          "t": 133.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            277,
+            277,
+            277,
+            277
+          ]
+        },
+        {
+          "t": 135.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            277,
+            277,
+            277,
+            277
+          ]
+        },
+        {
+          "t": 180.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            254,
+            254,
+            277,
+            277
+          ]
+        },
+        {
+          "t": 183.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            254,
+            254,
+            277,
+            277
+          ]
+        },
+        {
+          "t": 185.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            254,
+            254,
+            277,
+            277
+          ]
+        },
+        {
+          "t": 230.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            254,
+            254,
+            254,
+            254
+          ]
+        },
+        {
+          "t": 233.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            254,
+            254,
+            254,
+            254
+          ]
+        },
+        {
+          "t": 235.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            254,
+            254,
+            254,
+            254
+          ]
+        },
+        {
+          "t": 280.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            231,
+            231,
+            254,
+            254
+          ]
+        },
+        {
+          "t": 283.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            231,
+            231,
+            254,
+            254
+          ]
+        },
+        {
+          "t": 285.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            231,
+            231,
+            254,
+            254
+          ]
+        },
+        {
+          "t": 330.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            231,
+            231,
+            231,
+            231
+          ]
+        },
+        {
+          "t": 333.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            231,
+            231,
+            231,
+            231
+          ]
+        },
+        {
+          "t": 335.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            231,
+            231,
+            231,
+            231
+          ]
+        }
+      ],
+      "input_sha256": "9846edc9bfc9f6974aab55092afed77177901f7e96bb1112ba4e6f35de0cafef"
+    },
+    {
+      "name": "sustained_over_capacity",
+      "initial": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "duration_s": 300,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        240,
+        240,
+        240,
+        240
+      ],
+      "served": [
+        69,
+        69,
+        69,
+        69
+      ],
+      "remaining": [
+        171,
+        171,
+        171,
+        171
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        52.9,
+        52.9
+      ],
+      "max_observed_wait_s": [
+        231.0,
+        231.0,
+        231.0,
+        231.0
+      ],
+      "peak_queue": [
+        175,
+        175,
+        194,
+        194
+      ],
+      "maximum_green_seen": false,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 97.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 102.0,
+          "end_s": 147.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 152.0,
+          "end_s": 197.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 202.0,
+          "end_s": 247.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 252.0,
+          "end_s": 297.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            3,
+            3,
+            3,
+            3
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            25,
+            25,
+            48,
+            48
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            28,
+            28,
+            51,
+            51
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            30,
+            30,
+            53,
+            53
+          ]
+        },
+        {
+          "t": 97.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            75,
+            75,
+            75,
+            75
+          ]
+        },
+        {
+          "t": 100.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            78,
+            78,
+            78,
+            78
+          ]
+        },
+        {
+          "t": 102.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            80,
+            80,
+            80,
+            80
+          ]
+        },
+        {
+          "t": 147.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            102,
+            102,
+            125,
+            125
+          ]
+        },
+        {
+          "t": 150.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            105,
+            105,
+            128,
+            128
+          ]
+        },
+        {
+          "t": 152.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            107,
+            107,
+            130,
+            130
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            152,
+            152,
+            152,
+            152
+          ]
+        },
+        {
+          "t": 200.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            155,
+            155,
+            155,
+            155
+          ]
+        },
+        {
+          "t": 202.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            157,
+            157,
+            157,
+            157
+          ]
+        },
+        {
+          "t": 247.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            171,
+            171,
+            194,
+            194
+          ]
+        },
+        {
+          "t": 250.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            171,
+            171,
+            194,
+            194
+          ]
+        },
+        {
+          "t": 252.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            171,
+            171,
+            194,
+            194
+          ]
+        },
+        {
+          "t": 297.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            171,
+            171,
+            171,
+            171
+          ]
+        },
+        {
+          "t": 300.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            171,
+            171,
+            171,
+            171
+          ]
+        }
+      ],
+      "input_sha256": "e87ca1baaead23a13534c8de36cd42eb6f1da6df33f1f85ea3489d2885fc1f1b"
+    },
+    {
+      "name": "rush_changes_direction",
+      "initial": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "duration_s": 360,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        240,
+        240,
+        240,
+        240
+      ],
+      "served": [
+        103,
+        103,
+        64,
+        64
+      ],
+      "remaining": [
+        137,
+        137,
+        176,
+        176
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        125.9,
+        125.9
+      ],
+      "max_observed_wait_s": [
+        308.5,
+        308.5,
+        208.4,
+        208.4
+      ],
+      "peak_queue": [
+        184,
+        184,
+        210,
+        210
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 67.0,
+          "end_s": 120.0,
+          "duration_s": 53.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "EW",
+          "start_s": 125.0,
+          "end_s": 170.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "NS",
+          "start_s": 175.0,
+          "end_s": 220.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 225.0,
+          "end_s": 270.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 275.0,
+          "end_s": 320.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            5,
+            5,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            95,
+            95,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            101,
+            101,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            105,
+            105,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 120.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "allocated_green_complete",
+          "queues": [
+            183,
+            183,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 123.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            183,
+            183,
+            7,
+            7
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            183,
+            183,
+            11,
+            11
+          ]
+        },
+        {
+          "t": 170.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "pressure_difference",
+          "queues": [
+            183,
+            183,
+            78,
+            78
+          ]
+        },
+        {
+          "t": 173.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            183,
+            183,
+            84,
+            84
+          ]
+        },
+        {
+          "t": 175.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            183,
+            183,
+            88,
+            88
+          ]
+        },
+        {
+          "t": 220.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            160,
+            160,
+            178,
+            178
+          ]
+        },
+        {
+          "t": 223.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            160,
+            160,
+            184,
+            184
+          ]
+        },
+        {
+          "t": 225.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            160,
+            160,
+            188,
+            188
+          ]
+        },
+        {
+          "t": 270.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            160,
+            160,
+            194,
+            194
+          ]
+        },
+        {
+          "t": 273.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            160,
+            160,
+            194,
+            194
+          ]
+        },
+        {
+          "t": 275.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            160,
+            160,
+            194,
+            194
+          ]
+        },
+        {
+          "t": 320.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            137,
+            137,
+            194,
+            194
+          ]
+        },
+        {
+          "t": 323.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            137,
+            137,
+            194,
+            194
+          ]
+        },
+        {
+          "t": 325.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            137,
+            137,
+            194,
+            194
+          ]
+        }
+      ],
+      "input_sha256": "690ad0d362ecaa681b5ff23f7378b71f9607cea3e0ad3edd899f1c6d24a05c6a"
+    },
+    {
+      "name": "one_NS_exit_blocked",
+      "initial": [
+        50,
+        0,
+        1,
+        1
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        50,
+        0,
+        1,
+        1
+      ],
+      "served": [
+        50,
+        0,
+        1,
+        1
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        65.9,
+        null,
+        2.9,
+        2.9
+      ],
+      "max_observed_wait_s": [
+        168.9,
+        0.0,
+        2.9,
+        2.9
+      ],
+      "peak_queue": [
+        50,
+        0,
+        1,
+        1
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "EW",
+          "start_s": 2.0,
+          "end_s": 60.0,
+          "duration_s": 58.0,
+          "reason": "waiting_time_priority"
+        },
+        {
+          "phase": "NS",
+          "start_s": 65.0,
+          "end_s": 125.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 130.0,
+          "end_s": 190.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            50,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "waiting_time_priority",
+          "queues": [
+            50,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            50,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            50,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            20,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 128.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            20,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            20,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 190.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 193.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "5809f155da913a9993dadb9d1ca6479b580306f976581884f0859808678d166f"
+    },
+    {
+      "name": "all_exits_blocked_then_reopen",
+      "initial": [
+        50,
+        50,
+        50,
+        50
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        50,
+        50,
+        50,
+        50
+      ],
+      "served": [
+        47,
+        47,
+        44,
+        44
+      ],
+      "remaining": [
+        3,
+        3,
+        6,
+        6
+      ],
+      "first_service_s": [
+        30.9,
+        30.9,
+        65.9,
+        65.9
+      ],
+      "max_observed_wait_s": [
+        240.0,
+        240.0,
+        240.0,
+        240.0
+      ],
+      "peak_queue": [
+        50,
+        50,
+        50,
+        50
+      ],
+      "maximum_green_seen": false,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 30.0,
+          "end_s": 60.0,
+          "duration_s": 30.0,
+          "reason": "waiting_time_priority"
+        },
+        {
+          "phase": "EW",
+          "start_s": 65.0,
+          "end_s": 110.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "NS",
+          "start_s": 115.0,
+          "end_s": 151.0,
+          "duration_s": 36.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 156.0,
+          "end_s": 184.0,
+          "duration_s": 28.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "NS",
+          "start_s": 189.0,
+          "end_s": 207.0,
+          "duration_s": 18.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 212.0,
+          "end_s": 226.0,
+          "duration_s": 14.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "NS",
+          "start_s": 231.0,
+          "end_s": 240.0,
+          "duration_s": 9.0,
+          "reason": "pressure_difference"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 30.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            50,
+            50,
+            50,
+            50
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "waiting_time_priority",
+          "queues": [
+            35,
+            35,
+            50,
+            50
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            35,
+            35,
+            50,
+            50
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            35,
+            35,
+            50,
+            50
+          ]
+        },
+        {
+          "t": 110.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "pressure_difference",
+          "queues": [
+            35,
+            35,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 113.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            35,
+            35,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 115.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            35,
+            35,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 151.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            17,
+            17,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 154.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            17,
+            17,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 156.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            17,
+            17,
+            27,
+            27
+          ]
+        },
+        {
+          "t": 184.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "pressure_difference",
+          "queues": [
+            17,
+            17,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 187.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            17,
+            17,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 189.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            17,
+            17,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 207.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            8,
+            8,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 210.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            8,
+            8,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 212.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            8,
+            8,
+            13,
+            13
+          ]
+        },
+        {
+          "t": 226.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "pressure_difference",
+          "queues": [
+            8,
+            8,
+            6,
+            6
+          ]
+        },
+        {
+          "t": 229.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            8,
+            8,
+            6,
+            6
+          ]
+        },
+        {
+          "t": 231.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            8,
+            8,
+            6,
+            6
+          ]
+        },
+        {
+          "t": 240.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            3,
+            3,
+            6,
+            6
+          ]
+        }
+      ],
+      "input_sha256": "5190d53449326d2b9ffece62e7048d0efd7450da9241daf2f580e55d628efb32"
+    },
+    {
+      "name": "sensor_feed_loss",
+      "initial": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "served": [
+        69,
+        69,
+        37,
+        37
+      ],
+      "remaining": [
+        31,
+        31,
+        63,
+        63
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        52.9,
+        52.9
+      ],
+      "max_observed_wait_s": [
+        240.0,
+        240.0,
+        240.0,
+        240.0
+      ],
+      "peak_queue": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "maximum_green_seen": false,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 63.0,
+          "duration_s": 11.0,
+          "reason": "sensor_unavailable"
+        },
+        {
+          "phase": "NS",
+          "start_s": 75.0,
+          "end_s": 120.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 125.0,
+          "end_s": 170.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 175.0,
+          "end_s": 220.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            100,
+            100,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            77,
+            77,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            77,
+            77,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            77,
+            77,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "sensor_unavailable",
+          "queues": [
+            77,
+            77,
+            94,
+            94
+          ]
+        },
+        {
+          "t": 66.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            77,
+            77,
+            94,
+            94
+          ]
+        },
+        {
+          "t": 75.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            77,
+            77,
+            94,
+            94
+          ]
+        },
+        {
+          "t": 120.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            54,
+            54,
+            94,
+            94
+          ]
+        },
+        {
+          "t": 123.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            54,
+            54,
+            94,
+            94
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            54,
+            54,
+            94,
+            94
+          ]
+        },
+        {
+          "t": 170.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            54,
+            54,
+            71,
+            71
+          ]
+        },
+        {
+          "t": 173.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            54,
+            54,
+            71,
+            71
+          ]
+        },
+        {
+          "t": 175.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            54,
+            54,
+            71,
+            71
+          ]
+        },
+        {
+          "t": 220.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            31,
+            31,
+            71,
+            71
+          ]
+        },
+        {
+          "t": 223.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            31,
+            31,
+            71,
+            71
+          ]
+        },
+        {
+          "t": 225.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            31,
+            31,
+            71,
+            71
+          ]
+        }
+      ],
+      "input_sha256": "e9574cf7a63e49baea29b960aa27ade329fedd7c086303c6929ecf2ef0495c7e"
+    },
+    {
+      "name": "sensor_unhealthy",
+      "initial": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "served": [
+        68,
+        68,
+        35,
+        35
+      ],
+      "remaining": [
+        32,
+        32,
+        65,
+        65
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        52.9,
+        52.9
+      ],
+      "max_observed_wait_s": [
+        240.0,
+        240.0,
+        240.0,
+        240.0
+      ],
+      "peak_queue": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "maximum_green_seen": false,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 60.0,
+          "duration_s": 8.0,
+          "reason": "sensor_unavailable"
+        },
+        {
+          "phase": "NS",
+          "start_s": 75.0,
+          "end_s": 119.9,
+          "duration_s": 44.9,
+          "reason": "waiting_time_priority"
+        },
+        {
+          "phase": "EW",
+          "start_s": 124.9,
+          "end_s": 169.9,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "NS",
+          "start_s": 174.9,
+          "end_s": 219.9,
+          "duration_s": 45.0,
+          "reason": "pressure_difference"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            100,
+            100,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            77,
+            77,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            77,
+            77,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            77,
+            77,
+            100,
+            100
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "sensor_unavailable",
+          "queues": [
+            77,
+            77,
+            96,
+            96
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            77,
+            77,
+            96,
+            96
+          ]
+        },
+        {
+          "t": 75.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            77,
+            77,
+            96,
+            96
+          ]
+        },
+        {
+          "t": 119.9,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "waiting_time_priority",
+          "queues": [
+            55,
+            55,
+            96,
+            96
+          ]
+        },
+        {
+          "t": 122.9,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            55,
+            55,
+            96,
+            96
+          ]
+        },
+        {
+          "t": 124.9,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            55,
+            55,
+            96,
+            96
+          ]
+        },
+        {
+          "t": 169.9,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "allocated_green_complete",
+          "queues": [
+            55,
+            55,
+            73,
+            73
+          ]
+        },
+        {
+          "t": 172.9,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            55,
+            55,
+            73,
+            73
+          ]
+        },
+        {
+          "t": 174.9,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            55,
+            55,
+            73,
+            73
+          ]
+        },
+        {
+          "t": 219.9,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "pressure_difference",
+          "queues": [
+            32,
+            32,
+            73,
+            73
+          ]
+        },
+        {
+          "t": 222.9,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            32,
+            32,
+            73,
+            73
+          ]
+        },
+        {
+          "t": 224.9,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            32,
+            32,
+            73,
+            73
+          ]
+        }
+      ],
+      "input_sha256": "272e26d7c61e008b030744ae401e7120a3b45e4659ff2c229bd9ac68b044b677"
+    },
+    {
+      "name": "intersection_not_clear",
+      "initial": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "served": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        20.9,
+        20.9,
+        33.9,
+        33.9
+      ],
+      "max_observed_wait_s": [
+        20.9,
+        20.9,
+        33.9,
+        33.9
+      ],
+      "peak_queue": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 20.0,
+          "end_s": 28.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "EW",
+          "start_s": 33.0,
+          "end_s": 93.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 98.0,
+          "end_s": 158.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 163.0,
+          "end_s": 223.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 20.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 28.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "passage_gap",
+          "queues": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 31.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 33.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 93.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 96.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 98.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 158.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 161.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 163.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 223.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 226.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 228.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "63b1b1e5cb7fdee9c79aff8a2a807afb4b28aad88780fe9277de40333699c24f"
+    },
+    {
+      "name": "fast_70m_extension_bounded",
+      "initial": [
+        50,
+        50,
+        1,
+        1
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        50,
+        50,
+        1,
+        1
+      ],
+      "served": [
+        50,
+        50,
+        1,
+        1
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        67.9,
+        67.9
+      ],
+      "max_observed_wait_s": [
+        170.9,
+        170.9,
+        67.9,
+        67.9
+      ],
+      "peak_queue": [
+        50,
+        50,
+        1,
+        1
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": true,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 62.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 67.0,
+          "end_s": 127.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "NS",
+          "start_s": 132.0,
+          "end_s": 192.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            50,
+            50,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 62.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            20,
+            20,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            20,
+            20,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 67.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            20,
+            20,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 127.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            20,
+            20,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            20,
+            20,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 132.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            20,
+            20,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 192.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 197.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "ff7041167fbf285aa7c681ea1aac67b9d580b533db489ce99b7fcc9df8ccf6c8"
+    },
+    {
+      "name": "slow_70m_no_indefinite_hold",
+      "initial": [
+        50,
+        50,
+        1,
+        1
+      ],
+      "duration_s": 240,
+      "passed": true,
+      "violations": [],
+      "arrived": [
+        50,
+        50,
+        1,
+        1
+      ],
+      "served": [
+        50,
+        50,
+        1,
+        1
+      ],
+      "remaining": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "first_service_s": [
+        2.9,
+        2.9,
+        52.9,
+        52.9
+      ],
+      "max_observed_wait_s": [
+        117.9,
+        117.9,
+        52.9,
+        52.9
+      ],
+      "peak_queue": [
+        50,
+        50,
+        1,
+        1
+      ],
+      "maximum_green_seen": true,
+      "approach_hold_seen": false,
+      "count_saturation_ticks": 0,
+      "green_intervals": [
+        {
+          "phase": "NS",
+          "start_s": 2.0,
+          "end_s": 47.0,
+          "duration_s": 45.0,
+          "reason": "allocated_green_complete"
+        },
+        {
+          "phase": "EW",
+          "start_s": 52.0,
+          "end_s": 60.0,
+          "duration_s": 8.0,
+          "reason": "passage_gap"
+        },
+        {
+          "phase": "NS",
+          "start_s": 65.0,
+          "end_s": 125.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        },
+        {
+          "phase": "EW",
+          "start_s": 130.0,
+          "end_s": 190.0,
+          "duration_s": 60.0,
+          "reason": "maximum_green"
+        }
+      ],
+      "transitions": [
+        {
+          "t": 2.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            50,
+            50,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 47.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "allocated_green_complete",
+          "queues": [
+            27,
+            27,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 50.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            27,
+            27,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 52.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            27,
+            27,
+            1,
+            1
+          ]
+        },
+        {
+          "t": 60.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "passage_gap",
+          "queues": [
+            27,
+            27,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 63.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            27,
+            27,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 65.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            27,
+            27,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 125.0,
+          "stage": "YELLOW",
+          "phase": "NS",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 128.0,
+          "stage": "ALL_RED",
+          "phase": "EW",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 130.0,
+          "stage": "GREEN",
+          "phase": "EW",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 190.0,
+          "stage": "YELLOW",
+          "phase": "EW",
+          "reason": "maximum_green",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 193.0,
+          "stage": "ALL_RED",
+          "phase": "NS",
+          "reason": "clearance",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 195.0,
+          "stage": "GREEN",
+          "phase": "NS",
+          "reason": "clearance_complete",
+          "queues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "input_sha256": "ecf6c60f0c998e62a15f3c21a49f7f6cf5320dd60b0fcf628e9ac7c86d1d31b3"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sabz-edge"
+version = "0.1.0"
+description = "SABZ traffic-control bench integration service"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["cryptography"]
+hardware = ["pyserial>=3.5,<4"]
+vision = ["opencv-python-headless>=4.10,<6", "numpy>=1.26,<3"]
+
+[project.scripts]
+sabz-edge = "sabz_edge.server:main"
+
+[tool.setuptools.packages.find]
+include = ["sabz_edge*"]

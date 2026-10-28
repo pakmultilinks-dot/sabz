@@ -1,0 +1,49 @@
+{
+  "source_tests": {
+    "passed": 128,
+    "skipped": 0
+  },
+  "installed_vision_tests": {
+    "passed": 128,
+    "skipped": 0
+  },
+  "minimal_edge_tests": {
+    "executed_passed": 122,
+    "optional_vision_skipped": 6
+  },
+  "vision_environment": "Uses existing local OpenCV 5.0.0 and NumPy 2.4.6; not dependency-isolated.",
+  "esp32_target_build_passed": true,
+  "esp32_target": "esp32:esp32:esp32s3",
+  "esp32_core": "3.3.0",
+  "arduino_cli": "1.5.1",
+  "firmware_package": {
+    "path": "data\\firmware-release\\sabz-esp32s3-low-voltage-bench.zip",
+    "bytes": 375111,
+    "sha256": "23f39fe633bd982ea29aef1e7133857aae83f465d8f2f923a34425811da1a549",
+    "target_build_verified": true,
+    "flashed": false,
+    "electrical_verified": false,
+    "road_ready": false
+  },
+  "camera_fault_containment": "Separate spawned capture worker; bounded shared memory; stalled-worker termination tested.",
+  "detector_evaluation": "Matching and threshold logic tested; no trained-model dataset evaluation performed.",
+  "real_camera_opened": false,
+  "esp32_flashed": false,
+  "physical_io_verified": false,
+  "field_ready": false,
+  "remaining_external_inputs": [
+    "ESP32-S3-DevKitC-1 and wired low-voltage LED assembly",
+    "Authorized camera and surveyed calibration",
+    "Approved raw COCO-80 YOLOv8 ONNX model",
+    "Independent clearance/receiving-state sensors",
+    "Held-out labelled local traffic images"
+  ],
+  "source_sha256": {
+    "sabz_edge/capture.py": "7fd00c9b62e5e9b11cf424b8bb9e8bac2e4b04ba26d7abdc4dc080ff6b96d95c",
+    "sabz_edge/camera_sensor.py": "32ae6074070765532bda600da58d8942186c8ea86a91366ab82a3b0f70ca877b",
+    "sabz_edge/vision.py": "def427e29487d22b7063b90fd281673976df60d79dde6412f59a1f186e88ebc1",
+    "sabz_edge/detection_eval.py": "49ba5db7c89d2683b6fe125b555640d5bc78c0093617f7c28190273a60a9dd5e",
+    "firmware/esp32s3_bench/bench_core.h": "0bcd77751b21a58e2ef700fb5661a35dd3d99641a17b538e7f7bb3de9d9e1b5c",
+    "firmware/esp32s3_bench/esp32s3_bench.ino": "0901c2f5df73a3d77edc36e8f09f5b5e77c347cdd75403b3178c0f2fc82b6a87"
+  }
+}

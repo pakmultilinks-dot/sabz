@@ -1,0 +1,29 @@
+{
+  "source_suite": {
+    "passed": 119,
+    "skipped": 0
+  },
+  "installed_vision_suite": {
+    "passed": 119,
+    "skipped": 0
+  },
+  "minimal_installed_suite": {
+    "executed_passed": 114,
+    "optional_vision_skipped": 5
+  },
+  "vision_runtime": "OpenCV 5.0.0 / NumPy 2.4.6; verification environment shares existing system/user vision libraries via explicit .pth. Not dependency-isolated.",
+  "installed_package_sources_hash_verified": true,
+  "camera_opened": false,
+  "trained_detector_inference_executed": false,
+  "model_accuracy_verified": false,
+  "test_network_outputs": "Synthetic fixtures; used only for preprocessing/decoding/tracking/metric plumbing.",
+  "actual_model_hash_verified": false,
+  "physical_sensor_io_verified": false,
+  "commercial_ready": false,
+  "source_sha256": {
+    "sabz_edge/vision.py": "8ef71b068a1dc22ba3f8f7b8ddcbe243ea4cc69172c20b57b5fb26ff3344b931",
+    "sabz_edge/camera_sensor.py": "2d07faaaa109e8d07788bcd92561b7ba9207bce869e28156ac310056c2f83c4e",
+    "tests/test_vision.py": "08f605af803f6ecf89da698468dcb47fdaf0bb14ec40474cdfca4ce89e0c308f",
+    "pyproject.toml": "ce87fc1cd478c625334b4773ad8443c7a0df05c33b48a978b786dc4e17447229"
+  }
+}

@@ -1,0 +1,9 @@
+Collecting pyserial==3.5
+  Downloading pyserial-3.5-py2.py3-none-any.whl.metadata (1.6 kB)
+Downloading pyserial-3.5-py2.py3-none-any.whl (90 kB)
+   ---------------------------------------- 90.6/90.6 kB 395.8 kB/s eta 0:00:00
+Installing collected packages: pyserial
+Successfully installed pyserial-3.5
+
+[notice] A new release of pip is available: 24.0 -> 26.2.2
+[notice] To update, run: C:\Users\Lenovo\Documents\Code_PlayGround\SABZ\sabz\.venv-edge-test\Scripts\python.exe -m pip install --upgrade pip

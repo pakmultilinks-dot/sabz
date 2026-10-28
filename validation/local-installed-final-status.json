@@ -1,0 +1,62 @@
+{
+  "mode": "bench",
+  "field_ready": false,
+  "ready": false,
+  "adapter": "independent-bench-cabinet",
+  "sensor_age_s": 118.09904197502328,
+  "loop_healthy": true,
+  "controller": {
+    "schema_version": 1,
+    "stage": "ALL_RED",
+    "phase": "NS",
+    "elapsed_s": 112.03199999999924,
+    "lamps": {
+      "N": "RED",
+      "S": "RED",
+      "E": "RED",
+      "W": "RED"
+    },
+    "reason": "sensor_unavailable",
+    "fault": null,
+    "algorithm": "unavailable",
+    "approach_protection": "unavailable",
+    "phase_scores": {}
+  },
+  "last_output": {
+    "schema_version": 1,
+    "stage": "ALL_RED",
+    "phase": "NS",
+    "elapsed_s": 111.96899999999732,
+    "lamps": {
+      "N": "RED",
+      "S": "RED",
+      "E": "RED",
+      "W": "RED"
+    },
+    "reason": "sensor_unavailable",
+    "fault": null,
+    "algorithm": "unavailable",
+    "approach_protection": "unavailable",
+    "phase_scores": {},
+    "command_sequence": 2620,
+    "lease_s": 0.5,
+    "adapter": "independent-bench-cabinet",
+    "observation_sequence": 1793099284350058900
+  },
+  "cabinet_readback": {
+    "stage": "ALL_RED",
+    "phase": "NS",
+    "lamps": {
+      "N": "RED",
+      "S": "RED",
+      "E": "RED",
+      "W": "RED"
+    },
+    "elapsed_s": 112.07800000000134,
+    "fault": null,
+    "reason": "edge_transition",
+    "acknowledged_sequence": 2620,
+    "physical_hardware": false
+  },
+  "error": null
+}

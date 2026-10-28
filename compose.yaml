@@ -1,0 +1,27 @@
+services:
+  edge:
+    build: .
+    init: true
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 64
+    mem_limit: 256m
+    cpus: 1.0
+    environment:
+      SABZ_BIND: 0.0.0.0
+      SABZ_CAMERA_TOKEN: ${SABZ_CAMERA_TOKEN:?Set a camera token}
+      SABZ_READER_TOKEN: ${SABZ_READER_TOKEN:?Set a different reader token}
+      SABZ_TLS_CERT: /run/tls/server.crt
+      SABZ_TLS_KEY: /run/tls/server.key
+      SABZ_TIMING_FILE: /app/config/bench-timing.json
+    ports:
+      - "${SABZ_HOST_IP:-127.0.0.1}:8099:8099"
+    volumes:
+      - edge-state:/data
+      - ./deploy/tls:/run/tls:ro
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+volumes:
+  edge-state:

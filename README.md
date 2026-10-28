@@ -1,96 +1,89 @@
-# SABZ: AI-Adaptive Traffic Signals for Pakistan
+First hardware shopping and assembly: [docs/BENCH_SHOPPING_AND_ASSEMBLY.md](docs/BENCH_SHOPPING_AND_ASSEMBLY.md).
 
-**Category:** AI in Urban Tech | **4th International AI Championship (AIEF)**
+Local camera component and validation limits: [docs/CAMERA_SENSOR.md](docs/CAMERA_SENSOR.md).
 
-SABZ (سبز, "green") replaces blind fixed-time traffic signals with an AI controller that gives green where the cars actually are. Cameras count vehicles per approach; the signal extends green for long queues, cuts it the instant a road clears, skips empty approaches, and never starves any road.
+Active algorithm contracts and remaining integration limits: [docs/ALGORITHM_INTEGRATION.md](docs/ALGORITHM_INTEGRATION.md).
 
-**The hard rule:** green is NEVER cut while a vehicle is in the 70 m dilemma zone approaching the stop line. This is physics, not AI, and no training run can override it.
+Installation and operating instructions: [docs/INSTALLATION.md](docs/INSTALLATION.md). An ESP32-S3 low-voltage LED controller and serial adapter are implemented; board flashing and electrical validation remain unverified. See [physical bench guide](docs/PHYSICAL_BENCH.md). Road-signal integration remains unimplemented.
 
-## Real data, not just simulation
+# SABZ — adaptive traffic edge integration
 
-SABZ trains on measured traffic data:
+SABZ v0.1 provides a deployable edge service for integrating traffic observations
+with a deterministic signal-controller **bench emulator in a separate process**. It has an authenticated,
+versioned HTTPS API, persistent replay protection, an independently paced control
+loop, timed phase transitions, audit storage and a camera producer SDK.
 
-- **NGSIM trajectories:** 1,039,689 clean vehicle records from US-101 (3,209 real vehicles), deduplicated and quality-filtered. Arrival headways extracted per lane drive the simulator instead of synthetic Poisson rates.
-- **Live camera footage:** YOLOv8 runs on real intersection video, detecting actual vehicles frame by frame with cross-frame tracking to avoid double-counting.
-- **Simulator:** kinematic 4-way intersection used for controlled benchmarking, now calibrated with real measured arrival distributions.
+**Default output target: emulator.** An explicit low-voltage ESP32-S3 bench
+adapter and successfully built firmware are available. This is not a certified
+road controller and has no qualified road-cabinet adapter. It supports one intersection,
+two opposing through-only phases, and no pedestrians, turns or preemption.
+The service reports `field_ready: false` explicitly.
 
-## Accident prevention
+## Start here
 
-SABZ actively prevents the deadliest intersection crashes, not just optimizes flow:
+- [Adaptive controller and demonstration](docs/ADAPTIVE_DESIGN.md): deployed-system
+  research, implemented decision rules, v2 inputs and reproducible comparisons.
+- [Integration and deployment guide](docs/INTEGRATION.md): setup, API payloads,
+  camera SDK, container deployment, timing/fault behavior and hardware contract.
+- [Security scope](SECURITY.md): implemented defenses, trust boundaries and risks.
+- [Release roadmap](docs/ROADMAP.md): perception, model evaluation, physical
+  controller integration and field-pilot gates.
+- [Hardware decision for Pakistan](docs/HARDWARE.md): ESP32-S3 physical bench
+  target and integration with an authority-approved controller for a road pilot.
+- [OpenAPI contract](docs/openapi.json): versioned machine-readable API description.
 
-- **Red-light runner detection:** physics-based prediction using vehicle speed and distance. When a car cannot stop in time and will enter on red, the system extends all-red clearance to let it pass safely, preventing T-bone crashes.
-- **Adaptive yellow timing:** yellow duration scales with the 85th-percentile approach speed, eliminating the dilemma zone where 85% of drivers don't know whether to stop or go.
-- **Rear-end prevention:** detects when a following vehicle cannot stop behind a braking leader and extends green to let both clear.
-- **Dilemma-zone hard rule:** green is NEVER cut while a vehicle is inside 70 m. This is enforced outside the neural network and cannot be overridden.
+The supported edge package uses Python 3.11+ with no external runtime dependencies.
+Run `python -m sabz_edge.server` after setting distinct `SABZ_CAMERA_TOKEN` and
+`SABZ_READER_TOKEN` values of at least 32 characters. It defaults to loopback;
+non-loopback binding requires a TLS certificate and key. See the guide for exact
+commands. `python sabz_api.py` is an alias for the same service.
 
-Research basis: red light running causes ~900 deaths/year in the US; someone runs a red every 20 minutes at urban intersections (FHWA, IIHS).
+For a repeatable synthetic feed, run `python -m examples.bench_sender` with the
+camera credential. This produces bench observations, including synthetic
+conflict-zone clearance; it is not evidence from a real junction.
 
-## Screenshots
+`python sabz_live.py traffic.mp4` publishes experimental YOLO camera counts to
+the authenticated service. It deliberately cannot assert intersection clearance
+from counts alone. Install camera dependencies separately; the edge service
+does not need YOLO, OpenCV, NumPy, cloud access or an LLM.
 
-### Judges Dashboard
-![SABZ Dashboard](screenshot_dashboard.png)
+## Verify
 
-## System components
-
-| Module | File | What it does |
-|---|---|---|
-| Brain (DQN) | `sabz_rl.py` | Our own Deep Q-Network signal controller, trained from scratch on real NGSIM arrival data |
-| Intelligence layer | `sabz_intelligence.py` | Meta-controller: loads the trained DQN, routes each decision to the best controller per traffic regime using UCB exploration, learns online from real feedback |
-| Live video | `sabz_live.py` | End-to-end live pipeline: camera feed to YOLO detection to tracked counts to signal decision |
-| Camera system | `sabz_camera.py` | YOLOv8 vehicle detection on live video streams with cross-frame tracking |
-| Security layer | `sabz_security.py` | Input validation, timing bounds, dilemma-zone enforcement, fail-safe fallback, audit logging, watchdog |
-| Accident prevention | `sabz_safety.py` | Red-light runner detection, adaptive all-red extension, dynamic yellow timing, rear-end risk detection |
-| Integration API | `sabz_api.py` | REST service (port 8099): any camera and any signal hardware plug in through HTTP |
-| Safety layer | `sabz_sim2.py` | Dilemma-zone hard rule, checked every second, overrides any unsafe switch |
-| Simulator | `sabz_sim2.py` | Kinematic 4-way intersection, calibrated with real measured NGSIM arrival distributions |
-| Location intelligence | `sabz_poi.py` | Reads OpenStreetMap, finds schools/offices/mosques, auto-generates time-of-day plans |
-| LLM explainer | `sabz_explain.py` | Explains every signal decision in English or Urdu; daily traffic reports |
-| Continual learning | `sabz_learn.py` | Logs decisions, retrains nightly, only promotes the brain if it improves |
-| Judges dashboard | `sabz_dashboard.html` | Live side-by-side: fixed timer vs actuated vs our trained neural net |
-
-## Results
-
-Benchmarked in kinematic simulation with real NGSIM-calibrated arrivals, safety active. The DQN is trained on real measured headway distributions; results below compare all controllers under identical conditions.
-
-| Scenario | Fixed-time | SABZ actuated | SABZ brain (DQN) |
-|---|---|---|---|
-| Asymmetric (2 vs 50 cars) | 8.7 s | 5.0 s | 4.9 s (best) |
-| School morning rush | 11.0 s | 5.3 s | 5.2 s (best) |
-| Balanced rush hour | 179.7 s | 11.9 s | under training |
-
-Safety: 51 unsafe cutoffs attempted without protection; 0 executed with it.
-
-Note: the DQN is still training (700k+ episodes on real data). Balanced-scenario performance is the current focus. The intelligence layer routes live decisions to whichever controller is proven best per traffic regime.
-
-## The brain
-
-- Architecture: 16 inputs → 64 ReLU → 64 ReLU → 2 Q-values (stay/switch)
-- Inputs: 4 queue counts, 4 approaching counts, phase, green elapsed, 6 location features (school/mosque/office/hospital/Friday/hour)
-- Training data: real NGSIM vehicle trajectories (1M+ clean records), arrival headways extracted per lane
-- Training: 700,000+ episodes and continuing; 40k-episode blocks until it beats actuated on all scenarios
-- Weights: `sabz_dqn_capable.npz` (best), `sabz_dqn_ckpt.npz` (latest checkpoint)
-
-## Quick start
-
-```bash
-# Run the simulator comparison
-python3 eval_v2.py
-
-# Train the brain (resumes from checkpoint)
-python3 sabz_rl.py
-
-# Explain a decision (needs OPENROUTER_API_KEY for LLM, else template)
-python3 sabz_explain.py
-
-# Open the judges dashboard
-open sabz_dashboard.html
+```text
+python -B -m unittest discover -s tests -v
 ```
 
-## Project
+Tests cover timed transitions, 20,000 randomized controller steps, 50,000 guard proposals, stale data,
+request-frequency independence, validation, durable replay rejection, role
+separation, SDK integration, malformed/slow HTTP, storage faults, killed processes,
+and service restart. Loopback networking is
+required. CI is configured for Windows/Linux and Python 3.11–3.13.
+These checks establish bench implementation behavior, not collision prevention.
+Run `python -m examples.verify_release` for a 25-second real-time end-to-end
+check that records synthetic bench evidence under `validation/bench-run.json`.
+Run `python -m examples.soak_verify` for a 130-second isolated-service soak with
+maximum-green enforcement, unhealthy sensors, feed loss and recovery.
 
-- Proposal: `proposal.md`
-- Model card: `MODEL_CARD.md`
-- Product architecture: `PRODUCT.md`
-- Demo: `sabz_demo.mp4`
+## Research archive
 
-Built by Team SABZ, Lahore Garrison University.
+Historical simulation, DQN models, presentations and browser demonstrations
+remain available for research. They are not the supported integration path.
+The DQN has known training/architecture inconsistencies and is not loaded by
+the edge release. No new model-performance claim is made.
+
+## Signal Lab
+
+The private hosted Signal Lab is maintained in the dedicated `showcase` Sites
+checkout. It animates paired simulations and can run fresh seeds/demand settings
+using the same Python policy, safety kernel and cabinet model in a browser
+worker. This is explicitly synthetic simulation, with no road-controller link.
+The benchmark includes 105 controller runs and displays regressions as well as
+improvements. Generate evidence with `python -m examples.build_showcase`.
+The supported API accepts strict v2 traffic observations for the advanced
+controller; v1 remains the legacy queue-actuated path.
+
+[Archived research README](docs/LEGACY_RESEARCH.md) records previous claims for
+traceability. Its accident-prevention guarantees, performance figures and
+training status are historical and unverified for this release. Its relative
+asset links refer to the original repository root. See the release roadmap for
+what must be measured before making new product claims.

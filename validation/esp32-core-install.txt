@@ -1,0 +1,730 @@
+Downloading packages...
+
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 0 B / 410.53 MiB    0.00%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 0 B / 410.53 MiB    0.00%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 79.12 KiB / 410.53 MiB    0.02% 35m28s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 470.12 KiB / 410.53 MiB    0.11% 08m56s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 1.94 MiB / 410.53 MiB    0.47% 02m48s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 1.94 MiB / 410.53 MiB    0.47% 02m48s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 6.08 MiB / 410.53 MiB    1.48% 01m19s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 11.00 MiB / 410.53 MiB    2.68% 00m50s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 16.73 MiB / 410.53 MiB    4.08% 00m37s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 20.41 MiB / 410.53 MiB    4.97% 00m34s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 23.62 MiB / 410.53 MiB    5.75% 00m32s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 23.62 MiB / 410.53 MiB    5.75% 00m32s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 27.66 MiB / 410.53 MiB    6.74% 00m32s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 31.80 MiB / 410.53 MiB    7.75% 00m30s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 35.38 MiB / 410.53 MiB    8.62% 00m29s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 39.10 MiB / 410.53 MiB    9.52% 00m28s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 39.10 MiB / 410.53 MiB    9.52% 00m28s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 42.89 MiB / 410.53 MiB   10.45% 00m28s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 45.24 MiB / 410.53 MiB   11.02% 00m29s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 49.74 MiB / 410.53 MiB   12.12% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 52.34 MiB / 410.53 MiB   12.75% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 52.34 MiB / 410.53 MiB   12.75% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 55.20 MiB / 410.53 MiB   13.45% 00m28s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 57.95 MiB / 410.53 MiB   14.12% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 60.75 MiB / 410.53 MiB   14.80% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 63.53 MiB / 410.53 MiB   15.47% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 63.53 MiB / 410.53 MiB   15.47% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 66.17 MiB / 410.53 MiB   16.12% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 68.94 MiB / 410.53 MiB   16.79% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 71.95 MiB / 410.53 MiB   17.53% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 74.67 MiB / 410.53 MiB   18.19% 00m26s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 74.67 MiB / 410.53 MiB   18.19% 00m26s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 77.64 MiB / 410.53 MiB   18.91% 00m27s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 80.58 MiB / 410.53 MiB   19.63% 00m26s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 83.72 MiB / 410.53 MiB   20.39% 00m26s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 86.81 MiB / 410.53 MiB   21.15% 00m26s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 86.81 MiB / 410.53 MiB   21.15% 00m25s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 90.02 MiB / 410.53 MiB   21.93% 00m26s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 93.36 MiB / 410.53 MiB   22.74% 00m25s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 96.47 MiB / 410.53 MiB   23.50% 00m25s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 99.24 MiB / 410.53 MiB   24.17% 00m25s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 99.24 MiB / 410.53 MiB   24.17% 00m24s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 102.29 MiB / 410.53 MiB   24.92% 00m25s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 105.40 MiB / 410.53 MiB   25.68% 00m24s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 108.54 MiB / 410.53 MiB   26.44% 00m24s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 111.73 MiB / 410.53 MiB   27.22% 00m23s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 111.73 MiB / 410.53 MiB   27.22% 00m23s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 113.80 MiB / 410.53 MiB   27.72% 00m24s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 116.48 MiB / 410.53 MiB   28.37% 00m24s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 119.67 MiB / 410.53 MiB   29.15% 00m23s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 122.81 MiB / 410.53 MiB   29.92% 00m23s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 122.81 MiB / 410.53 MiB   29.92% 00m23s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 126.19 MiB / 410.53 MiB   30.74% 00m23s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 129.23 MiB / 410.53 MiB   31.48% 00m23s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 132.56 MiB / 410.53 MiB   32.29% 00m22s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 135.84 MiB / 410.53 MiB   33.09% 00m22s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 135.84 MiB / 410.53 MiB   33.09% 00m21s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 139.09 MiB / 410.53 MiB   33.88% 00m22s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 142.08 MiB / 410.53 MiB   34.61% 00m21s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 145.03 MiB / 410.53 MiB   35.33% 00m21s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 147.91 MiB / 410.53 MiB   36.03% 00m21s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 147.91 MiB / 410.53 MiB   36.03% 00m21s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 151.18 MiB / 410.53 MiB   36.82% 00m21s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 154.56 MiB / 410.53 MiB   37.65% 00m20s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 157.94 MiB / 410.53 MiB   38.47% 00m20s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 161.08 MiB / 410.53 MiB   39.24% 00m20s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 161.08 MiB / 410.53 MiB   39.24% 00m19s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 164.14 MiB / 410.53 MiB   39.98% 00m20s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 167.42 MiB / 410.53 MiB   40.78% 00m19s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 170.69 MiB / 410.53 MiB   41.58% 00m19s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 173.22 MiB / 410.53 MiB   42.19% 00m19s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 173.22 MiB / 410.53 MiB   42.19% 00m18s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 176.65 MiB / 410.53 MiB   43.03% 00m18s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 179.62 MiB / 410.53 MiB   43.75% 00m18s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 182.44 MiB / 410.53 MiB   44.44% 00m18s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 185.59 MiB / 410.53 MiB   45.21% 00m18s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 185.59 MiB / 410.53 MiB   45.21% 00m17s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 188.82 MiB / 410.53 MiB   45.99% 00m17s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 192.08 MiB / 410.53 MiB   46.79% 00m17s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 195.58 MiB / 410.53 MiB   47.64% 00m17s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 198.84 MiB / 410.53 MiB   48.43% 00m16s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 198.84 MiB / 410.53 MiB   48.43% 00m16s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 202.12 MiB / 410.53 MiB   49.23% 00m16s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 205.00 MiB / 410.53 MiB   49.94% 00m16s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 208.35 MiB / 410.53 MiB   50.75% 00m16s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 210.56 MiB / 410.53 MiB   51.29% 00m16s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 210.56 MiB / 410.53 MiB   51.29% 00m15s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 213.42 MiB / 410.53 MiB   51.99% 00m15s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 217.05 MiB / 410.53 MiB   52.87% 00m15s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 220.59 MiB / 410.53 MiB   53.73% 00m15s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 224.25 MiB / 410.53 MiB   54.62% 00m14s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 224.25 MiB / 410.53 MiB   54.62% 00m14s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 227.64 MiB / 410.53 MiB   55.45% 00m14s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 231.13 MiB / 410.53 MiB   56.30% 00m14s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 234.86 MiB / 410.53 MiB   57.21% 00m13s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 238.46 MiB / 410.53 MiB   58.09% 00m13s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 238.46 MiB / 410.53 MiB   58.09% 00m13s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 241.98 MiB / 410.53 MiB   58.94% 00m13s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 245.35 MiB / 410.53 MiB   59.76% 00m13s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 249.12 MiB / 410.53 MiB   60.68% 00m12s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 252.90 MiB / 410.53 MiB   61.60% 00m12s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 252.90 MiB / 410.53 MiB   61.60% 00m12s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 256.73 MiB / 410.53 MiB   62.54% 00m12s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 260.54 MiB / 410.53 MiB   63.47% 00m11s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 264.44 MiB / 410.53 MiB   64.41% 00m11s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 267.58 MiB / 410.53 MiB   65.18% 00m11s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 267.58 MiB / 410.53 MiB   65.18% 00m11s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 271.48 MiB / 410.53 MiB   66.13% 00m10s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 274.85 MiB / 410.53 MiB   66.95% 00m10s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 278.63 MiB / 410.53 MiB   67.87% 00m10s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 282.33 MiB / 410.53 MiB   68.77% 00m09s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 282.33 MiB / 410.53 MiB   68.77% 00m09s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 286.18 MiB / 410.53 MiB   69.71% 00m09s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 290.17 MiB / 410.53 MiB   70.68% 00m09s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 293.87 MiB / 410.53 MiB   71.58% 00m09s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 297.81 MiB / 410.53 MiB   72.54% 00m08s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 297.81 MiB / 410.53 MiB   72.54% 00m08s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 302.16 MiB / 410.53 MiB   73.60% 00m08s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 304.60 MiB / 410.53 MiB   74.20% 00m08s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 307.93 MiB / 410.53 MiB   75.01% 00m07s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 311.77 MiB / 410.53 MiB   75.94% 00m07s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 311.77 MiB / 410.53 MiB   75.94% 00m07s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 315.44 MiB / 410.53 MiB   76.84% 00m07s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 319.41 MiB / 410.53 MiB   77.81% 00m06s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 324.03 MiB / 410.53 MiB   78.93% 00m06s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 327.72 MiB / 410.53 MiB   79.83% 00m06s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 327.72 MiB / 410.53 MiB   79.83% 00m06s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 332.25 MiB / 410.53 MiB   80.93% 00m05s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 336.14 MiB / 410.53 MiB   81.88% 00m05s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 339.86 MiB / 410.53 MiB   82.78% 00m05s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 341.76 MiB / 410.53 MiB   83.25% 00m05s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 341.76 MiB / 410.53 MiB   83.25% 00m04s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 346.89 MiB / 410.53 MiB   84.50% 00m04s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 351.15 MiB / 410.53 MiB   85.54% 00m04s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 354.63 MiB / 410.53 MiB   86.38% 00m04s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 358.48 MiB / 410.53 MiB   87.32% 00m03s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 358.48 MiB / 410.53 MiB   87.32% 00m03s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 360.81 MiB / 410.53 MiB   87.89% 00m03s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 365.25 MiB / 410.53 MiB   88.97% 00m03s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 369.22 MiB / 410.53 MiB   89.94% 00m03s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 373.94 MiB / 410.53 MiB   91.09% 00m02s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 373.94 MiB / 410.53 MiB   91.09% 00m02s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 377.06 MiB / 410.53 MiB   91.85% 00m02s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 380.51 MiB / 410.53 MiB   92.69% 00m02s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 382.96 MiB / 410.53 MiB   93.29% 00m02s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 384.48 MiB / 410.53 MiB   93.66% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 384.48 MiB / 410.53 MiB   93.66% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 385.42 MiB / 410.53 MiB   93.88% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 387.21 MiB / 410.53 MiB   94.32% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 388.94 MiB / 410.53 MiB   94.74% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 390.53 MiB / 410.53 MiB   95.13% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 390.53 MiB / 410.53 MiB   95.13% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 391.84 MiB / 410.53 MiB   95.45% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 393.72 MiB / 410.53 MiB   95.90% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 395.43 MiB / 410.53 MiB   96.32% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 397.24 MiB / 410.53 MiB   96.76% 00m01s
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 397.24 MiB / 410.53 MiB   96.76%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 398.88 MiB / 410.53 MiB   97.16%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 400.69 MiB / 410.53 MiB   97.60%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 402.44 MiB / 410.53 MiB   98.03%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 404.20 MiB / 410.53 MiB   98.46%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 404.20 MiB / 410.53 MiB   98.46%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 406.28 MiB / 410.53 MiB   98.96%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 407.94 MiB / 410.53 MiB   99.37%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 409.90 MiB / 410.53 MiB   99.85%
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 downloaded
+
+esp32:esp-x32@2411 0 B / 368.42 MiB    0.00%
+esp32:esp-x32@2411 0 B / 368.42 MiB    0.00%
+esp32:esp-x32@2411 2.15 MiB / 368.42 MiB    0.58% 01m08s
+esp32:esp-x32@2411 4.32 MiB / 368.42 MiB    1.17% 00m50s
+esp32:esp-x32@2411 6.42 MiB / 368.42 MiB    1.74% 00m45s
+esp32:esp-x32@2411 8.51 MiB / 368.42 MiB    2.31% 00m42s
+esp32:esp-x32@2411 8.51 MiB / 368.42 MiB    2.31% 00m42s
+esp32:esp-x32@2411 10.56 MiB / 368.42 MiB    2.87% 00m47s
+esp32:esp-x32@2411 12.69 MiB / 368.42 MiB    3.44% 00m44s
+esp32:esp-x32@2411 14.75 MiB / 368.42 MiB    4.00% 00m43s
+esp32:esp-x32@2411 16.93 MiB / 368.42 MiB    4.59% 00m41s
+esp32:esp-x32@2411 16.93 MiB / 368.42 MiB    4.59% 00m41s
+esp32:esp-x32@2411 19.03 MiB / 368.42 MiB    5.17% 00m43s
+esp32:esp-x32@2411 21.21 MiB / 368.42 MiB    5.76% 00m42s
+esp32:esp-x32@2411 22.62 MiB / 368.42 MiB    6.14% 00m42s
+esp32:esp-x32@2411 24.75 MiB / 368.42 MiB    6.72% 00m41s
+esp32:esp-x32@2411 24.75 MiB / 368.42 MiB    6.72% 00m41s
+esp32:esp-x32@2411 26.94 MiB / 368.42 MiB    7.31% 00m42s
+esp32:esp-x32@2411 29.08 MiB / 368.42 MiB    7.89% 00m41s
+esp32:esp-x32@2411 31.15 MiB / 368.42 MiB    8.46% 00m41s
+esp32:esp-x32@2411 33.25 MiB / 368.42 MiB    9.02% 00m40s
+esp32:esp-x32@2411 33.25 MiB / 368.42 MiB    9.02% 00m39s
+esp32:esp-x32@2411 35.28 MiB / 368.42 MiB    9.58% 00m41s
+esp32:esp-x32@2411 37.38 MiB / 368.42 MiB   10.15% 00m40s
+esp32:esp-x32@2411 39.56 MiB / 368.42 MiB   10.74% 00m39s
+esp32:esp-x32@2411 41.67 MiB / 368.42 MiB   11.31% 00m39s
+esp32:esp-x32@2411 41.67 MiB / 368.42 MiB   11.31% 00m38s
+esp32:esp-x32@2411 43.79 MiB / 368.42 MiB   11.89% 00m39s
+esp32:esp-x32@2411 45.81 MiB / 368.42 MiB   12.44% 00m39s
+esp32:esp-x32@2411 47.17 MiB / 368.42 MiB   12.80% 00m39s
+esp32:esp-x32@2411 48.58 MiB / 368.42 MiB   13.19% 00m39s
+esp32:esp-x32@2411 48.58 MiB / 368.42 MiB   13.19% 00m39s
+esp32:esp-x32@2411 50.40 MiB / 368.42 MiB   13.68% 00m40s
+esp32:esp-x32@2411 52.43 MiB / 368.42 MiB   14.23% 00m39s
+esp32:esp-x32@2411 54.35 MiB / 368.42 MiB   14.75% 00m39s
+esp32:esp-x32@2411 56.48 MiB / 368.42 MiB   15.33% 00m38s
+esp32:esp-x32@2411 56.48 MiB / 368.42 MiB   15.33% 00m38s
+esp32:esp-x32@2411 58.65 MiB / 368.42 MiB   15.92% 00m38s
+esp32:esp-x32@2411 60.88 MiB / 368.42 MiB   16.52% 00m38s
+esp32:esp-x32@2411 63.12 MiB / 368.42 MiB   17.13% 00m37s
+esp32:esp-x32@2411 64.90 MiB / 368.42 MiB   17.62% 00m37s
+esp32:esp-x32@2411 64.90 MiB / 368.42 MiB   17.62% 00m37s
+esp32:esp-x32@2411 66.76 MiB / 368.42 MiB   18.12% 00m37s
+esp32:esp-x32@2411 69.09 MiB / 368.42 MiB   18.75% 00m37s
+esp32:esp-x32@2411 71.32 MiB / 368.42 MiB   19.36% 00m36s
+esp32:esp-x32@2411 71.32 MiB / 368.42 MiB   19.36% 00m36s
+esp32:esp-x32@2411 73.67 MiB / 368.42 MiB   20.00% 00m36s
+esp32:esp-x32@2411 76.07 MiB / 368.42 MiB   20.65% 00m36s
+esp32:esp-x32@2411 78.48 MiB / 368.42 MiB   21.30% 00m35s
+esp32:esp-x32@2411 80.93 MiB / 368.42 MiB   21.97% 00m34s
+esp32:esp-x32@2411 83.42 MiB / 368.42 MiB   22.64% 00m34s
+esp32:esp-x32@2411 83.42 MiB / 368.42 MiB   22.64% 00m33s
+esp32:esp-x32@2411 85.81 MiB / 368.42 MiB   23.29% 00m34s
+esp32:esp-x32@2411 87.90 MiB / 368.42 MiB   23.86% 00m33s
+esp32:esp-x32@2411 90.28 MiB / 368.42 MiB   24.50% 00m33s
+esp32:esp-x32@2411 92.50 MiB / 368.42 MiB   25.11% 00m32s
+esp32:esp-x32@2411 92.50 MiB / 368.42 MiB   25.11% 00m32s
+esp32:esp-x32@2411 94.65 MiB / 368.42 MiB   25.69% 00m33s
+esp32:esp-x32@2411 96.58 MiB / 368.42 MiB   26.21% 00m32s
+esp32:esp-x32@2411 99.42 MiB / 368.42 MiB   26.99% 00m31s
+esp32:esp-x32@2411 102.09 MiB / 368.42 MiB   27.71% 00m31s
+esp32:esp-x32@2411 102.09 MiB / 368.42 MiB   27.71% 00m31s
+esp32:esp-x32@2411 104.90 MiB / 368.42 MiB   28.47% 00m30s
+esp32:esp-x32@2411 107.46 MiB / 368.42 MiB   29.17% 00m30s
+esp32:esp-x32@2411 110.20 MiB / 368.42 MiB   29.91% 00m29s
+esp32:esp-x32@2411 112.67 MiB / 368.42 MiB   30.58% 00m29s
+esp32:esp-x32@2411 112.67 MiB / 368.42 MiB   30.58% 00m29s
+esp32:esp-x32@2411 115.51 MiB / 368.42 MiB   31.35% 00m29s
+esp32:esp-x32@2411 118.71 MiB / 368.42 MiB   32.22% 00m28s
+esp32:esp-x32@2411 121.68 MiB / 368.42 MiB   33.03% 00m27s
+esp32:esp-x32@2411 125.15 MiB / 368.42 MiB   33.97% 00m27s
+esp32:esp-x32@2411 125.15 MiB / 368.42 MiB   33.97% 00m26s
+esp32:esp-x32@2411 128.56 MiB / 368.42 MiB   34.90% 00m26s
+esp32:esp-x32@2411 132.11 MiB / 368.42 MiB   35.86% 00m26s
+esp32:esp-x32@2411 135.05 MiB / 368.42 MiB   36.66% 00m25s
+esp32:esp-x32@2411 138.91 MiB / 368.42 MiB   37.70% 00m24s
+esp32:esp-x32@2411 138.91 MiB / 368.42 MiB   37.70% 00m24s
+esp32:esp-x32@2411 141.53 MiB / 368.42 MiB   38.42% 00m24s
+esp32:esp-x32@2411 145.11 MiB / 368.42 MiB   39.39% 00m23s
+esp32:esp-x32@2411 149.28 MiB / 368.42 MiB   40.52% 00m23s
+esp32:esp-x32@2411 152.91 MiB / 368.42 MiB   41.51% 00m22s
+esp32:esp-x32@2411 152.91 MiB / 368.42 MiB   41.51% 00m22s
+esp32:esp-x32@2411 156.53 MiB / 368.42 MiB   42.49% 00m22s
+esp32:esp-x32@2411 160.33 MiB / 368.42 MiB   43.52% 00m21s
+esp32:esp-x32@2411 164.67 MiB / 368.42 MiB   44.70% 00m20s
+esp32:esp-x32@2411 169.03 MiB / 368.42 MiB   45.88% 00m20s
+esp32:esp-x32@2411 169.03 MiB / 368.42 MiB   45.88% 00m19s
+esp32:esp-x32@2411 172.70 MiB / 368.42 MiB   46.88% 00m19s
+esp32:esp-x32@2411 177.00 MiB / 368.42 MiB   48.04% 00m19s
+esp32:esp-x32@2411 181.12 MiB / 368.42 MiB   49.16% 00m18s
+esp32:esp-x32@2411 183.28 MiB / 368.42 MiB   49.75% 00m18s
+esp32:esp-x32@2411 183.28 MiB / 368.42 MiB   49.75% 00m17s
+esp32:esp-x32@2411 187.16 MiB / 368.42 MiB   50.80% 00m17s
+esp32:esp-x32@2411 189.43 MiB / 368.42 MiB   51.42% 00m17s
+esp32:esp-x32@2411 191.66 MiB / 368.42 MiB   52.02% 00m17s
+esp32:esp-x32@2411 193.87 MiB / 368.42 MiB   52.62% 00m17s
+esp32:esp-x32@2411 193.87 MiB / 368.42 MiB   52.62% 00m16s
+esp32:esp-x32@2411 196.51 MiB / 368.42 MiB   53.34% 00m16s
+esp32:esp-x32@2411 198.90 MiB / 368.42 MiB   53.99% 00m16s
+esp32:esp-x32@2411 200.59 MiB / 368.42 MiB   54.45% 00m16s
+esp32:esp-x32@2411 203.30 MiB / 368.42 MiB   55.18% 00m16s
+esp32:esp-x32@2411 203.30 MiB / 368.42 MiB   55.18% 00m16s
+esp32:esp-x32@2411 205.90 MiB / 368.42 MiB   55.89% 00m16s
+esp32:esp-x32@2411 208.82 MiB / 368.42 MiB   56.68% 00m15s
+esp32:esp-x32@2411 211.56 MiB / 368.42 MiB   57.42% 00m15s
+esp32:esp-x32@2411 214.31 MiB / 368.42 MiB   58.17% 00m15s
+esp32:esp-x32@2411 214.31 MiB / 368.42 MiB   58.17% 00m14s
+esp32:esp-x32@2411 217.09 MiB / 368.42 MiB   58.92% 00m14s
+esp32:esp-x32@2411 219.80 MiB / 368.42 MiB   59.66% 00m14s
+esp32:esp-x32@2411 222.32 MiB / 368.42 MiB   60.34% 00m14s
+esp32:esp-x32@2411 224.59 MiB / 368.42 MiB   60.96% 00m14s
+esp32:esp-x32@2411 224.59 MiB / 368.42 MiB   60.96% 00m13s
+esp32:esp-x32@2411 227.01 MiB / 368.42 MiB   61.62% 00m13s
+esp32:esp-x32@2411 229.66 MiB / 368.42 MiB   62.34% 00m13s
+esp32:esp-x32@2411 232.48 MiB / 368.42 MiB   63.10% 00m13s
+esp32:esp-x32@2411 235.73 MiB / 368.42 MiB   63.98% 00m12s
+esp32:esp-x32@2411 235.73 MiB / 368.42 MiB   63.98% 00m12s
+esp32:esp-x32@2411 238.26 MiB / 368.42 MiB   64.67% 00m12s
+esp32:esp-x32@2411 240.97 MiB / 368.42 MiB   65.41% 00m12s
+esp32:esp-x32@2411 243.92 MiB / 368.42 MiB   66.21% 00m12s
+esp32:esp-x32@2411 245.79 MiB / 368.42 MiB   66.71% 00m11s
+esp32:esp-x32@2411 245.79 MiB / 368.42 MiB   66.71% 00m11s
+esp32:esp-x32@2411 248.48 MiB / 368.42 MiB   67.45% 00m11s
+esp32:esp-x32@2411 251.58 MiB / 368.42 MiB   68.29% 00m11s
+esp32:esp-x32@2411 254.71 MiB / 368.42 MiB   69.14% 00m11s
+esp32:esp-x32@2411 257.88 MiB / 368.42 MiB   70.00% 00m10s
+esp32:esp-x32@2411 257.88 MiB / 368.42 MiB   70.00% 00m10s
+esp32:esp-x32@2411 260.81 MiB / 368.42 MiB   70.79% 00m10s
+esp32:esp-x32@2411 264.09 MiB / 368.42 MiB   71.68% 00m10s
+esp32:esp-x32@2411 267.33 MiB / 368.42 MiB   72.56% 00m09s
+esp32:esp-x32@2411 270.55 MiB / 368.42 MiB   73.43% 00m09s
+esp32:esp-x32@2411 270.55 MiB / 368.42 MiB   73.43% 00m09s
+esp32:esp-x32@2411 272.72 MiB / 368.42 MiB   74.02% 00m09s
+esp32:esp-x32@2411 276.07 MiB / 368.42 MiB   74.93% 00m08s
+esp32:esp-x32@2411 277.03 MiB / 368.42 MiB   75.19% 00m08s
+esp32:esp-x32@2411 281.82 MiB / 368.42 MiB   76.49% 00m08s
+esp32:esp-x32@2411 281.82 MiB / 368.42 MiB   76.49% 00m08s
+esp32:esp-x32@2411 284.94 MiB / 368.42 MiB   77.34% 00m07s
+esp32:esp-x32@2411 288.20 MiB / 368.42 MiB   78.23% 00m07s
+esp32:esp-x32@2411 291.30 MiB / 368.42 MiB   79.07% 00m07s
+esp32:esp-x32@2411 294.51 MiB / 368.42 MiB   79.94% 00m06s
+esp32:esp-x32@2411 294.51 MiB / 368.42 MiB   79.94% 00m06s
+esp32:esp-x32@2411 297.17 MiB / 368.42 MiB   80.66% 00m06s
+esp32:esp-x32@2411 298.97 MiB / 368.42 MiB   81.15% 00m06s
+esp32:esp-x32@2411 301.72 MiB / 368.42 MiB   81.89% 00m06s
+esp32:esp-x32@2411 304.75 MiB / 368.42 MiB   82.72% 00m06s
+esp32:esp-x32@2411 304.75 MiB / 368.42 MiB   82.72% 00m05s
+esp32:esp-x32@2411 308.17 MiB / 368.42 MiB   83.65% 00m05s
+esp32:esp-x32@2411 310.50 MiB / 368.42 MiB   84.28% 00m05s
+esp32:esp-x32@2411 313.77 MiB / 368.42 MiB   85.17% 00m05s
+esp32:esp-x32@2411 316.89 MiB / 368.42 MiB   86.01% 00m04s
+esp32:esp-x32@2411 316.89 MiB / 368.42 MiB   86.01% 00m04s
+esp32:esp-x32@2411 320.12 MiB / 368.42 MiB   86.89% 00m04s
+esp32:esp-x32@2411 323.52 MiB / 368.42 MiB   87.81% 00m04s
+esp32:esp-x32@2411 326.88 MiB / 368.42 MiB   88.72% 00m03s
+esp32:esp-x32@2411 330.19 MiB / 368.42 MiB   89.62% 00m03s
+esp32:esp-x32@2411 330.19 MiB / 368.42 MiB   89.62% 00m03s
+esp32:esp-x32@2411 333.34 MiB / 368.42 MiB   90.48% 00m03s
+esp32:esp-x32@2411 336.56 MiB / 368.42 MiB   91.35% 00m02s
+esp32:esp-x32@2411 339.78 MiB / 368.42 MiB   92.23% 00m02s
+esp32:esp-x32@2411 343.05 MiB / 368.42 MiB   93.11% 00m02s
+esp32:esp-x32@2411 343.05 MiB / 368.42 MiB   93.11% 00m02s
+esp32:esp-x32@2411 346.30 MiB / 368.42 MiB   93.99% 00m02s
+esp32:esp-x32@2411 349.70 MiB / 368.42 MiB   94.92% 00m01s
+esp32:esp-x32@2411 353.04 MiB / 368.42 MiB   95.83% 00m01s
+esp32:esp-x32@2411 356.70 MiB / 368.42 MiB   96.82% 00m01s
+esp32:esp-x32@2411 356.70 MiB / 368.42 MiB   96.82%
+esp32:esp-x32@2411 360.06 MiB / 368.42 MiB   97.73%
+esp32:esp-x32@2411 363.10 MiB / 368.42 MiB   98.56%
+esp32:esp-x32@2411 366.80 MiB / 368.42 MiB   99.56%
+esp32:esp-x32@2411 downloaded
+
+esp32:xtensa-esp-elf-gdb@16.2_20250324 0 B / 30.80 MiB    0.00%
+esp32:xtensa-esp-elf-gdb@16.2_20250324 0 B / 30.80 MiB    0.00%
+esp32:xtensa-esp-elf-gdb@16.2_20250324 3.60 MiB / 30.80 MiB   11.70% 00m02s
+esp32:xtensa-esp-elf-gdb@16.2_20250324 7.47 MiB / 30.80 MiB   24.26% 00m01s
+esp32:xtensa-esp-elf-gdb@16.2_20250324 11.06 MiB / 30.80 MiB   35.93% 00m01s
+esp32:xtensa-esp-elf-gdb@16.2_20250324 14.89 MiB / 30.80 MiB   48.35% 00m01s
+esp32:xtensa-esp-elf-gdb@16.2_20250324 14.89 MiB / 30.80 MiB   48.35%
+esp32:xtensa-esp-elf-gdb@16.2_20250324 18.54 MiB / 30.80 MiB   60.19%
+esp32:xtensa-esp-elf-gdb@16.2_20250324 22.02 MiB / 30.80 MiB   71.50%
+esp32:xtensa-esp-elf-gdb@16.2_20250324 25.23 MiB / 30.80 MiB   81.92%
+esp32:xtensa-esp-elf-gdb@16.2_20250324 25.23 MiB / 30.80 MiB   81.92%
+esp32:xtensa-esp-elf-gdb@16.2_20250324 28.96 MiB / 30.80 MiB   94.03%
+esp32:xtensa-esp-elf-gdb@16.2_20250324 downloaded
+
+esp32:esp-rv32@2411 0 B / 646.41 MiB    0.00%
+esp32:esp-rv32@2411 0 B / 646.41 MiB    0.00%
+esp32:esp-rv32@2411 2.73 MiB / 646.41 MiB    0.42% 01m34s
+esp32:esp-rv32@2411 6.48 MiB / 646.41 MiB    1.00% 00m59s
+esp32:esp-rv32@2411 10.26 MiB / 646.41 MiB    1.59% 00m49s
+esp32:esp-rv32@2411 14.70 MiB / 646.41 MiB    2.27% 00m43s
+esp32:esp-rv32@2411 14.70 MiB / 646.41 MiB    2.27% 00m42s
+esp32:esp-rv32@2411 19.08 MiB / 646.41 MiB    2.95% 00m46s
+esp32:esp-rv32@2411 23.12 MiB / 646.41 MiB    3.58% 00m43s
+esp32:esp-rv32@2411 26.78 MiB / 646.41 MiB    4.14% 00m41s
+esp32:esp-rv32@2411 31.31 MiB / 646.41 MiB    4.84% 00m39s
+esp32:esp-rv32@2411 31.31 MiB / 646.41 MiB    4.84% 00m39s
+esp32:esp-rv32@2411 35.88 MiB / 646.41 MiB    5.55% 00m40s
+esp32:esp-rv32@2411 38.10 MiB / 646.41 MiB    5.89% 00m41s
+esp32:esp-rv32@2411 43.38 MiB / 646.41 MiB    6.71% 00m38s
+esp32:esp-rv32@2411 43.38 MiB / 646.41 MiB    6.71% 00m38s
+esp32:esp-rv32@2411 46.08 MiB / 646.41 MiB    7.13% 00m41s
+esp32:esp-rv32@2411 47.65 MiB / 646.41 MiB    7.37% 00m42s
+esp32:esp-rv32@2411 49.45 MiB / 646.41 MiB    7.65% 00m43s
+esp32:esp-rv32@2411 50.96 MiB / 646.41 MiB    7.88% 00m44s
+esp32:esp-rv32@2411 52.54 MiB / 646.41 MiB    8.13% 00m44s
+esp32:esp-rv32@2411 52.54 MiB / 646.41 MiB    8.13% 00m44s
+esp32:esp-rv32@2411 54.33 MiB / 646.41 MiB    8.40% 00m47s
+esp32:esp-rv32@2411 56.31 MiB / 646.41 MiB    8.71% 00m48s
+esp32:esp-rv32@2411 58.20 MiB / 646.41 MiB    9.00% 00m48s
+esp32:esp-rv32@2411 60.14 MiB / 646.41 MiB    9.30% 00m48s
+esp32:esp-rv32@2411 60.14 MiB / 646.41 MiB    9.30% 00m48s
+esp32:esp-rv32@2411 62.06 MiB / 646.41 MiB    9.60% 00m50s
+esp32:esp-rv32@2411 64.06 MiB / 646.41 MiB    9.91% 00m50s
+esp32:esp-rv32@2411 66.09 MiB / 646.41 MiB   10.22% 00m50s
+esp32:esp-rv32@2411 68.08 MiB / 646.41 MiB   10.53% 00m50s
+esp32:esp-rv32@2411 68.08 MiB / 646.41 MiB   10.53% 00m50s
+esp32:esp-rv32@2411 70.07 MiB / 646.41 MiB   10.84% 00m52s
+esp32:esp-rv32@2411 71.67 MiB / 646.41 MiB   11.09% 00m53s
+esp32:esp-rv32@2411 73.58 MiB / 646.41 MiB   11.38% 00m52s
+esp32:esp-rv32@2411 75.68 MiB / 646.41 MiB   11.71% 00m52s
+esp32:esp-rv32@2411 75.68 MiB / 646.41 MiB   11.71% 00m52s
+esp32:esp-rv32@2411 77.60 MiB / 646.41 MiB   12.00% 00m54s
+esp32:esp-rv32@2411 79.58 MiB / 646.41 MiB   12.31% 00m54s
+esp32:esp-rv32@2411 81.56 MiB / 646.41 MiB   12.62% 00m53s
+esp32:esp-rv32@2411 83.60 MiB / 646.41 MiB   12.93% 00m53s
+esp32:esp-rv32@2411 83.60 MiB / 646.41 MiB   12.93% 00m53s
+esp32:esp-rv32@2411 85.69 MiB / 646.41 MiB   13.26% 00m54s
+esp32:esp-rv32@2411 87.65 MiB / 646.41 MiB   13.56% 00m54s
+esp32:esp-rv32@2411 89.82 MiB / 646.41 MiB   13.90% 00m54s
+esp32:esp-rv32@2411 91.88 MiB / 646.41 MiB   14.21% 00m54s
+esp32:esp-rv32@2411 91.88 MiB / 646.41 MiB   14.21% 00m53s
+esp32:esp-rv32@2411 93.99 MiB / 646.41 MiB   14.54% 00m55s
+esp32:esp-rv32@2411 95.94 MiB / 646.41 MiB   14.84% 00m54s
+esp32:esp-rv32@2411 97.96 MiB / 646.41 MiB   15.15% 00m54s
+esp32:esp-rv32@2411 100.00 MiB / 646.41 MiB   15.47% 00m54s
+esp32:esp-rv32@2411 100.00 MiB / 646.41 MiB   15.47% 00m54s
+esp32:esp-rv32@2411 102.10 MiB / 646.41 MiB   15.80% 00m55s
+esp32:esp-rv32@2411 104.18 MiB / 646.41 MiB   16.12% 00m55s
+esp32:esp-rv32@2411 106.25 MiB / 646.41 MiB   16.44% 00m54s
+esp32:esp-rv32@2411 108.32 MiB / 646.41 MiB   16.76% 00m54s
+esp32:esp-rv32@2411 108.32 MiB / 646.41 MiB   16.76% 00m54s
+esp32:esp-rv32@2411 110.37 MiB / 646.41 MiB   17.07% 00m55s
+esp32:esp-rv32@2411 112.36 MiB / 646.41 MiB   17.38% 00m54s
+esp32:esp-rv32@2411 114.09 MiB / 646.41 MiB   17.65% 00m54s
+esp32:esp-rv32@2411 116.25 MiB / 646.41 MiB   17.98% 00m54s
+esp32:esp-rv32@2411 116.25 MiB / 646.41 MiB   17.98% 00m54s
+esp32:esp-rv32@2411 118.34 MiB / 646.41 MiB   18.31% 00m55s
+esp32:esp-rv32@2411 120.40 MiB / 646.41 MiB   18.63% 00m55s
+esp32:esp-rv32@2411 122.37 MiB / 646.41 MiB   18.93% 00m54s
+esp32:esp-rv32@2411 124.34 MiB / 646.41 MiB   19.23% 00m54s
+esp32:esp-rv32@2411 124.34 MiB / 646.41 MiB   19.23% 00m54s
+esp32:esp-rv32@2411 126.42 MiB / 646.41 MiB   19.56% 00m55s
+esp32:esp-rv32@2411 128.38 MiB / 646.41 MiB   19.86% 00m54s
+esp32:esp-rv32@2411 130.34 MiB / 646.41 MiB   20.16% 00m54s
+esp32:esp-rv32@2411 132.47 MiB / 646.41 MiB   20.49% 00m54s
+esp32:esp-rv32@2411 132.47 MiB / 646.41 MiB   20.49% 00m54s
+esp32:esp-rv32@2411 134.69 MiB / 646.41 MiB   20.84% 00m54s
+esp32:esp-rv32@2411 136.76 MiB / 646.41 MiB   21.16% 00m54s
+esp32:esp-rv32@2411 138.99 MiB / 646.41 MiB   21.50% 00m53s
+esp32:esp-rv32@2411 141.21 MiB / 646.41 MiB   21.84% 00m53s
+esp32:esp-rv32@2411 141.21 MiB / 646.41 MiB   21.84% 00m53s
+esp32:esp-rv32@2411 143.47 MiB / 646.41 MiB   22.19% 00m53s
+esp32:esp-rv32@2411 145.54 MiB / 646.41 MiB   22.52% 00m53s
+esp32:esp-rv32@2411 147.82 MiB / 646.41 MiB   22.87% 00m53s
+esp32:esp-rv32@2411 150.14 MiB / 646.41 MiB   23.23% 00m52s
+esp32:esp-rv32@2411 150.14 MiB / 646.41 MiB   23.23% 00m52s
+esp32:esp-rv32@2411 152.48 MiB / 646.41 MiB   23.59% 00m52s
+esp32:esp-rv32@2411 154.68 MiB / 646.41 MiB   23.93% 00m52s
+esp32:esp-rv32@2411 157.11 MiB / 646.41 MiB   24.30% 00m52s
+esp32:esp-rv32@2411 159.57 MiB / 646.41 MiB   24.69% 00m51s
+esp32:esp-rv32@2411 159.57 MiB / 646.41 MiB   24.69% 00m51s
+esp32:esp-rv32@2411 161.83 MiB / 646.41 MiB   25.04% 00m51s
+esp32:esp-rv32@2411 163.45 MiB / 646.41 MiB   25.29% 00m52s
+esp32:esp-rv32@2411 165.65 MiB / 646.41 MiB   25.63% 00m51s
+esp32:esp-rv32@2411 168.22 MiB / 646.41 MiB   26.02% 00m51s
+esp32:esp-rv32@2411 168.22 MiB / 646.41 MiB   26.02% 00m50s
+esp32:esp-rv32@2411 170.64 MiB / 646.41 MiB   26.40% 00m51s
+esp32:esp-rv32@2411 173.04 MiB / 646.41 MiB   26.77% 00m50s
+esp32:esp-rv32@2411 175.77 MiB / 646.41 MiB   27.19% 00m50s
+esp32:esp-rv32@2411 178.44 MiB / 646.41 MiB   27.61% 00m49s
+esp32:esp-rv32@2411 178.44 MiB / 646.41 MiB   27.61% 00m49s
+esp32:esp-rv32@2411 181.27 MiB / 646.41 MiB   28.04% 00m49s
+esp32:esp-rv32@2411 183.55 MiB / 646.41 MiB   28.40% 00m49s
+esp32:esp-rv32@2411 186.52 MiB / 646.41 MiB   28.85% 00m48s
+esp32:esp-rv32@2411 189.48 MiB / 646.41 MiB   29.31% 00m47s
+esp32:esp-rv32@2411 189.48 MiB / 646.41 MiB   29.31% 00m47s
+esp32:esp-rv32@2411 192.69 MiB / 646.41 MiB   29.81% 00m48s
+esp32:esp-rv32@2411 195.42 MiB / 646.41 MiB   30.23% 00m47s
+esp32:esp-rv32@2411 198.85 MiB / 646.41 MiB   30.76% 00m46s
+esp32:esp-rv32@2411 201.38 MiB / 646.41 MiB   31.15% 00m46s
+esp32:esp-rv32@2411 201.38 MiB / 646.41 MiB   31.15% 00m45s
+esp32:esp-rv32@2411 203.72 MiB / 646.41 MiB   31.51% 00m46s
+esp32:esp-rv32@2411 206.38 MiB / 646.41 MiB   31.93% 00m46s
+esp32:esp-rv32@2411 209.97 MiB / 646.41 MiB   32.48% 00m45s
+esp32:esp-rv32@2411 213.81 MiB / 646.41 MiB   33.08% 00m44s
+esp32:esp-rv32@2411 213.81 MiB / 646.41 MiB   33.08% 00m44s
+esp32:esp-rv32@2411 217.70 MiB / 646.41 MiB   33.68% 00m44s
+esp32:esp-rv32@2411 221.50 MiB / 646.41 MiB   34.27% 00m43s
+esp32:esp-rv32@2411 225.50 MiB / 646.41 MiB   34.88% 00m42s
+esp32:esp-rv32@2411 228.76 MiB / 646.41 MiB   35.39% 00m42s
+esp32:esp-rv32@2411 228.76 MiB / 646.41 MiB   35.39% 00m41s
+esp32:esp-rv32@2411 231.15 MiB / 646.41 MiB   35.76% 00m41s
+esp32:esp-rv32@2411 234.80 MiB / 646.41 MiB   36.32% 00m41s
+esp32:esp-rv32@2411 239.44 MiB / 646.41 MiB   37.04% 00m40s
+esp32:esp-rv32@2411 243.89 MiB / 646.41 MiB   37.73% 00m39s
+esp32:esp-rv32@2411 243.89 MiB / 646.41 MiB   37.73% 00m39s
+esp32:esp-rv32@2411 248.71 MiB / 646.41 MiB   38.48% 00m38s
+esp32:esp-rv32@2411 252.70 MiB / 646.41 MiB   39.09% 00m38s
+esp32:esp-rv32@2411 256.65 MiB / 646.41 MiB   39.70% 00m37s
+esp32:esp-rv32@2411 260.55 MiB / 646.41 MiB   40.31% 00m36s
+esp32:esp-rv32@2411 260.55 MiB / 646.41 MiB   40.31% 00m36s
+esp32:esp-rv32@2411 264.06 MiB / 646.41 MiB   40.85% 00m36s
+esp32:esp-rv32@2411 267.94 MiB / 646.41 MiB   41.45% 00m36s
+esp32:esp-rv32@2411 271.89 MiB / 646.41 MiB   42.06% 00m35s
+esp32:esp-rv32@2411 276.06 MiB / 646.41 MiB   42.71% 00m34s
+esp32:esp-rv32@2411 276.06 MiB / 646.41 MiB   42.71% 00m34s
+esp32:esp-rv32@2411 278.25 MiB / 646.41 MiB   43.04% 00m34s
+esp32:esp-rv32@2411 282.58 MiB / 646.41 MiB   43.72% 00m34s
+esp32:esp-rv32@2411 284.68 MiB / 646.41 MiB   44.04% 00m34s
+esp32:esp-rv32@2411 286.70 MiB / 646.41 MiB   44.35% 00m33s
+esp32:esp-rv32@2411 286.70 MiB / 646.41 MiB   44.35% 00m33s
+esp32:esp-rv32@2411 288.74 MiB / 646.41 MiB   44.67% 00m33s
+esp32:esp-rv32@2411 290.82 MiB / 646.41 MiB   44.99% 00m33s
+esp32:esp-rv32@2411 292.93 MiB / 646.41 MiB   45.32% 00m33s
+esp32:esp-rv32@2411 294.93 MiB / 646.41 MiB   45.63% 00m33s
+esp32:esp-rv32@2411 294.93 MiB / 646.41 MiB   45.63% 00m32s
+esp32:esp-rv32@2411 297.22 MiB / 646.41 MiB   45.98% 00m33s
+esp32:esp-rv32@2411 299.07 MiB / 646.41 MiB   46.27% 00m33s
+esp32:esp-rv32@2411 301.37 MiB / 646.41 MiB   46.62% 00m32s
+esp32:esp-rv32@2411 303.45 MiB / 646.41 MiB   46.94% 00m32s
+esp32:esp-rv32@2411 303.45 MiB / 646.41 MiB   46.94% 00m32s
+esp32:esp-rv32@2411 305.94 MiB / 646.41 MiB   47.33% 00m32s
+esp32:esp-rv32@2411 308.43 MiB / 646.41 MiB   47.71% 00m32s
+esp32:esp-rv32@2411 310.89 MiB / 646.41 MiB   48.09% 00m32s
+esp32:esp-rv32@2411 313.36 MiB / 646.41 MiB   48.48% 00m31s
+esp32:esp-rv32@2411 313.36 MiB / 646.41 MiB   48.48% 00m31s
+esp32:esp-rv32@2411 315.73 MiB / 646.41 MiB   48.84% 00m31s
+esp32:esp-rv32@2411 317.73 MiB / 646.41 MiB   49.15% 00m31s
+esp32:esp-rv32@2411 320.37 MiB / 646.41 MiB   49.56% 00m31s
+esp32:esp-rv32@2411 322.83 MiB / 646.41 MiB   49.94% 00m30s
+esp32:esp-rv32@2411 322.83 MiB / 646.41 MiB   49.94% 00m30s
+esp32:esp-rv32@2411 325.35 MiB / 646.41 MiB   50.33% 00m30s
+esp32:esp-rv32@2411 327.75 MiB / 646.41 MiB   50.70% 00m30s
+esp32:esp-rv32@2411 330.17 MiB / 646.41 MiB   51.08% 00m30s
+esp32:esp-rv32@2411 332.38 MiB / 646.41 MiB   51.42% 00m30s
+esp32:esp-rv32@2411 332.38 MiB / 646.41 MiB   51.42% 00m30s
+esp32:esp-rv32@2411 334.62 MiB / 646.41 MiB   51.77% 00m30s
+esp32:esp-rv32@2411 337.22 MiB / 646.41 MiB   52.17% 00m29s
+esp32:esp-rv32@2411 339.38 MiB / 646.41 MiB   52.50% 00m29s
+esp32:esp-rv32@2411 341.64 MiB / 646.41 MiB   52.85% 00m29s
+esp32:esp-rv32@2411 341.64 MiB / 646.41 MiB   52.85% 00m29s
+esp32:esp-rv32@2411 343.59 MiB / 646.41 MiB   53.15% 00m29s
+esp32:esp-rv32@2411 345.99 MiB / 646.41 MiB   53.52% 00m28s
+esp32:esp-rv32@2411 348.56 MiB / 646.41 MiB   53.92% 00m28s
+esp32:esp-rv32@2411 351.02 MiB / 646.41 MiB   54.30% 00m28s
+esp32:esp-rv32@2411 351.02 MiB / 646.41 MiB   54.30% 00m28s
+esp32:esp-rv32@2411 353.56 MiB / 646.41 MiB   54.70% 00m28s
+esp32:esp-rv32@2411 355.99 MiB / 646.41 MiB   55.07% 00m28s
+esp32:esp-rv32@2411 358.25 MiB / 646.41 MiB   55.42% 00m27s
+esp32:esp-rv32@2411 360.79 MiB / 646.41 MiB   55.81% 00m27s
+esp32:esp-rv32@2411 360.79 MiB / 646.41 MiB   55.81% 00m27s
+esp32:esp-rv32@2411 363.39 MiB / 646.41 MiB   56.22% 00m27s
+esp32:esp-rv32@2411 365.92 MiB / 646.41 MiB   56.61% 00m27s
+esp32:esp-rv32@2411 368.47 MiB / 646.41 MiB   57.00% 00m26s
+esp32:esp-rv32@2411 370.63 MiB / 646.41 MiB   57.34% 00m26s
+esp32:esp-rv32@2411 370.63 MiB / 646.41 MiB   57.34% 00m26s
+esp32:esp-rv32@2411 373.11 MiB / 646.41 MiB   57.72% 00m26s
+esp32:esp-rv32@2411 375.61 MiB / 646.41 MiB   58.11% 00m26s
+esp32:esp-rv32@2411 378.00 MiB / 646.41 MiB   58.48% 00m26s
+esp32:esp-rv32@2411 380.57 MiB / 646.41 MiB   58.87% 00m25s
+esp32:esp-rv32@2411 380.57 MiB / 646.41 MiB   58.87% 00m25s
+esp32:esp-rv32@2411 383.03 MiB / 646.41 MiB   59.26% 00m25s
+esp32:esp-rv32@2411 385.61 MiB / 646.41 MiB   59.65% 00m25s
+esp32:esp-rv32@2411 388.00 MiB / 646.41 MiB   60.02% 00m25s
+esp32:esp-rv32@2411 390.34 MiB / 646.41 MiB   60.39% 00m24s
+esp32:esp-rv32@2411 390.34 MiB / 646.41 MiB   60.39% 00m24s
+esp32:esp-rv32@2411 392.97 MiB / 646.41 MiB   60.79% 00m24s
+esp32:esp-rv32@2411 395.61 MiB / 646.41 MiB   61.20% 00m24s
+esp32:esp-rv32@2411 398.07 MiB / 646.41 MiB   61.58% 00m24s
+esp32:esp-rv32@2411 400.72 MiB / 646.41 MiB   61.99% 00m23s
+esp32:esp-rv32@2411 400.72 MiB / 646.41 MiB   61.99% 00m23s
+esp32:esp-rv32@2411 403.25 MiB / 646.41 MiB   62.38% 00m23s
+esp32:esp-rv32@2411 405.93 MiB / 646.41 MiB   62.80% 00m23s
+esp32:esp-rv32@2411 408.64 MiB / 646.41 MiB   63.22% 00m23s
+esp32:esp-rv32@2411 411.30 MiB / 646.41 MiB   63.63% 00m22s
+esp32:esp-rv32@2411 411.30 MiB / 646.41 MiB   63.63% 00m22s
+esp32:esp-rv32@2411 413.94 MiB / 646.41 MiB   64.04% 00m22s
+esp32:esp-rv32@2411 416.81 MiB / 646.41 MiB   64.48% 00m22s
+esp32:esp-rv32@2411 418.51 MiB / 646.41 MiB   64.74% 00m22s
+esp32:esp-rv32@2411 421.44 MiB / 646.41 MiB   65.20% 00m21s
+esp32:esp-rv32@2411 421.44 MiB / 646.41 MiB   65.20% 00m21s
+esp32:esp-rv32@2411 423.86 MiB / 646.41 MiB   65.57% 00m21s
+esp32:esp-rv32@2411 426.61 MiB / 646.41 MiB   66.00% 00m21s
+esp32:esp-rv32@2411 429.21 MiB / 646.41 MiB   66.40% 00m21s
+esp32:esp-rv32@2411 432.15 MiB / 646.41 MiB   66.85% 00m20s
+esp32:esp-rv32@2411 432.15 MiB / 646.41 MiB   66.85% 00m20s
+esp32:esp-rv32@2411 435.12 MiB / 646.41 MiB   67.31% 00m20s
+esp32:esp-rv32@2411 437.69 MiB / 646.41 MiB   67.71% 00m20s
+esp32:esp-rv32@2411 440.81 MiB / 646.41 MiB   68.19% 00m19s
+esp32:esp-rv32@2411 444.05 MiB / 646.41 MiB   68.69% 00m19s
+esp32:esp-rv32@2411 444.05 MiB / 646.41 MiB   68.69% 00m19s
+esp32:esp-rv32@2411 447.19 MiB / 646.41 MiB   69.18% 00m19s
+esp32:esp-rv32@2411 450.44 MiB / 646.41 MiB   69.68% 00m18s
+esp32:esp-rv32@2411 453.94 MiB / 646.41 MiB   70.22% 00m18s
+esp32:esp-rv32@2411 457.46 MiB / 646.41 MiB   70.77% 00m18s
+esp32:esp-rv32@2411 457.46 MiB / 646.41 MiB   70.77% 00m17s
+esp32:esp-rv32@2411 461.03 MiB / 646.41 MiB   71.32% 00m17s
+esp32:esp-rv32@2411 464.73 MiB / 646.41 MiB   71.89% 00m17s
+esp32:esp-rv32@2411 468.58 MiB / 646.41 MiB   72.49% 00m16s
+esp32:esp-rv32@2411 471.91 MiB / 646.41 MiB   73.00% 00m16s
+esp32:esp-rv32@2411 471.91 MiB / 646.41 MiB   73.00% 00m16s
+esp32:esp-rv32@2411 475.91 MiB / 646.41 MiB   73.62% 00m16s
+esp32:esp-rv32@2411 479.83 MiB / 646.41 MiB   74.23% 00m15s
+esp32:esp-rv32@2411 483.50 MiB / 646.41 MiB   74.80% 00m15s
+esp32:esp-rv32@2411 487.50 MiB / 646.41 MiB   75.42% 00m14s
+esp32:esp-rv32@2411 487.50 MiB / 646.41 MiB   75.42% 00m14s
+esp32:esp-rv32@2411 491.18 MiB / 646.41 MiB   75.99% 00m14s
+esp32:esp-rv32@2411 495.65 MiB / 646.41 MiB   76.68% 00m14s
+esp32:esp-rv32@2411 500.20 MiB / 646.41 MiB   77.38% 00m13s
+esp32:esp-rv32@2411 504.30 MiB / 646.41 MiB   78.02% 00m13s
+esp32:esp-rv32@2411 504.30 MiB / 646.41 MiB   78.02% 00m13s
+esp32:esp-rv32@2411 508.56 MiB / 646.41 MiB   78.67% 00m12s
+esp32:esp-rv32@2411 513.37 MiB / 646.41 MiB   79.42% 00m12s
+esp32:esp-rv32@2411 515.67 MiB / 646.41 MiB   79.77% 00m12s
+esp32:esp-rv32@2411 519.11 MiB / 646.41 MiB   80.31% 00m11s
+esp32:esp-rv32@2411 519.11 MiB / 646.41 MiB   80.31% 00m11s
+esp32:esp-rv32@2411 521.75 MiB / 646.41 MiB   80.71% 00m11s
+esp32:esp-rv32@2411 525.40 MiB / 646.41 MiB   81.28% 00m11s
+esp32:esp-rv32@2411 529.13 MiB / 646.41 MiB   81.86% 00m10s
+esp32:esp-rv32@2411 532.59 MiB / 646.41 MiB   82.39% 00m10s
+esp32:esp-rv32@2411 532.59 MiB / 646.41 MiB   82.39% 00m10s
+esp32:esp-rv32@2411 536.38 MiB / 646.41 MiB   82.98% 00m10s
+esp32:esp-rv32@2411 540.15 MiB / 646.41 MiB   83.56% 00m09s
+esp32:esp-rv32@2411 544.14 MiB / 646.41 MiB   84.18% 00m09s
+esp32:esp-rv32@2411 548.16 MiB / 646.41 MiB   84.80% 00m08s
+esp32:esp-rv32@2411 548.16 MiB / 646.41 MiB   84.80% 00m08s
+esp32:esp-rv32@2411 552.49 MiB / 646.41 MiB   85.47% 00m08s
+esp32:esp-rv32@2411 556.94 MiB / 646.41 MiB   86.16% 00m08s
+esp32:esp-rv32@2411 560.92 MiB / 646.41 MiB   86.77% 00m07s
+esp32:esp-rv32@2411 565.15 MiB / 646.41 MiB   87.43% 00m07s
+esp32:esp-rv32@2411 565.15 MiB / 646.41 MiB   87.43% 00m07s
+esp32:esp-rv32@2411 567.83 MiB / 646.41 MiB   87.84% 00m07s
+esp32:esp-rv32@2411 572.90 MiB / 646.41 MiB   88.63% 00m06s
+esp32:esp-rv32@2411 576.09 MiB / 646.41 MiB   89.12% 00m06s
+esp32:esp-rv32@2411 579.34 MiB / 646.41 MiB   89.62% 00m05s
+esp32:esp-rv32@2411 579.34 MiB / 646.41 MiB   89.62% 00m05s
+esp32:esp-rv32@2411 582.45 MiB / 646.41 MiB   90.11% 00m05s
+esp32:esp-rv32@2411 585.64 MiB / 646.41 MiB   90.60% 00m05s
+esp32:esp-rv32@2411 588.83 MiB / 646.41 MiB   91.09% 00m05s
+esp32:esp-rv32@2411 591.85 MiB / 646.41 MiB   91.56% 00m04s
+esp32:esp-rv32@2411 591.85 MiB / 646.41 MiB   91.56% 00m04s
+esp32:esp-rv32@2411 594.83 MiB / 646.41 MiB   92.02% 00m04s
+esp32:esp-rv32@2411 598.44 MiB / 646.41 MiB   92.58% 00m04s
+esp32:esp-rv32@2411 601.98 MiB / 646.41 MiB   93.13% 00m03s
+esp32:esp-rv32@2411 605.67 MiB / 646.41 MiB   93.70% 00m03s
+esp32:esp-rv32@2411 605.67 MiB / 646.41 MiB   93.70% 00m03s
+esp32:esp-rv32@2411 609.28 MiB / 646.41 MiB   94.25% 00m03s
+esp32:esp-rv32@2411 612.89 MiB / 646.41 MiB   94.81% 00m02s
+esp32:esp-rv32@2411 616.41 MiB / 646.41 MiB   95.36% 00m02s
+esp32:esp-rv32@2411 620.16 MiB / 646.41 MiB   95.94% 00m02s
+esp32:esp-rv32@2411 620.16 MiB / 646.41 MiB   95.94% 00m02s
+esp32:esp-rv32@2411 623.82 MiB / 646.41 MiB   96.51% 00m01s
+esp32:esp-rv32@2411 627.56 MiB / 646.41 MiB   97.08% 00m01s
+esp32:esp-rv32@2411 631.31 MiB / 646.41 MiB   97.66% 00m01s
+esp32:esp-rv32@2411 635.10 MiB / 646.41 MiB   98.25%
+esp32:esp-rv32@2411 635.10 MiB / 646.41 MiB   98.25%
+esp32:esp-rv32@2411 638.96 MiB / 646.41 MiB   98.85%
+esp32:esp-rv32@2411 642.78 MiB / 646.41 MiB   99.44%
+esp32:esp-rv32@2411 downloaded
+
+esp32:riscv32-esp-elf-gdb@16.2_20250324 0 B / 31.15 MiB    0.00%
+esp32:riscv32-esp-elf-gdb@16.2_20250324 0 B / 31.15 MiB    0.00%
+esp32:riscv32-esp-elf-gdb@16.2_20250324 3.66 MiB / 31.15 MiB   11.74% 00m02s
+esp32:riscv32-esp-elf-gdb@16.2_20250324 7.44 MiB / 31.15 MiB   23.88% 00m01s
+esp32:riscv32-esp-elf-gdb@16.2_20250324 11.23 MiB / 31.15 MiB   36.06% 00m01s
+esp32:riscv32-esp-elf-gdb@16.2_20250324 15.00 MiB / 31.15 MiB   48.14% 00m01s
+esp32:riscv32-esp-elf-gdb@16.2_20250324 15.00 MiB / 31.15 MiB   48.14%
+esp32:riscv32-esp-elf-gdb@16.2_20250324 18.68 MiB / 31.15 MiB   59.96%
+esp32:riscv32-esp-elf-gdb@16.2_20250324 22.58 MiB / 31.15 MiB   72.48%
+esp32:riscv32-esp-elf-gdb@16.2_20250324 26.37 MiB / 31.15 MiB   84.64%
+esp32:riscv32-esp-elf-gdb@16.2_20250324 30.31 MiB / 31.15 MiB   97.29%
+esp32:riscv32-esp-elf-gdb@16.2_20250324 downloaded
+
+esp32:openocd-esp32@v0.12.0-esp32-20250422 0 B / 2.85 MiB    0.00%
+esp32:openocd-esp32@v0.12.0-esp32-20250422 downloaded
+
+esp32:esptool_py@5.0.0 0 B / 56.37 MiB    0.00%
+esp32:esptool_py@5.0.0 0 B / 56.37 MiB    0.00%
+esp32:esptool_py@5.0.0 3.97 MiB / 56.37 MiB    7.04% 00m05s
+esp32:esptool_py@5.0.0 7.92 MiB / 56.37 MiB   14.06% 00m03s
+esp32:esptool_py@5.0.0 11.67 MiB / 56.37 MiB   20.70% 00m03s
+esp32:esptool_py@5.0.0 15.22 MiB / 56.37 MiB   26.99% 00m02s
+esp32:esptool_py@5.0.0 15.22 MiB / 56.37 MiB   26.99% 00m02s
+esp32:esptool_py@5.0.0 18.73 MiB / 56.37 MiB   33.24% 00m02s
+esp32:esptool_py@5.0.0 22.53 MiB / 56.37 MiB   39.97% 00m02s
+esp32:esptool_py@5.0.0 26.28 MiB / 56.37 MiB   46.62% 00m02s
+esp32:esptool_py@5.0.0 30.06 MiB / 56.37 MiB   53.33% 00m01s
+esp32:esptool_py@5.0.0 30.06 MiB / 56.37 MiB   53.33% 00m01s
+esp32:esptool_py@5.0.0 34.04 MiB / 56.37 MiB   60.39% 00m01s
+esp32:esptool_py@5.0.0 37.74 MiB / 56.37 MiB   66.95% 00m01s
+esp32:esptool_py@5.0.0 41.31 MiB / 56.37 MiB   73.29% 00m01s
+esp32:esptool_py@5.0.0 45.19 MiB / 56.37 MiB   80.17%
+esp32:esptool_py@5.0.0 45.19 MiB / 56.37 MiB   80.17%
+esp32:esptool_py@5.0.0 49.00 MiB / 56.37 MiB   86.93%
+esp32:esptool_py@5.0.0 52.58 MiB / 56.37 MiB   93.28%
+esp32:esptool_py@5.0.0 downloaded
+
+esp32:mkspiffs@0.2.3 0 B / 243.95 KiB    0.00%
+esp32:mkspiffs@0.2.3 downloaded
+
+esp32:mklittlefs@3.0.0-gnu12-dc7f933 0 B / 337.04 KiB    0.00%
+esp32:mklittlefs@3.0.0-gnu12-dc7f933 downloaded
+
+arduino:dfu-util@0.11.0-arduino5 0 B / 557.95 KiB    0.00%
+arduino:dfu-util@0.11.0-arduino5 downloaded
+
+esp32:esp32@3.3.0 0 B / 24.64 MiB    0.00%
+esp32:esp32@3.3.0 0 B / 24.64 MiB    0.00%
+esp32:esp32@3.3.0 4.00 MiB / 24.64 MiB   16.23% 00m02s
+esp32:esp32@3.3.0 7.69 MiB / 24.64 MiB   31.21% 00m01s
+esp32:esp32@3.3.0 10.84 MiB / 24.64 MiB   44.00% 00m01s
+esp32:esp32@3.3.0 14.69 MiB / 24.64 MiB   59.60%
+esp32:esp32@3.3.0 14.69 MiB / 24.64 MiB   59.60%
+esp32:esp32@3.3.0 18.60 MiB / 24.64 MiB   75.49%
+esp32:esp32@3.3.0 20.57 MiB / 24.64 MiB   83.48%
+esp32:esp32@3.3.0 downloaded
+Installing esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1...
+Skipping tool configuration....
+esp32:esp32-arduino-libs@idf-release_v5.5-b66b5448-v1 installed
+Installing esp32:esp-x32@2411...
+Skipping tool configuration....
+esp32:esp-x32@2411 installed
+Installing esp32:xtensa-esp-elf-gdb@16.2_20250324...
+Skipping tool configuration....
+esp32:xtensa-esp-elf-gdb@16.2_20250324 installed
+Installing esp32:esp-rv32@2411...
+Skipping tool configuration....
+esp32:esp-rv32@2411 installed
+Installing esp32:riscv32-esp-elf-gdb@16.2_20250324...
+Skipping tool configuration....
+esp32:riscv32-esp-elf-gdb@16.2_20250324 installed
+Installing esp32:openocd-esp32@v0.12.0-esp32-20250422...
+Skipping tool configuration....
+esp32:openocd-esp32@v0.12.0-esp32-20250422 installed
+Installing esp32:esptool_py@5.0.0...
+Skipping tool configuration....
+esp32:esptool_py@5.0.0 installed
+Installing esp32:mkspiffs@0.2.3...
+Skipping tool configuration....
+esp32:mkspiffs@0.2.3 installed
+Installing esp32:mklittlefs@3.0.0-gnu12-dc7f933...
+Skipping tool configuration....
+esp32:mklittlefs@3.0.0-gnu12-dc7f933 installed
+Installing arduino:dfu-util@0.11.0-arduino5...
+Skipping tool configuration....
+arduino:dfu-util@0.11.0-arduino5 installed
+Installing platform esp32:esp32@3.3.0...
+Skipping platform configuration....
+Platform esp32:esp32@3.3.0 installed
