@@ -1,4 +1,4 @@
-"""Build SABZ_Presentation.pptx: 12 slides, 16:9, dark theme. Verified numbers only."""
+"""Build SABZ_Presentation.pptx: 14 slides, 16:9, dark theme. Verified numbers only."""
 import os
 from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
@@ -234,7 +234,69 @@ b = tb(s, 0.7, 6.0, 11.9, 1.0)
 para(b, "Best mean benchmark delay: 7.3 s. The balanced tie is disclosed, not hidden: training continues specifically to break it.", size=17, color=MUTED, align=PP_ALIGN.CENTER)
 notes(s, "AWAIS presents. Read the table slowly. Wins on asymmetric and school, tie on balanced. Say the tie out loud yourself; it proves honesty. Training is still running to break it.")
 
-# ============ SLIDE 9: DEMO TRANSITION ============
+# ============ SLIDE 9: CONTROLLER BENCHMARK (HARNESS) ============
+s = prs.slides.add_slide(BLANK); bg(s)
+kicker(s, "08  CONTROLLER BENCHMARK")
+title(s, "Adaptive vs fixed timers, on identical traffic.")
+b = tb(s, 0.7, 2.35, 11.9, 0.5)
+para(b, "7 scenarios x 5 held-out seeds x 600 s, safety kernel on. Mean delay per vehicle (seconds):", size=15, color=MUTED)
+rows_data = [
+    ("Scenario", "Fixed", "Actuated", "Adaptive", "vs fixed"),
+    ("Tidal surge", "59.7", "13.9", "16.2", "-72.8%"),
+    ("Balanced", "22.5", "44.6", "22.5", "-0.2%"),
+    ("Bursts", "17.7", "8.7", "5.4", "-69.5%"),
+    ("Spillback", "65.6", "89.3", "41.7", "-36.5%"),
+    ("Night", "12.3", "3.7", "2.8", "-77.6%"),
+    ("Sensor faults", "24.0", "37.5", "25.8", "-7.6%"),
+    ("School zone", "46.5", "25.7", "25.8", "-44.5%"),
+]
+tbl = s.shapes.add_table(len(rows_data), 5, Inches(0.7), Inches(2.95), Inches(11.9), Inches(3.6)).table
+for j, h in enumerate(rows_data[0]):
+    c = tbl.cell(0, j)
+    c.text = ""
+    r = c.text_frame.paragraphs[0].add_run(); r.text = h
+    r.font.size = Pt(14); r.font.bold = True; r.font.color.rgb = GREEN; r.font.name = "Space Grotesk"
+    c.fill.solid(); c.fill.fore_color.rgb = INK
+for i, row in enumerate(rows_data[1:], start=1):
+    for j, val in enumerate(row):
+        c = tbl.cell(i, j)
+        c.text = ""
+        r = c.text_frame.paragraphs[0].add_run(); r.text = val
+        r.font.size = Pt(14); r.font.name = "Inter"
+        r.font.color.rgb = TEXT
+        if j == 4:
+            r.font.bold = True
+            r.font.color.rgb = GREEN if val.startswith("-7") or val.startswith("-6") or val.startswith("-4") or val.startswith("-3") else AMBER
+        c.fill.solid(); c.fill.fore_color.rgb = CARD
+b = tb(s, 0.7, 6.7, 11.9, 0.6)
+para(b, "105 runs, seeds never seen during tuning. Ties disclosed, not hidden. Reproducible harness ships with the code.", size=15, color=MUTED, align=PP_ALIGN.CENTER)
+notes(s, "AWAIS presents. Same traffic stream per cell, three controllers. Big wins under load (tidal, bursts, night, school); honest ties on balanced/sensor. The point: we publish the harness, competitors publish marketing numbers.")
+
+# ============ SLIDE 10: NETWORK INTELLIGENCE ============
+s = prs.slides.add_slide(BLANK); bg(s)
+kicker(s, "09  BEYOND ONE JUNCTION")
+title(s, "Corridors that talk to each other.")
+c1 = card(s, 0.7, 2.4, 5.8, 1.9)
+b = tb(s, 0.95, 2.6, 5.3, 1.5)
+para(b, "GREEN WAVES, DECENTRALIZED", size=14, bold=True, color=GREEN, font="Space Grotesk")
+add_para(b, "Neighbours exchange supply hints and platoon arrivals - no central master to fail. Corridor benchmark: 25.45 s vs 26.00 s coordinated vs independent.", size=15, color=TEXT)
+c2 = card(s, 6.8, 2.4, 5.8, 1.9)
+b = tb(s, 7.05, 2.6, 5.3, 1.5)
+para(b, "SELF-TUNING OFFSETS", size=14, bold=True, color=GREEN, font="Space Grotesk")
+add_para(b, "SCOOT-style closed loop: observed link travel bends each offset - capped at 4 s per step, 40 s from plan. The plan can never run away.", size=15, color=TEXT)
+c3 = card(s, 0.7, 4.5, 5.8, 1.9)
+b = tb(s, 0.95, 4.7, 5.3, 1.5)
+para(b, "BUS PRIORITY (TSP)", size=14, bold=True, color=GREEN, font="Space Grotesk")
+add_para(b, "A detected bus holds green up to 15 s past minimum - then safety limits, max green and emergency preemption still win, always.", size=15, color=TEXT)
+c4 = card(s, 6.8, 4.5, 5.8, 1.9)
+b = tb(s, 7.05, 4.7, 5.3, 1.5)
+para(b, "GRID-READY", size=14, bold=True, color=GREEN, font="Space Grotesk")
+add_para(b, "The coordinator generalizes from a corridor to N x M grids - the step SCOOT/SCATS needed a regional master plan for.", size=15, color=TEXT)
+b = tb(s, 0.7, 6.7, 11.9, 0.6)
+para(b, "368 automated tests, including 20,000 randomized controller steps and 50,000 guard proposals.", size=15, color=MUTED, align=PP_ALIGN.CENTER)
+notes(s, "BILAL presents. Four cards: coordination without a master, offsets that tune themselves bounded, bus priority, grid readiness. Close with the test count - every claim is machine-checked.")
+
+# ============ SLIDE 11: DEMO TRANSITION ============
 s = prs.slides.add_slide(BLANK); bg(s)
 b = tb(s, 0.7, 2.6, 11.9, 1.4)
 para(b, "Enough slides.", size=44, bold=True, color=TEXT, font="Space Grotesk", align=PP_ALIGN.CENTER)
@@ -244,9 +306,9 @@ b = tb(s, 0.7, 5.3, 11.9, 0.8)
 para(b, "[ SWITCH TO LIVE DEMO ]", size=20, color=MUTED, font="Inter", align=PP_ALIGN.CENTER)
 notes(s, "AWAIS presents. Pause. Let the line land. Then switch to the live demo and narrate: watch the green hold because the camera sees the queue still discharging.")
 
-# ============ SLIDE 10: DEPLOYMENT ============
+# ============ SLIDE 12: DEPLOYMENT ============
 s = prs.slides.add_slide(BLANK); bg(s)
-kicker(s, "08  DEPLOYMENT VISION")
+kicker(s, "10  DEPLOYMENT VISION")
 title(s, "One intersection in Lahore. Then every corridor.")
 arrow_label(s, 0.7, 2.9, 3.5, 2.0, "PHASE 1: SHADOW\nBrain decides, existing controller executes. Decisions logged.", fill=CARD)
 arrow_shape(s, 4.2, 3.9, 4.8, 3.9)
@@ -257,9 +319,9 @@ b = tb(s, 0.7, 5.4, 11.9, 1.2)
 para(b, "Cameras on existing poles. One small computer in the signal cabinet. No road digging, no GPU, no cloud dependency.", size=18, color=MUTED, align=PP_ALIGN.CENTER)
 notes(s, "DAWOOD presents. Three phases, each earns the next. Stress: the city can always override. A system the city cannot supervise is a system the city will not buy.")
 
-# ============ SLIDE 11: BUSINESS MODEL ============
+# ============ SLIDE 13: BUSINESS MODEL ============
 s = prs.slides.add_slide(BLANK); bg(s)
-kicker(s, "09  BUSINESS MODEL")
+kicker(s, "11  BUSINESS MODEL")
 title(s, "Land one pilot. Prove it. Scale corridor by corridor.")
 b = tb(s, 0.7, 2.6, 11.9, 4.0)
 para(b, "Customer: the city traffic authority, the same body that already buys signals. Private campuses and housing societies are a faster first door.", size=20, color=TEXT)
@@ -267,7 +329,7 @@ add_para(b, "Model: per-intersection hardware plus software license, or a manage
 add_para(b, "Moat: the trained policy library per intersection type, the calibration process, and the first real deployment data from Pakistani intersections.", size=20, color=GREEN)
 notes(s, "DAWOOD presents. Keep it short and concrete: who pays, how we charge, why we win. Then close on slide 12.")
 
-# ============ SLIDE 12: THANK YOU ============
+# ============ SLIDE 14: THANK YOU ============
 s = prs.slides.add_slide(BLANK); bg(s)
 if os.path.exists(logo_path):
     s.shapes.add_picture(logo_path, Inches(5.92), Inches(1.0), width=Inches(1.5))
