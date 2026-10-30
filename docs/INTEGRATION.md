@@ -8,13 +8,50 @@ This is not a certified road controller. The service is deployable on an edge
 computer and reachable over authenticated HTTPS; a cloud connection is not
 required for local control.
 
+**Emergency preemption (schema v5).** A reader-token `POST /v1/preemption`
+endpoint and an `emergency` field in the observation schema request a phase
+for an emergency vehicle on one approach. This is an explicit authenticated
+request, never automatic vehicle detection. The safety kernel still enforces
+yellow and all-red clearance, a 60-second request expiry, and latched faults —
+preemption can end green early but can never skip clearance or override a
+fault. It is a bench feature, not a certified emergency-vehicle preemption
+system.
+
 ## Supported topology
 
 One intersection, one authenticated observation producer, two opposing
-through-only phases (NS and EW). Turns, pedestrian crossings, emergency
-preemption, railway interaction and coordinated junctions are outside this
-release. Do not use its two-phase configuration for a real junction containing
-these movements. Counts are nonnegative bounded numerical demand estimates.
+through-only phases (NS and EW). Turns, railway
+interaction and coordinated junctions are outside this release. Pedestrian
+queue demand (schema v4) is accepted as an input count and starts a protected
+walk: the walk accompanies the parallel vehicle green as a GREEN sub-state,
+holds it for at least `walk_min` (default 7s) against demand switches, and
+persistent demand extends it up to `walk_max` (default 20s from green entry).
+The controller reports reason `pedestrian_walk` and exposes `walk_active` in
+snapshots; safety-class exits (emergency preemption, sensor loss, maximum
+green, fixed plan) still end the walk, and yellow/all-red clearance is never
+compressed.
+
+Accessibility-aware timing (optional `accessibility` timing config) assigns
+each approach a multiplier from 1.0 to 3.0 for sites with a hospital, school
+or senior crossing. A phase uses the maximum multiplier of its two approaches
+and scales `walk_min`, `walk_max`, `min_green`, `max_green` and the fixed-plan
+green — so flagged crossings get proportionally longer walks and greens.
+Yellow and all-red clearance are never scaled, safety exits still override,
+and the active map is exposed as `accessibility` in snapshots. Emergency
+preemption (schema v5) is an
+explicit authenticated request for one approach's phase; it never skips
+clearance and is not automatic detection. Do not use its two-phase
+configuration for a real junction containing these movements. Counts are
+nonnegative bounded numerical demand estimates.
+
+**Stopped-vehicle class breakdown (schema v6).** The producer can report how
+many stopped vehicles of each class (`car`, `motorcycle`, `bicycle`, `bus`,
+`truck`) are queued on each approach. The field is optional at the producer —
+when present it escalates the packet to schema v6 and must cover all four
+approaches with the exact class vocabulary; `person` tallies as a pedestrian,
+never as a vehicle. The dashboard exposes the latest breakdown and the report
+summarizes it per class and per approach. It is an input metric only — the
+scheduler does not yet weight phases by vehicle class.
 
 Observation v1 uses the legacy queue-actuated scheduler. Observation v2 enables
 the capacity-aware adaptive policy with downstream supply, approaching demand,
@@ -125,6 +162,12 @@ accepted, freshness uses monotonic time and preserves the packet's existing age.
 Exactly the documented fields are accepted. Counts must contain exactly the
 four approaches, each finite and between 0 and 100 in schemas 1/2; schema 3 allows up to 500
 queued/approaching vehicles and receiving counts/capacities. Booleans are not counts.
+Schema versions are cumulative: v2 adds the downstream/approaching dictionaries,
+v3 the approach distance/speed fields, v4 `pedestrian_queue`, v5 `emergency`,
+and v6 `class_counts` — a per-approach stopped-vehicle breakdown keyed
+N/S/E/W, each a dict of exactly `car`, `motorcycle`, `bicycle`, `bus`, `truck`
+with whole counts 0–500. A v6 packet must carry every earlier field as well;
+older packets remain accepted unchanged.
 `healthy` and `conflict_clear` must be literal JSON booleans. Sequence is a
 strictly increasing nonnegative signed 64-bit integer, scoped to the configured
 `SABZ_SOURCE_ID`. Acceptance and audit insertion share a durable transaction.
@@ -155,6 +198,93 @@ healthy; it does not establish clearance or field approval.
 `GET /healthz` returns minimal unauthenticated loop liveness, including a recent
 completed tick. No token, raw frame or credential is returned in status/logs.
 There is no legacy `/camera` or `/feedback` route.
+
+`POST /v1/preemption` requires the **reader** token (not the camera token) and
+a JSON body `{"approach": "N" | "S" | "E" | "W"}`. It returns `202` when the
+request is recorded, `400` for a malformed body or unknown approach, and `401`
+without the reader token. The request asks the controller for that approach's
+phase; it is honoured only while the request is fresh (60-second expiry) and
+subject to the safety kernel: yellow and all-red clearance are always run,
+and a latched fault still wins. The same request can be carried in an
+observation's `emergency` field (schema v5: exactly one of N/S/E/W set to 1).
+There is no automatic emergency-vehicle detection — COCO classes do not
+include ambulances, and detection-based preemption would be unsafe to guess.
+Status exposes the active request under `controller.preemption`.
+
+`GET /v1/metrics` requires the reader token and returns the local dashboard
+view: `mode`, `field_ready`, `now`, `sensor_age_s`, `sensor_fresh`,
+`loop_healthy`, `last_error`, the full `controller` snapshot, `metrics` (the
+latest accepted feed: sequence, schema version, capture age, health flags and
+per-approach `counts`, `approaching`, `arrival_rate`, `oldest_wait_s`,
+`pedestrian_queue`, `emergency` dictionaries keyed N/S/E/W, plus
+`class_counts` (schema v6: per-approach stopped-vehicle counts by class),
+`recent_transitions` — the last 20 `transition_intent` audit events with parsed
+payloads — and `recent_alerts` — the last 20 edge-triggered `alert` events
+(fault latch, preemption request, sensor loss/recovery, audit failure), each
+deduplicated so an alert fires once per state change rather than every tick.
+`metrics` is `null` until the first feed arrives. If the control lock
+is busy the endpoint answers `400` with `{"error": "control_lock_busy"}` rather
+than delaying the control loop; retry on the next refresh. The snapshot is
+aggregates only — no frames, tokens or raw detections leave the edge.
+
+Fault and preemption alert events are surfaced on the dashboard and via a
+local alert log. The runtime journals an `alert` event on each state edge:
+a fault latching, a preemption request arriving, the sensor going stale or
+recovering, and an audit failure. Alerts are edge-triggered and deduplicated
+— a persistent condition alerts once, not on every control tick. The dashboard
+renders the latest alerts under an `alerts:` section, `/v1/metrics` exposes
+them as `recent_alerts`, and the server mirrors each alert as a JSON line in
+`alerts.jsonl` inside the installation directory for offline review. Alert
+journaling runs inside the audit path: if the journal itself fails, the fault
+latches exactly like any other audit failure.
+
+`POST /v1/telemetry` requires the **camera** token and accepts a counts-only
+feed whose body is exactly `{"counts": {"N": …, "S": …, "E": …, "W": …},
+"conflict_clear": <bool>, "healthy": <bool>}`. It returns `202` with
+`accepted_sequence` and feeds the same dashboard view as a full observation,
+with the metric dictionaries empty (schema v1 semantics). It exists so a
+counts-only sensor can drive the dashboard without implementing the extended
+schemas; it does not bypass validation — counts are range-checked and the
+sequence watermark still applies.
+
+The local operator dashboard renders this snapshot in a terminal:
+
+```bash
+python -m sabz_edge.dashboard --directory data/local-installation
+```
+
+It reads the protected reader credential from the installation directory,
+refreshes once per second and never places tokens in a browser URL. No cloud
+service is in the dashboard path; the hot control path is unaffected.
+
+Historical reports aggregate the local audit journal (observations,
+transitions and preemption requests) without any network access:
+
+```bash
+python -m sabz_edge.report --database data/local-installation/edge.sqlite3 --since 24h
+python -m sabz_edge.report --database data/local-installation/edge.sqlite3 --since 7d --json
+```
+
+`--since` accepts `90s`, `30m`, `24h`, `7d` or `all` (default). The text view
+shows the window, event totals, per-approach vehicle averages, maximum wait
+and pedestrian queue, stage dwell times and transition reasons; `--json`
+emits the same summary for downstream tooling. Pedestrian flow analytics
+break foot traffic down per approach (observations, total, average and peak
+queue from schema v4/v5 pedestrian dictionaries) and report peak-hour foot
+traffic — the densest rolling one-hour window of pedestrian demand in the
+selected range. When schema v6 observations are present, a "stopped vehicles
+by class" table shows per-class totals (car, motorcycle, bicycle, bus, truck)
+and a per-approach class matrix, with the number of class-aware observations;
+the table is omitted for journals that predate schema v6. The report also
+derives idle and emission estimates: consecutive observations are spaced by
+their `captured_at` stamps (gaps clamped to 60s), and each gap accrues the
+observed stopped-vehicle queue as idle vehicle-seconds. With schema v6 class
+data, per-class idle time converts to a rough CO2 estimate using fixed idle
+factors (car 0.56, motorcycle 0.12, bicycle 0, bus 2.9, truck 3.5 g/s);
+without class data the idle vehicle-seconds are reported as unclassified with
+no emission figure. These are planning-grade estimates, not measurements.
+The report only reads the
+journal — it never touches the control loop.
 
 Python producer:
 

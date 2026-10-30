@@ -177,7 +177,11 @@ After service, actual eligible demand on the opposing phase gets the next turn,
 even if the previous phase retains a much larger queue. An empty or blocked
 receiving phase can be skipped. Startup still selects by demand. Maximum green
 bounds monopolization; this is not a guarantee under sensor failure, blocked
-receiving roads, pedestrians, turns or emergency preemption (not implemented).
+receiving roads or turns. Emergency preemption (v5) is implemented as an
+explicit reader-authenticated request: it may end green early but never skips
+yellow or all-red, expires after 60 seconds, and cannot override a latched
+fault. Pedestrian queue demand (v4) raises demand on its approach but cannot
+hold a phase or create a crossing interval.
 
 Precise metric distance/speed fields are omitted from SQLite observation audit
 records. Counts, timestamps and decisions remain local and need a deployment

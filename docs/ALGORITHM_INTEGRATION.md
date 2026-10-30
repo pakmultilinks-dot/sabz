@@ -79,8 +79,9 @@ unnecessarily until the next valid sample. Missing tracks, implausible motion or
 a frame gap over 200 ms withdraw health. Temporary tracks expire after two
 seconds and are capped; identity changes and occlusion can still corrupt counts.
 Independent quality assessment is necessary: blank detections do not prove the
-camera sees all traffic. Unsupported pedestrians/road users fail this through-only
-bridge rather than being silently treated as supported movements.
+camera sees all traffic. Persons are tallied into pedestrian_queue demand and
+never silently treated as vehicle movements; other unsupported road users fail
+this through-only bridge.
 
 Raw frames and temporary track IDs are not sent in the observation or audit.
 The CLI prints only accepted sequence information, or aggregate values in

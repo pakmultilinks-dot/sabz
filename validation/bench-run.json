@@ -5,13 +5,13 @@
   "time_basis": "real monotonic seconds",
   "physical_hardware": false,
   "passed": true,
-  "journal_events": 89,
+  "journal_events": 93,
   "transitions": [
     {
       "schema_version": 1,
       "stage": "ALL_RED",
       "phase": "NS",
-      "elapsed_s": 0.13999999999998636,
+      "elapsed_s": 0.0779999999977008,
       "lamps": {
         "N": "RED",
         "S": "RED",
@@ -20,9 +20,22 @@
       },
       "reason": "sensor_unavailable",
       "fault": null,
+      "algorithm": "unavailable",
+      "walk_active": false,
+      "accessibility": {},
+      "approach_protection": "unavailable",
+      "tsp_hold_until": 0.0,
+      "metric_protection_required": false,
+      "phase_scores": {},
+      "preemption": {
+        "active": false,
+        "approach": null,
+        "reason": null
+      },
       "command_sequence": 3,
       "lease_s": 0.5,
       "adapter": "independent-bench-cabinet",
+      "observation_sequence": null,
       "since_start_s": 0.015,
       "cabinet_readback": {
         "stage": "ALL_RED",
@@ -33,7 +46,7 @@
           "E": "RED",
           "W": "RED"
         },
-        "elapsed_s": 0.2340000000000373,
+        "elapsed_s": 0.125,
         "fault": null,
         "reason": "startup",
         "acknowledged_sequence": 3,
@@ -44,7 +57,7 @@
       "schema_version": 1,
       "stage": "GREEN",
       "phase": "NS",
-      "elapsed_s": 0.10900000000003729,
+      "elapsed_s": 0.18700000000171713,
       "lamps": {
         "N": "GREEN",
         "S": "GREEN",
@@ -53,10 +66,23 @@
       },
       "reason": "clearance_complete",
       "fault": null,
-      "command_sequence": 21,
+      "algorithm": "actuated-v1",
+      "walk_active": false,
+      "accessibility": {},
+      "approach_protection": "unavailable",
+      "tsp_hold_until": 0.0,
+      "metric_protection_required": false,
+      "phase_scores": {},
+      "preemption": {
+        "active": false,
+        "approach": null,
+        "reason": null
+      },
+      "command_sequence": 38,
       "lease_s": 0.5,
       "adapter": "independent-bench-cabinet",
-      "since_start_s": 2.015,
+      "observation_sequence": 1793361354217020200,
+      "since_start_s": 2.172,
       "cabinet_readback": {
         "stage": "GREEN",
         "phase": "NS",
@@ -66,10 +92,10 @@
           "E": "RED",
           "W": "RED"
         },
-        "elapsed_s": 0.1710000000000491,
+        "elapsed_s": 0.20300000000133878,
         "fault": null,
         "reason": "clearance_complete",
-        "acknowledged_sequence": 21,
+        "acknowledged_sequence": 38,
         "physical_hardware": false
       }
     },
@@ -77,7 +103,7 @@
       "schema_version": 1,
       "stage": "YELLOW",
       "phase": "NS",
-      "elapsed_s": 0.0,
+      "elapsed_s": 0.062000000001717126,
       "lamps": {
         "N": "YELLOW",
         "S": "YELLOW",
@@ -86,10 +112,23 @@
       },
       "reason": "opposing_demand",
       "fault": null,
-      "command_sequence": 94,
+      "algorithm": "actuated-v1",
+      "walk_active": false,
+      "accessibility": {},
+      "approach_protection": "unavailable",
+      "tsp_hold_until": 0.0,
+      "metric_protection_required": false,
+      "phase_scores": {},
+      "preemption": {
+        "active": false,
+        "approach": null,
+        "reason": null
+      },
+      "command_sequence": 167,
       "lease_s": 0.5,
       "adapter": "independent-bench-cabinet",
-      "since_start_s": 9.937,
+      "observation_sequence": 1793361362112829300,
+      "since_start_s": 10.062,
       "cabinet_readback": {
         "stage": "YELLOW",
         "phase": "NS",
@@ -99,10 +138,10 @@
           "E": "RED",
           "W": "RED"
         },
-        "elapsed_s": 0.03099999999994907,
+        "elapsed_s": 0.062000000001717126,
         "fault": null,
         "reason": "edge_transition",
-        "acknowledged_sequence": 94,
+        "acknowledged_sequence": 167,
         "physical_hardware": false
       }
     },
@@ -110,7 +149,7 @@
       "schema_version": 1,
       "stage": "ALL_RED",
       "phase": "EW",
-      "elapsed_s": 0.0,
+      "elapsed_s": 0.125,
       "lamps": {
         "N": "RED",
         "S": "RED",
@@ -119,10 +158,23 @@
       },
       "reason": "clearance",
       "fault": null,
-      "command_sequence": 122,
+      "algorithm": "actuated-v1",
+      "walk_active": false,
+      "accessibility": {},
+      "approach_protection": "unavailable",
+      "tsp_hold_until": 0.0,
+      "metric_protection_required": false,
+      "phase_scores": {},
+      "preemption": {
+        "active": false,
+        "approach": null,
+        "reason": null
+      },
+      "command_sequence": 217,
       "lease_s": 0.5,
       "adapter": "independent-bench-cabinet",
-      "since_start_s": 13.0,
+      "observation_sequence": 1793361365186995200,
+      "since_start_s": 13.14,
       "cabinet_readback": {
         "stage": "ALL_RED",
         "phase": "EW",
@@ -132,10 +184,10 @@
           "E": "RED",
           "W": "RED"
         },
-        "elapsed_s": 0.06200000000001182,
+        "elapsed_s": 0.13999999999941792,
         "fault": null,
         "reason": "edge_transition",
-        "acknowledged_sequence": 122,
+        "acknowledged_sequence": 217,
         "physical_hardware": false
       }
     },
@@ -143,7 +195,7 @@
       "schema_version": 1,
       "stage": "GREEN",
       "phase": "EW",
-      "elapsed_s": 0.10900000000003729,
+      "elapsed_s": 0.062000000001717126,
       "lamps": {
         "N": "RED",
         "S": "RED",
@@ -152,10 +204,23 @@
       },
       "reason": "clearance_complete",
       "fault": null,
-      "command_sequence": 142,
+      "algorithm": "actuated-v1",
+      "walk_active": false,
+      "accessibility": {},
+      "approach_protection": "unavailable",
+      "tsp_hold_until": 0.0,
+      "metric_protection_required": false,
+      "phase_scores": {},
+      "preemption": {
+        "active": false,
+        "approach": null,
+        "reason": null
+      },
+      "command_sequence": 248,
       "lease_s": 0.5,
       "adapter": "independent-bench-cabinet",
-      "since_start_s": 15.156,
+      "observation_sequence": 1793361367129707000,
+      "since_start_s": 15.078,
       "cabinet_readback": {
         "stage": "GREEN",
         "phase": "EW",
@@ -165,10 +230,10 @@
           "E": "GREEN",
           "W": "GREEN"
         },
-        "elapsed_s": 0.125,
+        "elapsed_s": 0.07800000000133878,
         "fault": null,
         "reason": "clearance_complete",
-        "acknowledged_sequence": 142,
+        "acknowledged_sequence": 248,
         "physical_hardware": false
       }
     },
@@ -176,7 +241,7 @@
       "schema_version": 1,
       "stage": "YELLOW",
       "phase": "EW",
-      "elapsed_s": 0.10900000000003729,
+      "elapsed_s": 0.0,
       "lamps": {
         "N": "RED",
         "S": "RED",
@@ -185,10 +250,23 @@
       },
       "reason": "sensor_unavailable",
       "fault": null,
-      "command_sequence": 177,
+      "algorithm": "unavailable",
+      "walk_active": false,
+      "accessibility": {},
+      "approach_protection": "unavailable",
+      "tsp_hold_until": 0.0,
+      "metric_protection_required": false,
+      "phase_scores": {},
+      "preemption": {
+        "active": false,
+        "approach": null,
+        "reason": null
+      },
+      "command_sequence": 310,
       "lease_s": 0.5,
       "adapter": "independent-bench-cabinet",
-      "since_start_s": 19.031,
+      "observation_sequence": 1793361368191189800,
+      "since_start_s": 18.969,
       "cabinet_readback": {
         "stage": "YELLOW",
         "phase": "EW",
@@ -198,10 +276,10 @@
           "E": "YELLOW",
           "W": "YELLOW"
         },
-        "elapsed_s": 0.18700000000001182,
+        "elapsed_s": 0.01599999999962165,
         "fault": null,
         "reason": "edge_transition",
-        "acknowledged_sequence": 177,
+        "acknowledged_sequence": 310,
         "physical_hardware": false
       }
     },
@@ -209,19 +287,32 @@
       "schema_version": 1,
       "stage": "ALL_RED",
       "phase": "NS",
-      "elapsed_s": 0.10999999999989996,
+      "elapsed_s": 0.0,
       "lamps": {
         "N": "RED",
         "S": "RED",
         "E": "RED",
         "W": "RED"
       },
-      "reason": "sensor_unavailable",
+      "reason": "clearance",
       "fault": null,
-      "command_sequence": 205,
+      "algorithm": "unavailable",
+      "walk_active": false,
+      "accessibility": {},
+      "approach_protection": "unavailable",
+      "tsp_hold_until": 0.0,
+      "metric_protection_required": false,
+      "phase_scores": {},
+      "preemption": {
+        "active": false,
+        "approach": null,
+        "reason": null
+      },
+      "command_sequence": 360,
       "lease_s": 0.5,
       "adapter": "independent-bench-cabinet",
-      "since_start_s": 22.062,
+      "observation_sequence": 1793361368191189800,
+      "since_start_s": 22.0,
       "cabinet_readback": {
         "stage": "ALL_RED",
         "phase": "NS",
@@ -231,10 +322,56 @@
           "E": "RED",
           "W": "RED"
         },
-        "elapsed_s": 0.2179999999999609,
+        "elapsed_s": 0.030999999999039574,
         "fault": null,
         "reason": "edge_transition",
-        "acknowledged_sequence": 205,
+        "acknowledged_sequence": 360,
+        "physical_hardware": false
+      }
+    },
+    {
+      "schema_version": 1,
+      "stage": "ALL_RED",
+      "phase": "NS",
+      "elapsed_s": 0.18700000000171713,
+      "lamps": {
+        "N": "RED",
+        "S": "RED",
+        "E": "RED",
+        "W": "RED"
+      },
+      "reason": "sensor_unavailable",
+      "fault": null,
+      "algorithm": "unavailable",
+      "walk_active": false,
+      "accessibility": {},
+      "approach_protection": "unavailable",
+      "tsp_hold_until": 0.0,
+      "metric_protection_required": false,
+      "phase_scores": {},
+      "preemption": {
+        "active": false,
+        "approach": null,
+        "reason": null
+      },
+      "command_sequence": 364,
+      "lease_s": 0.5,
+      "adapter": "independent-bench-cabinet",
+      "observation_sequence": 1793361368191189800,
+      "since_start_s": 22.203,
+      "cabinet_readback": {
+        "stage": "ALL_RED",
+        "phase": "NS",
+        "lamps": {
+          "N": "RED",
+          "S": "RED",
+          "E": "RED",
+          "W": "RED"
+        },
+        "elapsed_s": 0.23400000000037835,
+        "fault": null,
+        "reason": "edge_transition",
+        "acknowledged_sequence": 364,
         "physical_hardware": false
       }
     }
@@ -254,7 +391,7 @@
       "reason": "startup",
       "acknowledged_sequence": -1,
       "physical_hardware": false,
-      "monotonic": 750.562
+      "monotonic": 21055.921
     },
     {
       "stage": "GREEN",
@@ -268,9 +405,9 @@
       "elapsed_s": 0,
       "fault": null,
       "reason": "clearance_complete",
-      "acknowledged_sequence": 20,
+      "acknowledged_sequence": 35,
       "physical_hardware": false,
-      "monotonic": 752.625
+      "monotonic": 21058.0
     },
     {
       "stage": "YELLOW",
@@ -284,9 +421,9 @@
       "elapsed_s": 0,
       "fault": null,
       "reason": "edge_transition",
-      "acknowledged_sequence": 94,
+      "acknowledged_sequence": 166,
       "physical_hardware": false,
-      "monotonic": 760.687
+      "monotonic": 21066.031
     },
     {
       "stage": "ALL_RED",
@@ -297,12 +434,12 @@
         "E": "RED",
         "W": "RED"
       },
-      "elapsed_s": 0.031000000000062755,
+      "elapsed_s": 0,
       "fault": null,
       "reason": "edge_transition",
-      "acknowledged_sequence": 121,
+      "acknowledged_sequence": 215,
       "physical_hardware": false,
-      "monotonic": 763.734
+      "monotonic": 21069.031
     },
     {
       "stage": "GREEN",
@@ -316,9 +453,9 @@
       "elapsed_s": 0,
       "fault": null,
       "reason": "clearance_complete",
-      "acknowledged_sequence": 141,
+      "acknowledged_sequence": 247,
       "physical_hardware": false,
-      "monotonic": 765.812
+      "monotonic": 21071.031
     },
     {
       "stage": "YELLOW",
@@ -332,9 +469,9 @@
       "elapsed_s": 0,
       "fault": null,
       "reason": "edge_transition",
-      "acknowledged_sequence": 176,
+      "acknowledged_sequence": 310,
       "physical_hardware": false,
-      "monotonic": 769.625
+      "monotonic": 21074.984
     },
     {
       "stage": "ALL_RED",
@@ -345,19 +482,19 @@
         "E": "RED",
         "W": "RED"
       },
-      "elapsed_s": 0.014999999999986358,
+      "elapsed_s": 0,
       "fault": null,
       "reason": "edge_transition",
-      "acknowledged_sequence": 203,
+      "acknowledged_sequence": 360,
       "physical_hardware": false,
-      "monotonic": 772.64
+      "monotonic": 21078.0
     }
   ],
   "samples": [
     {
       "since_start_s": 0.015,
       "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.006149768829345703,
+      "sensor_age_s": 0.004199981689453125,
       "ready": true,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
@@ -365,191 +502,199 @@
     {
       "since_start_s": 0.234,
       "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.0050389766693115234,
+      "sensor_age_s": 0.003991127014160156,
       "ready": true,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 0.469,
-      "cycle_latency_s": 0.032,
-      "sensor_age_s": 0.02785038948059082,
-      "ready": true,
-      "stage": "ALL_RED",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 0.687,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.004300117492675781,
-      "ready": true,
-      "stage": "ALL_RED",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 0.906,
+      "since_start_s": 0.453,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004065275192260742,
+      "sensor_age_s": 0.006439208984375,
       "ready": true,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 1.14,
+      "since_start_s": 0.672,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.018007246017077705,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 0.89,
       "cycle_latency_s": 0.031,
-      "sensor_age_s": 0.022593975067138672,
+      "sensor_age_s": 0.019313573837280273,
       "ready": true,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 1.359,
+      "since_start_s": 1.109,
       "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.005753755569458008,
+      "sensor_age_s": 0.005510091781616211,
       "ready": true,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 1.578,
+      "since_start_s": 1.328,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.00447845458984375,
+      "sensor_age_s": 0.003029346466064453,
       "ready": true,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 1.797,
+      "since_start_s": 1.531,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004446268081665039,
+      "sensor_age_s": 0.005085468292236328,
       "ready": true,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 2.015,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.004019498825073242,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 2.25,
-      "cycle_latency_s": 0.031,
-      "sensor_age_s": 0.023621797561645508,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 2.469,
+      "since_start_s": 1.75,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.0037622451782226562,
+      "sensor_age_s": 0.02201196289024665,
       "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 2.687,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.019086971282945342,
+      "since_start_s": 1.953,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.0060312747955322266,
       "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
+      "stage": "ALL_RED",
+      "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 2.922,
-      "cycle_latency_s": 0.032,
-      "sensor_age_s": 0.025879621505737305,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 3.14,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.005260944366455078,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 3.359,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.019001855850206084,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 3.578,
+      "since_start_s": 2.172,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.020851818084793194,
+      "sensor_age_s": 0.003031492233276367,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 3.797,
+      "since_start_s": 2.39,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.005000591278076172,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 2.594,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.020024028778038883,
+      "sensor_age_s": 0.006003618240356445,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 4.015,
-      "cycle_latency_s": 0.031,
-      "sensor_age_s": 0.00502467155456543,
+      "since_start_s": 2.812,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.01902617454470601,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 4.25,
-      "cycle_latency_s": 0.047,
-      "sensor_age_s": 0.028204679489135742,
+      "since_start_s": 3.015,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.004021883010864258,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 4.484,
-      "cycle_latency_s": 0.031,
-      "sensor_age_s": 0.02044057846069336,
+      "since_start_s": 3.234,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.0200015449518105,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 4.703,
+      "since_start_s": 3.437,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.005579710006713867,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 3.656,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.020008293151931866,
+      "sensor_age_s": 0.005897045135498047,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 4.922,
-      "cycle_latency_s": 0.032,
-      "sensor_age_s": 0.004024505615234375,
+      "since_start_s": 3.875,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.019084421157458564,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 5.156,
-      "cycle_latency_s": 0.047,
-      "sensor_age_s": 0.0412513885497674,
+      "since_start_s": 4.078,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.005548715591430664,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 4.297,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004988193511962891,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 4.515,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.004032135009765625,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 4.719,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0050201416015625,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 4.937,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.02009738922060933,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 5.14,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.0045468807220458984,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
       "since_start_s": 5.375,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.020517316818200015,
+      "cycle_latency_s": 0.031,
+      "sensor_age_s": 0.031147924422839424,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
@@ -557,7 +702,7 @@
     {
       "since_start_s": 5.578,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004032611846923828,
+      "sensor_age_s": 0.005982398986816406,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
@@ -565,7 +710,7 @@
     {
       "since_start_s": 5.797,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004071474075317383,
+      "sensor_age_s": 0.006038665771484375,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
@@ -573,727 +718,727 @@
     {
       "since_start_s": 6.015,
       "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.004210948944091797,
+      "sensor_age_s": 0.005022764205932617,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 6.234,
+      "since_start_s": 6.219,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004033565521240234,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 6.437,
       "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.004708766937255859,
+      "sensor_age_s": 0.020109071730985306,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 6.453,
+      "since_start_s": 6.64,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.005213499069213867,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 6.859,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.003946542739868164,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 7.078,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004263401031494141,
+      "sensor_age_s": 0.020092931747058174,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 6.672,
+      "since_start_s": 7.281,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004598140716552734,
+      "sensor_age_s": 0.0049893856048583984,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 6.906,
+      "since_start_s": 7.5,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.021042314529040596,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 7.703,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.0040018558502197266,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 7.922,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.005991458892822266,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 8.14,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.0180021667474648,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 8.344,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0045588016510009766,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 8.562,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.018990411757840775,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 8.765,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.005035400390625,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 8.984,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.00393366813659668,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 9.203,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.02000686264000251,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 9.406,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.004999876022338867,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 9.64,
       "cycle_latency_s": 0.031,
-      "sensor_age_s": 0.020138708114586734,
+      "sensor_age_s": 0.023188352584838867,
       "ready": true,
       "stage": "GREEN",
       "reason": "clearance_complete"
     },
     {
-      "since_start_s": 7.125,
+      "since_start_s": 9.859,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.01900352477969136,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 10.062,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.005377054214477539,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 10.281,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.0049304962158203125,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 10.5,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.02170511817894294,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 10.719,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.01802206039428711,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 10.937,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.020082845687284134,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 11.14,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.005005598068237305,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 11.359,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.004018306732177734,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 11.594,
+      "cycle_latency_s": 0.032,
+      "sensor_age_s": 0.039201704024890205,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 11.797,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.003033161163330078,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 12.015,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.006003379821777344,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 12.234,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.006004810333251953,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 12.5,
+      "cycle_latency_s": 0.078,
+      "sensor_age_s": 0.06631156539879157,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 12.719,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.02708384132347419,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 12.922,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.005995988845825195,
+      "ready": true,
+      "stage": "YELLOW",
+      "reason": "opposing_demand"
+    },
+    {
+      "since_start_s": 13.14,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.0040242671966552734,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 13.359,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.01951922416628804,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 13.562,
+      "cycle_latency_s": 0.015,
+      "sensor_age_s": 0.005007266998291016,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 13.781,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.005606412887573242,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 14.0,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.018254756927490234,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 14.219,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004998445510864258,
+      "ready": true,
+      "stage": "ALL_RED",
+      "reason": "clearance"
+    },
+    {
+      "since_start_s": 14.453,
       "cycle_latency_s": 0.031,
-      "sensor_age_s": 0.004918098449707031,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 7.328,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.005033016204833984,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 7.547,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.0042531490325927734,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 7.765,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.0039103031158447266,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 7.984,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.0038716793060302734,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 8.203,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.02001806831367503,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 8.406,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 0.004062175750732422,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 8.625,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.003999233245849609,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 8.844,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.0043256282806396484,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 9.062,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.0043582916259765625,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 9.281,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.0040476322174072266,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 9.5,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.0041120052337646484,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 9.719,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.02152344322200861,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 9.937,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.019476070404039092,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 10.156,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.01962706184383478,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 10.375,
-      "cycle_latency_s": 0.031,
-      "sensor_age_s": 0.005412101745605469,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 10.578,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.003267049789428711,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 10.797,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004832267761230469,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 11.015,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.005056858062744141,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 11.234,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.0039174556732177734,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 11.453,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004060506820678711,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 11.672,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.0040056705474853516,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 11.89,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.01937855720530024,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 12.125,
-      "cycle_latency_s": 0.031,
-      "sensor_age_s": 0.025745868682861328,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 12.344,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.005836963653564453,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 12.562,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.019964828491197295,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 12.781,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.020122495651207828,
-      "ready": true,
-      "stage": "YELLOW",
-      "reason": "opposing_demand"
-    },
-    {
-      "since_start_s": 13.0,
-      "cycle_latency_s": 0.031,
-      "sensor_age_s": 0.004843950271606445,
+      "sensor_age_s": 0.01661992073059082,
       "ready": true,
       "stage": "ALL_RED",
       "reason": "clearance"
     },
     {
-      "since_start_s": 13.203,
+      "since_start_s": 14.656,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.005102396011352539,
+      "sensor_age_s": 0.0039064884185791016,
       "ready": true,
       "stage": "ALL_RED",
       "reason": "clearance"
     },
     {
-      "since_start_s": 13.422,
+      "since_start_s": 14.875,
       "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004816770553588867,
+      "sensor_age_s": 0.020030466079333564,
       "ready": true,
       "stage": "ALL_RED",
       "reason": "clearance"
     },
     {
-      "since_start_s": 13.64,
+      "since_start_s": 15.078,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004522085189819336,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 15.297,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004996776580810547,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 15.515,
       "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.004811525344848633,
+      "sensor_age_s": 0.007017374038696289,
       "ready": true,
-      "stage": "ALL_RED",
-      "reason": "clearance"
+      "stage": "GREEN",
+      "reason": "clearance_complete"
     },
     {
-      "since_start_s": 13.859,
+      "since_start_s": 15.719,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 0.004990816116333008,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 15.937,
       "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.003999233245849609,
+      "sensor_age_s": 0.006314754486083984,
       "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 16.14,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.20931475448378478,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 16.344,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.4133147544853273,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 16.547,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.6163147544866661,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 16.75,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 0.8193147544843669,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 16.953,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 1.0223147544857056,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 17.156,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 1.2093147544837848,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 17.359,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 1.4283147544847452,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 17.547,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 1.616314754486666,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 17.75,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 1.8193147544843669,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 17.953,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 2.0223147544857056,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 18.156,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 2.2253147544870444,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 18.359,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 2.428314754484745,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 18.562,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 2.631314754486084,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 18.765,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 2.834314754483785,
+      "ready": true,
+      "stage": "GREEN",
+      "reason": "clearance_complete"
+    },
+    {
+      "since_start_s": 18.969,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 3.0383147544853273,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 19.172,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 3.241314754486666,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 19.375,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 3.428314754484745,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 19.562,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 3.631314754486084,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 19.781,
+      "cycle_latency_s": 0.016,
+      "sensor_age_s": 3.834314754483785,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 19.984,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 4.053314754484745,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 20.187,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 4.256314754486084,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 20.39,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 4.459314754483785,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 20.578,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 4.647314754485706,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 20.781,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 4.850314754487044,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 20.984,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 5.053314754484745,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 21.187,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 5.256314754486084,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 21.39,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 5.459314754483785,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 21.594,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 5.663314754485327,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 21.797,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 5.866314754486666,
+      "ready": false,
+      "stage": "YELLOW",
+      "reason": "sensor_unavailable"
+    },
+    {
+      "since_start_s": 22.0,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 6.069314754484367,
+      "ready": false,
       "stage": "ALL_RED",
       "reason": "clearance"
     },
     {
-      "since_start_s": 14.078,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004359245300292969,
-      "ready": true,
-      "stage": "ALL_RED",
-      "reason": "clearance"
-    },
-    {
-      "since_start_s": 14.297,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.0044519901275634766,
-      "ready": true,
-      "stage": "ALL_RED",
-      "reason": "clearance"
-    },
-    {
-      "since_start_s": 14.515,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.0035543441772460938,
-      "ready": true,
-      "stage": "ALL_RED",
-      "reason": "clearance"
-    },
-    {
-      "since_start_s": 14.719,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.0039043426513671875,
-      "ready": true,
-      "stage": "ALL_RED",
-      "reason": "clearance"
-    },
-    {
-      "since_start_s": 14.937,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.003937482833862305,
-      "ready": true,
-      "stage": "ALL_RED",
-      "reason": "clearance"
-    },
-    {
-      "since_start_s": 15.156,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.0056836605072021484,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 15.375,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.004294872283935547,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 15.594,
-      "cycle_latency_s": 0.016,
-      "sensor_age_s": 0.0036835670471191406,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 15.812,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 0.004185914993286133,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 16.015,
+      "since_start_s": 22.203,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 0.20718591499337435,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 16.219,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 0.41118591499332524,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 16.422,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 0.6141859149932998,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 16.625,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 0.8171859149932743,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 16.812,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 1.0041859149932861,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 17.015,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 1.2071859149933744,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 17.219,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 1.4111859149933252,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 17.422,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 1.6141859149932998,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 17.625,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 1.8171859149932743,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 17.828,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 2.0201859149933625,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 18.031,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 2.223185914993337,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 18.234,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 2.4261859149933116,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 18.437,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 2.629185914993286,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 18.625,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 2.8171859149932743,
-      "ready": true,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 18.828,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 3.0201859149933625,
-      "ready": false,
-      "stage": "GREEN",
-      "reason": "clearance_complete"
-    },
-    {
-      "since_start_s": 19.031,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 3.223185914993337,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 19.234,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 3.4261859149933116,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 19.437,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 3.629185914993286,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 19.64,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 3.8321859149933744,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 19.844,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 4.036185914993325,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 20.047,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 4.2391859149933,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 20.25,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 4.442185914993274,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 20.453,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 4.6451859149933625,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 20.64,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 4.832185914993374,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 20.844,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 5.036185914993325,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 21.047,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 5.2391859149933,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 21.25,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 5.442185914993274,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 21.453,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 5.6451859149933625,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 21.656,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 5.848185914993337,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 21.859,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 6.051185914993312,
-      "ready": false,
-      "stage": "YELLOW",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 22.062,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 6.254185914993286,
+      "sensor_age_s": 6.272314754485706,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 22.265,
-      "cycle_latency_s": 0.015,
-      "sensor_age_s": 6.442185914993274,
+      "since_start_s": 22.39,
+      "cycle_latency_s": 0.0,
+      "sensor_age_s": 6.459314754483785,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 22.453,
+      "since_start_s": 22.594,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 6.6451859149933625,
+      "sensor_age_s": 6.663314754485327,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 22.656,
+      "since_start_s": 22.797,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 6.848185914993337,
+      "sensor_age_s": 6.866314754486666,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 22.859,
+      "since_start_s": 23.0,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 7.051185914993312,
+      "sensor_age_s": 7.069314754484367,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 23.062,
+      "since_start_s": 23.203,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 7.254185914993286,
+      "sensor_age_s": 7.272314754485706,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 23.265,
+      "since_start_s": 23.406,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 7.457185914993374,
+      "sensor_age_s": 7.475314754487044,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 23.469,
+      "since_start_s": 23.609,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 7.661185914993325,
+      "sensor_age_s": 7.678314754484745,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 23.672,
+      "since_start_s": 23.812,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 7.8641859149933,
+      "sensor_age_s": 7.881314754486084,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 23.875,
+      "since_start_s": 24.015,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 8.067185914993274,
+      "sensor_age_s": 8.084314754483785,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 24.062,
+      "since_start_s": 24.219,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 8.254185914993286,
+      "sensor_age_s": 8.288314754485327,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 24.265,
+      "since_start_s": 24.406,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 8.457185914993374,
+      "sensor_age_s": 8.475314754487044,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 24.469,
+      "since_start_s": 24.609,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 8.661185914993325,
+      "sensor_age_s": 8.678314754484745,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"
     },
     {
-      "since_start_s": 24.672,
+      "since_start_s": 24.812,
       "cycle_latency_s": 0.0,
-      "sensor_age_s": 8.8641859149933,
-      "ready": false,
-      "stage": "ALL_RED",
-      "reason": "sensor_unavailable"
-    },
-    {
-      "since_start_s": 24.875,
-      "cycle_latency_s": 0.0,
-      "sensor_age_s": 9.067185914993274,
+      "sensor_age_s": 8.881314754486084,
       "ready": false,
       "stage": "ALL_RED",
       "reason": "sensor_unavailable"

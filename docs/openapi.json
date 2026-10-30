@@ -85,6 +85,55 @@
         }
       }
     },
+    "/v1/preemption": {
+      "post": {
+        "security": [
+          {
+            "readerBearer": []
+          }
+        ],
+        "summary": "Request a phase for an emergency vehicle on one approach (explicit request, never auto-detection)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "approach"
+                ],
+                "properties": {
+                  "approach": {
+                    "type": "string",
+                    "enum": [
+                      "N",
+                      "S",
+                      "E",
+                      "W"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Request recorded; safety kernel still enforces yellow/all-red clearance, 60 s expiry and latched faults"
+          },
+          "400": {
+            "description": "Malformed body or unknown approach"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
     "/readyz": {
       "get": {
         "security": [
@@ -119,6 +168,126 @@
           },
           "503": {
             "description": "Loop unavailable"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/v1/metrics": {
+      "get": {
+        "security": [
+          {
+            "readerBearer": []
+          }
+        ],
+        "summary": "Local dashboard view: latest metric stream, controller snapshot and recent transitions",
+        "responses": {
+          "200": {
+            "description": "Snapshot with mode, sensor age/freshness, loop health, controller, metrics (null before the first feed) and the last 20 transition_intent events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "control_lock_busy: control loop held the lock; retry"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "429": {
+            "description": "Rate limited"
+          }
+        }
+      }
+    },
+    "/v1/telemetry": {
+      "post": {
+        "security": [
+          {
+            "cameraBearer": []
+          }
+        ],
+        "summary": "Counts-only dashboard feed (schema v1 semantics, metric dictionaries empty)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "counts",
+                  "conflict_clear",
+                  "healthy"
+                ],
+                "properties": {
+                  "counts": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "N",
+                      "S",
+                      "E",
+                      "W"
+                    ],
+                    "properties": {
+                      "N": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "S": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "E": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "W": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                      }
+                    }
+                  },
+                  "conflict_clear": {
+                    "type": "boolean"
+                  },
+                  "healthy": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted; returns accepted_sequence"
+          },
+          "400": {
+            "description": "Malformed body, wrong counts keys or non-boolean flags"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "Sequence replayed"
+          },
+          "413": {
+            "description": "Body size limit"
+          },
+          "415": {
+            "description": "application/json required"
           },
           "429": {
             "description": "Rate limited"

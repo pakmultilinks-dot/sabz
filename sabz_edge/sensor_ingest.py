@@ -1,4 +1,4 @@
-"""Local JSON-lines detection bridge to authenticated observation v3.
+"""Local JSON-lines detection bridge to authenticated observation v4.
 Input is metadata from an authorized local detector, never camera images.
 Calibration must be surveyed; clearance/receiving occupancy are separate inputs.
 """
@@ -23,7 +23,8 @@ def producer_from_file(path):
 
 def process_frame(producer,packet):
     fields={'frame_time_s','captured_at','detections','conflict_clear','downstream_counts','downstream_capacity','sensors_healthy'}
-    if not isinstance(packet,dict) or set(packet)!=fields or not isinstance(packet['detections'],list) or len(packet['detections'])>2000:
+    with_peds=fields|{'pedestrian_queue'}
+    if not isinstance(packet,dict) or set(packet) not in (fields,with_peds) or not isinstance(packet['detections'],list) or len(packet['detections'])>2000:
         raise ValueError('Invalid local detector frame')
     detections=[]
     for data in packet['detections']:
@@ -31,7 +32,8 @@ def process_frame(producer,packet):
         detections.append(Detection(**data))
     return producer.update(detections,monotonic_now=packet['frame_time_s'],captured_at=packet['captured_at'],
                            conflict_clear=packet['conflict_clear'],downstream_counts=packet['downstream_counts'],
-                           downstream_capacity=packet['downstream_capacity'],sensors_healthy=packet['sensors_healthy'])
+                           downstream_capacity=packet['downstream_capacity'],sensors_healthy=packet['sensors_healthy'],
+                           pedestrian_queue=packet.get('pedestrian_queue'))
 
 
 def main():

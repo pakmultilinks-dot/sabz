@@ -1,10 +1,11 @@
 """Single control owner, paced independently of incoming HTTP observations."""
+import json
 import threading
 import time
 import copy
 from collections import deque
 
-from .core import Controller, Timing
+from .core import Controller, Observation, Timing
 
 
 class BenchAdapter:
@@ -30,7 +31,11 @@ class Runtime:
         self.controller = Controller(timing or Timing(), clock())
         self.adapter = BenchAdapter()
         self.observation = None
+        self.metrics = None
+        self.telemetry_sequence = 0
+        self.telemetry_source = "telemetry"
         self.received_at = None
+        self.telemetry_received_at = None
         self.stop_event = threading.Event()
         self.thread = None
         self.last_error = None
@@ -40,6 +45,9 @@ class Runtime:
         self.last_acknowledgement = None
         self.output = None
         self.last_completed_tick = None
+        self.alert_log = None
+        self._prev_fault = None
+        self._prev_fresh = None
 
     def submit(self, source, observation):
         with self.lock:
@@ -52,6 +60,74 @@ class Runtime:
             if self.clock() - now + age > self.controller.timing.stale_after:
                 raise ValueError("observation expired during durable acceptance")
             self.observation, self.received_at = observation, now - age
+            # Dashboard view of the accepted metric stream; aggregates only.
+            self.metrics = {"sequence": observation.sequence,
+                            "schema_version": observation.schema_version,
+                            "captured_at": observation.captured_at,
+                            "received_age_s": age,
+                            "healthy": observation.healthy,
+                            "conflict_clear": observation.conflict_clear,
+                            "counts": dict(zip(("N", "S", "E", "W"), observation.counts)),
+                            "approaching": dict(zip(("N", "S", "E", "W"), observation.approaching)),
+                            "arrival_rate": dict(zip(("N", "S", "E", "W"), observation.arrival_rate)),
+                            "oldest_wait_s": dict(zip(("N", "S", "E", "W"), observation.oldest_wait_s)),
+                            "pedestrian_queue": dict(zip(("N", "S", "E", "W"), observation.pedestrian_queue)),
+                                                        "emergency": dict(zip(("N", "S", "E", "W"), observation.emergency)),
+                                                        "class_counts": dict(zip(("N", "S", "E", "W"), observation.class_counts))}
+
+    def submit_telemetry(self, counts, conflict_clear, healthy):
+        """Accept a counts-only dashboard feed (schema v1) without a metric stream."""
+        with self.lock:
+            now = self.clock()
+            stamp = self.wall()
+            observation = Observation.parse(
+                {"schema_version": 1, "sequence": self.telemetry_sequence,
+                 "captured_at": stamp, "counts": counts,
+                 "conflict_clear": conflict_clear, "healthy": healthy}, stamp)
+            self.telemetry_sequence += 1
+            age = max(0.0, self.wall() - observation.captured_at)
+            if age > self.controller.timing.stale_after:
+                raise ValueError("observation expired before acceptance")
+            self.store.accept(self.telemetry_source, observation)
+            if self.clock() - now + age > self.controller.timing.stale_after:
+                raise ValueError("observation expired during durable acceptance")
+            # The counts-only feed is a dashboard view; it must never
+            # replace the control observation/received_at pair that
+            # tick() and status() consume as a unit.
+            self.telemetry_received_at = now - age
+            self.metrics = {"sequence": observation.sequence,
+                            "schema_version": 1,
+                            "captured_at": observation.captured_at,
+                            "received_age_s": age,
+                            "healthy": observation.healthy,
+                            "conflict_clear": observation.conflict_clear,
+                            "counts": dict(zip(("N", "S", "E", "W"), observation.counts)),
+                            "approaching": {}, "arrival_rate": {}, "oldest_wait_s": {},
+                                                        "pedestrian_queue": {}, "emergency": {}, "class_counts": {}}
+            return observation.sequence
+
+    def set_alert_log(self, path):
+        """Mirror alert events to a local JSONL alert log (best effort)."""
+        self.alert_log = path
+
+    def _alert(self, kind, payload):
+        """Journal a deduplicated alert event and mirror it to the local alert log."""
+        record = {"kind": kind, **payload}
+        self.store.event("alert", record)
+        if self.alert_log:
+            try:
+                with open(self.alert_log, "a", encoding="utf-8") as handle:
+                    handle.write(json.dumps(record, sort_keys=True) + "\n")
+            except OSError:
+                pass
+
+    def preempt(self, approach):
+        with self.lock:
+            if approach not in ("N", "S", "E", "W"):
+                raise ValueError("approach must be N, S, E or W")
+            self.controller.request_preemption(approach, self.clock())
+            self.store.event("preemption_requested", {"approach": approach})
+            self._alert("preemption_requested", {"approach": approach})
 
     def tick(self):
         with self.lock:
@@ -60,6 +136,21 @@ class Runtime:
             snapshot = candidate.tick(now, self.observation, self.received_at)
             signature = (snapshot["stage"], snapshot["phase"], snapshot["reason"], snapshot["fault"])
             try:
+                # Edge-triggered alerts: journaled once per state change, inside
+                # the audit path so a journal failure latches the fault.
+                fault = snapshot["fault"]
+                if fault is not None and fault != self._prev_fault:
+                    self._alert("fault_latched", {"fault": fault})
+                self._prev_fault = fault
+                age = (None if self.received_at is None
+                       else max(0.0, now - self.received_at))
+                fresh = age is not None and age <= self.controller.timing.stale_after
+                if self._prev_fresh is not None and fresh != self._prev_fresh:
+                    if fresh:
+                        self._alert("sensor_recovered", {})
+                    else:
+                        self._alert("sensor_lost", {"age_s": age})
+                self._prev_fresh = fresh
                 if signature != self.last_transition:
                     self.store.event("transition_intent", snapshot)
                 applied_at = self.clock()
@@ -94,6 +185,7 @@ class Runtime:
             except Exception:
                 self.last_error = "audit_or_adapter_failure"
                 self.controller.trip(self.last_error)
+                self._alert("audit_failure", {"error": self.last_error})
                 # Do not emit a green command after an audit failure. The next
                 # control tick starts normal yellow clearance from a green.
                 raise
@@ -113,7 +205,7 @@ class Runtime:
                      and age is not None and age <= self.controller.timing.stale_after
                      and self.observation.healthy
                      and (not self.controller.timing.require_metric_protection or
-                          (self.observation.schema_version == 3 and age <= .2)))
+                          (self.observation.schema_version >= 3 and age <= .2)))
             cabinet = None
             if hasattr(self.adapter, "status"):
                 try:
@@ -126,6 +218,46 @@ class Runtime:
                     "adapter": self.adapter.name, "sensor_age_s": age, "loop_healthy": loop_healthy,
                     "controller": self.controller.snapshot(now),
                     "last_output": self.output, "cabinet_readback": cabinet, "error": self.last_error}
+        finally:
+            self.lock.release()
+
+    def metrics_snapshot(self):
+        """Read-only dashboard view: latest metric stream plus recent transitions."""
+        if not self.lock.acquire(timeout=.1):
+            return {"error": "control_lock_busy"}
+        try:
+            now = self.clock()
+            # Freshness follows the control metric stream when present,
+            # otherwise the counts-only telemetry feed.
+            ref = (self.received_at if self.received_at is not None
+                   else self.telemetry_received_at)
+            age = None if ref is None else max(0, now - ref)
+            fresh = age is not None and age <= self.controller.timing.stale_after
+            snapshot = self.controller.snapshot(now)
+            events, alerts = [], []
+            try:
+                rows = self.store.db.execute(
+                    "SELECT at, kind, payload FROM events WHERE kind = 'transition_intent'"
+                    " ORDER BY at DESC, rowid DESC LIMIT 20").fetchall()
+                events = [{"at": row[0], "kind": row[1], "payload": json.loads(row[2])}
+                          for row in rows]
+                rows = self.store.db.execute(
+                    "SELECT at, kind, payload FROM events WHERE kind = 'alert'"
+                    " ORDER BY at DESC, rowid DESC LIMIT 20").fetchall()
+                alerts = [{"at": row[0], "kind": row[1], "payload": json.loads(row[2])}
+                          for row in rows]
+            except (OSError, ValueError):
+                events, alerts = [], []
+            return {"mode": "bench", "field_ready": False, "now": now,
+                    "sensor_age_s": age, "sensor_fresh": fresh,
+                    "loop_healthy": (self.last_completed_tick is not None
+                                     and 0 <= now - self.last_completed_tick
+                                     <= self.controller.timing.max_tick_gap),
+                    "last_error": self.last_error,
+                    "controller": snapshot,
+                    "metrics": self.metrics,
+                    "recent_transitions": events,
+                    "recent_alerts": alerts}
         finally:
             self.lock.release()
 

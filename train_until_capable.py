@@ -24,7 +24,7 @@ sys.path.insert(0, HERE)
 
 import sabz_rl
 from sabz_rl import DQN, load_net, BEST, CKPT, DONE_FLAG, run_v2, \
-    state_vec_from_dict
+    state_vec_from_dict, bench_scenarios, PROMO_SEEDS
 
 BLOCK = 40000
 MAX_EPISODES = 10000000
@@ -42,25 +42,23 @@ def load_best_net():
     return net
 
 
-def bench(path=None):
-    """DQN vs actuated on all three scenarios. Returns (dqn_wins_all, rows)."""
+def bench(path=None, seeds=PROMO_SEEDS):
+    """DQN vs actuated on all three scenarios. Returns (dqn_wins_all, rows).
+
+    Runs on HELD-OUT seeds (default 44/55/66) that training never sees, so
+    "capable" means generalization. Pass seeds=(11, 22, 33) for the legacy
+    in-sample benchmark."""
     net = load_best_net()
 
     def rl_decide(state, prio):
         s = state_vec_from_dict(state)
         return "switch" if net.act(s) == 1 else "stay"
 
-    scenarios = {
-        "asymmetric": lambda a, t: 0.25 if a in ("N", "S") else 0.035,
-        "balanced": lambda a, t: 0.22,
-        "school": lambda a, t: (0.30 if a in ("N", "S") else 0.10)
-        if 7 <= (t / 3600) % 24 <= 9 else 0.08,
-    }
     rows = []
     wins = 0
-    for name, rates in scenarios.items():
+    for name, rates in bench_scenarios().items():
         da, dd = [], []
-        for sd in (11, 22, 33):
+        for sd in seeds:
             da.append(run_v2("actuated", rates, T=3600.0, seed=sd,
                              safety_on=True)["avg_delay_s"])
             dd.append(run_v2(rl_decide, rates, T=3600.0, seed=sd,

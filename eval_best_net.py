@@ -13,7 +13,8 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from sabz_rl import DQN, load_net, run_v2, state_vec_from_dict
+from sabz_rl import DQN, load_net, run_v2, state_vec_from_dict, \
+    bench_scenarios, PROMO_SEEDS
 
 BEST_FILE = os.path.join(HERE, "sabz_dqn_capable.npz")
 
@@ -25,20 +26,14 @@ def main():
         return "switch" if net.act(state_vec_from_dict(state)) == 1 \
             else "stay"
 
-    scenarios = {
-        "asymmetric": lambda a, t: 0.25 if a in ("N", "S") else 0.035,
-        "balanced": lambda a, t: 0.22,
-        "school": lambda a, t: (0.30 if a in ("N", "S") else 0.10)
-        if 7 <= (t / 3600) % 24 <= 9 else 0.08,
-    }
     wins = 0
-    for name, rates in scenarios.items():
+    for name, rates in bench_scenarios().items():
         da, dd = [], []
-        for sd in (11, 22, 33):
+        for sd in PROMO_SEEDS:
             da.append(run_v2("actuated", rates, T=3600.0, seed=sd,
                              safety_on=True)["avg_delay_s"])
             dd.append(run_v2(rl_decide, rates, T=3600.0, seed=sd,
-                            safety_on=True)["avg_delay_s"])
+                             safety_on=True)["avg_delay_s"])
         ma, md = float(np.mean(da)), float(np.mean(dd))
         ok = md <= ma
         wins += ok

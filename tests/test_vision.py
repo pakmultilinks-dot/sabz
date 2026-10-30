@@ -19,15 +19,19 @@ class CameraContractTests(unittest.TestCase):
     def test_tracker_identity_is_unique_and_expires(self):
         tracker=RoadTracker(planes())
         boxes=[Box(40,100,60,130,.9,2),Box(70,100,80,130,.8,2)]
-        tracks=tracker.update(boxes,1)
+        tracks,_=tracker.update(boxes,1)
         self.assertNotEqual(tracks[0].track_id,tracks[1].track_id)
         ids=[t.track_id for t in tracks]
-        self.assertEqual([t.track_id for t in tracker.update(boxes,1.1)],ids)
-        self.assertNotIn(tracker.update(boxes,2)[0].track_id,ids)
+        followed,_=tracker.update(boxes,1.1)
+        self.assertEqual([t.track_id for t in followed],ids)
+        self.assertNotIn(tracker.update(boxes,2)[0][0].track_id,ids)
     def test_approach_regions_and_person_handling(self):
         tracker=RoadTracker(planes())
-        self.assertEqual(tracker.update([Box(440,100,460,130,.9,3)],1)[0].approach,'E')
-        with self.assertRaises(ValueError):tracker.update([Box(40,100,60,130,.9,0)],1.1)
+        tracks,_=tracker.update([Box(440,100,460,130,.9,3)],1)
+        self.assertEqual(tracks[0].approach,'E')
+        tracks,pedestrians=tracker.update([Box(40,100,60,130,.9,0)],1.1)
+        self.assertEqual(tracks,[])
+        self.assertEqual(pedestrians,{'N':1,'S':0,'E':0,'W':0})
     def test_overlapping_regions_are_not_silently_assigned(self):
         calibration=planes()['N'];tracker=RoadTracker(dict.fromkeys('NSEW',calibration))
         with self.assertRaises(ValueError):tracker.update([Box(40,100,60,130,.9,2)],1)
@@ -121,9 +125,9 @@ class DetectorTensorTests(unittest.TestCase):
         image=np.zeros((400,800,3),dtype=np.uint8)
         common=dict(conflict_clear=False,downstream_counts=dict.fromkeys('NSEW',0),
                     downstream_capacity=dict.fromkeys('NSEW',20),sensors_healthy=True)
-        producer.update(tracker.update(detector.detect(image),1),monotonic_now=1,captured_at=1001,**common)
+        producer.update(tracker.update(detector.detect(image),1)[0],monotonic_now=1,captured_at=1001,**common)
         detector.net.y+=.96 # 1.2 pixels on the original road image in 0.1 s.
-        data=producer.update(tracker.update(detector.detect(image),1.1),monotonic_now=1.1,captured_at=1001.1,**common)
+        data=producer.update(tracker.update(detector.detect(image),1.1)[0],monotonic_now=1.1,captured_at=1001.1,**common)
         self.assertTrue(data['healthy'])
         self.assertAlmostEqual(data['approach_state']['max_approach_speed_mps']['N'],12,places=2)
         self.assertFalse(data['conflict_clear'])
@@ -135,7 +139,9 @@ class DetectorTensorTests(unittest.TestCase):
         output[0,6,0]=.9;output[0,4,1]=.8
         boxes=decode_yolo(output,image_width=800,image_height=400,scale=1,pad_x=0,pad_y=0)
         self.assertEqual(len(boxes),2)
-        with self.assertRaises(ValueError):RoadTracker(planes()).update(boxes,1)
+        tracks,pedestrians=RoadTracker(planes()).update(boxes,1)
+        self.assertEqual(len(tracks),1)
+        self.assertEqual(sum(pedestrians.values()),1)
 
     def test_bad_output_shape_nan_and_probabilities_rejected(self):
         from sabz_edge.vision import decode_yolo

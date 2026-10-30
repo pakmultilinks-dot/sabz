@@ -15,10 +15,10 @@ There is no approved ONNX vehicle-detector file in the repository.
   detector formats/custom class counts are rejected, not guessed.
 - OpenCV DNN classic CPU backend preprocesses/infers. COCO bicycle, car,
   motorcycle, bus and truck classes feed local ground-plane tracking.
-- Person detections overlapping vehicles are retained separately during
-  suppression. A person in a supported road region withdraws health because
-  pedestrian control is not implemented. This does not prove all people are
-  detected; model quality remains unmeasured.
+- Person detections are tallied per approach as pedestrian_queue demand
+  (schema v4) and are never counted as vehicles or tracked. A person in a
+  supported road region no longer withdraws health. This does not prove all
+  people are detected; model quality remains unmeasured.
 - The tracker assigns temporary in-memory IDs; it does not identify faces or
   plates. Matching is greedy and not validated against occlusion or identity swaps.
 - A single latest frame is retained in RAM; frames and tracks are not written

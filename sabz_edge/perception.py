@@ -1,11 +1,13 @@
-"""Local calibrated detections -> aggregate observation v3. No frames/IDs emitted.
+"""Local calibrated detections -> aggregate observation v6 (v4 adds
+pedestrian_queue; v6 adds per-approach stopped-vehicle class_counts).
+No frames/IDs emitted; people are counted, never tracked.
 Surveyed planar geometry only; calibration accuracy must be measured on site.
 Conflict clearance and receiving-road occupancy require independent inputs.
 """
 from collections import deque
 from dataclasses import dataclass
 from math import isfinite
-from .core import APPROACHES,number
+from .core import APPROACHES,VEHICLE_CLASSES,number
 
 
 def solve(matrix):
@@ -67,7 +69,7 @@ class MetricProducer:
             raise ValueError('Calibrations for exactly N/S/E/W required')
         self.calibrations=calibrations
         self.tracks={};self.arrivals={a:deque() for a in APPROACHES};self.last_frame=None
-    def update(self,detections,*,monotonic_now,captured_at,conflict_clear,downstream_counts,downstream_capacity,sensors_healthy):
+    def update(self,detections,*,monotonic_now,captured_at,conflict_clear,downstream_counts,downstream_capacity,sensors_healthy,pedestrian_queue=None):
         now=number(monotonic_now,'monotonic frame time',0,1e12)
         number(captured_at,'capture timestamp',0,1e12)
         if any(type(v) is not bool for v in (conflict_clear,sensors_healthy)):raise ValueError('Sensor health/clearance must be booleans')
@@ -78,25 +80,42 @@ class MetricProducer:
         for a in APPROACHES:
             cap=number(downstream_capacity[a],'capacity',1,500)
             number(downstream_counts[a],'receiving count',0,cap)
+        pedestrians=dict.fromkeys(APPROACHES,0)
+        if pedestrian_queue is not None:
+            if not isinstance(pedestrian_queue,dict) or set(pedestrian_queue)!=set(APPROACHES):
+                raise ValueError('Pedestrian queue must contain exactly N, S, E, W')
+            for a in APPROACHES:
+                value=pedestrian_queue[a]
+                if (isinstance(value,bool) or not isinstance(value,(int,float)) or not isfinite(value)
+                        or not 0<=value<=500 or int(value)!=value):
+                    raise ValueError('Pedestrian queue values must be whole numbers in 0..500')
+                pedestrians[a]=int(value)
         # Validate/project the complete frame before changing state.
-        projected=[];seen=set()
+        projected=[];seen=set();saw_person=False
         for det in detections:
             if not isinstance(det,Detection) or type(det.track_id) is not int or not 0<=det.track_id<2**63 or det.approach not in APPROACHES:
                 raise ValueError('Invalid ephemeral detection')
-            if det.vehicle_class not in ('car','motorcycle','bicycle','bus','truck'):raise ValueError('Unsupported road user; this release has no pedestrian controller')
+            if det.vehicle_class not in ('car','motorcycle','bicycle','bus','truck','person'):raise ValueError('Unsupported road user class')
             key=(det.approach,det.track_id)
             if key in seen:raise ValueError('Duplicate track in frame')
             seen.add(key)
             x,distance=self.calibrations[det.approach].project(det.pixel_x,det.pixel_y)
-            projected.append((key,x,distance))
+            if det.vehicle_class=='person':
+                # Frame-local pedestrian tally per approach; people are counted, never tracked.
+                saw_person=True;pedestrians[det.approach]+=1
+                continue
+            projected.append((key,x,distance,det.vehicle_class))
+        if saw_person and pedestrian_queue is not None:
+            raise ValueError('Provide pedestrian_queue or person detections, not both')
         # Expire tracks on elapsed time, not frame count. No persistence/network IDs.
         self.tracks={k:v for k,v in self.tracks.items() if now-v['at']<=self.ttl_s}
         healthy=sensors_healthy and self.last_frame is not None and now-self.last_frame<=.2
         if any(k not in seen and v['distance']>=0 for k,v in self.tracks.items()):healthy=False
         counts=dict.fromkeys(APPROACHES,0);approaching=dict.fromkeys(APPROACHES,0)
+        classes={a:dict.fromkeys(VEHICLE_CLASSES,0) for a in APPROACHES}
         nearest=dict.fromkeys(APPROACHES,None);max_speed=dict.fromkeys(APPROACHES,0)
         waits=dict.fromkeys(APPROACHES,0)
-        for key,x,distance in projected:
+        for key,x,distance,vehicle_class in projected:
             approach=key[0];prior=self.tracks.get(key)
             speed=None
             stopped_since=None
@@ -114,6 +133,7 @@ class MetricProducer:
             if distance>=0:
                 if speed is not None and abs(speed)<=.5:
                     counts[approach]+=1
+                    classes[approach][vehicle_class]+=1
                     stopped_since=now if stopped_since is None else stopped_since
                     waits[approach]=max(waits[approach],now-stopped_since)
                 elif speed is not None and speed>.5:
@@ -133,12 +153,14 @@ class MetricProducer:
             self.tracks.clear();healthy=False
         for a in APPROACHES:
             while self.arrivals[a] and self.arrivals[a][0]<now-30:self.arrivals[a].popleft()
-            if len(self.arrivals[a])>150 or counts[a]>500 or approaching[a]>500:healthy=False
+            if len(self.arrivals[a])>150 or counts[a]>500 or approaching[a]>500 or pedestrians[a]>500:healthy=False
             while len(self.arrivals[a])>150:self.arrivals[a].popleft()
-            counts[a]=min(counts[a],500);approaching[a]=min(approaching[a],500)
+            counts[a]=min(counts[a],500);approaching[a]=min(approaching[a],500);pedestrians[a]=min(pedestrians[a],500)
+            classes[a]={c:min(classes[a][c],500) for c in VEHICLE_CLASSES}
         traffic={'downstream_counts':dict(downstream_counts),'downstream_capacity':dict(downstream_capacity),
                  'approaching':approaching,'arrival_rate':{a:len(self.arrivals[a])/30 for a in APPROACHES},'oldest_wait_s':{a:min(waits[a],3600) for a in APPROACHES}}
         metric={'nearest_moving_distance_m':nearest,'max_approach_speed_mps':max_speed,
                 'distance_uncertainty_m':{a:self.calibrations[a].uncertainty for a in APPROACHES}}
         return {'counts':counts,'conflict_clear':conflict_clear,'healthy':healthy,'captured_at':captured_at,
-                'traffic_state':traffic,'approach_state':metric}
+                'traffic_state':traffic,'approach_state':metric,'pedestrian_queue':pedestrians,
+                'class_counts':classes}

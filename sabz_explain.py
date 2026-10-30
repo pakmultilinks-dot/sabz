@@ -45,7 +45,10 @@ def _llm_chat(system, user, max_tokens=300):
         OPENROUTER_URL, data=body,
         headers={"Authorization": "Bearer " + key,
                  "Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=60) as r:
+    # Never route through env-configured proxies: they would see the
+    # Authorization header. Connect directly (empty ProxyHandler).
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    with opener.open(req, timeout=60) as r:
         out = json.load(r)
     return out["choices"][0]["message"]["content"].strip()
 
@@ -64,17 +67,30 @@ def describe_state(st):
             st.get("safety_holds", 0), st["decision"]))
 
 
+def _queue_int(value):
+    """Coerce a queue value to a non-negative int; malformed -> 0.
+
+    The template fallback must never raise, even on hostile input.
+    """
+    if type(value) is bool:
+        return 0
+    try:
+        return max(0, int(value))
+    except (TypeError, ValueError):
+        return 0
+
+
 def _template_explain(st, lang):
     q = st["queues"]
-    busy = max(q, key=q.get)
+    busy = max(q, key=lambda k: _queue_int(q[k]))
     if lang == "ur":
         return ("[template] Signal ne %s road ko sabz batti di kyunke wahan "
                 "sab se zyada %d gaariyan intezar kar rahi thin. "
                 "Khaali road ko green de kar waqt zaya nahi kiya gaya." % (
-                    busy, q[busy]))
+                    busy, _queue_int(q[busy])))
     return ("[template] Green went to the %s approach because it had the "
             "longest queue (%d waiting). No green time was wasted on the "
-            "empty approaches." % (busy, q[busy]))
+            "empty approaches." % (busy, _queue_int(q[busy])))
 
 
 def explain_decision(st, lang="en"):

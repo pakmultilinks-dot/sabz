@@ -54,8 +54,10 @@ class Guard:
             if stage == "GREEN" and phase != self.phase:
                 self.trip("illegal_phase_change", now)
             elif stage != "GREEN":
-                # A fault request may terminate early, but never skips yellow.
-                fault_request = bool(command.get("fault")) or command.get("reason") in ("sensor_unavailable", "metric_sensor_unavailable")
+                # A fault or preemption request may terminate early, but never skips yellow.
+                fault_request = (bool(command.get("fault"))
+                    or command.get("reason") in ("sensor_unavailable", "metric_sensor_unavailable",
+                    "emergency_preemption"))
                 if elapsed >= self.timing.min_green or fault_request:
                     self.stage, self.entered, self.reason = "YELLOW", now, "edge_transition"
         elif self.stage == "ALL_RED" and stage == "GREEN":

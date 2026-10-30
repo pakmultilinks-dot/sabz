@@ -235,7 +235,10 @@ class Handler(BaseHTTPRequestHandler):
 <pre>python deploy/local_instance.py status --directory data/local-installation</pre>
 <p>The utility reads protected local credentials and verifies HTTPS. Do not paste credentials into browser URLs.</p>
 <h2>API routes</h2><ul><li>GET /v1/status: reader authentication required.</li>
-<li>GET /readyz: reader authentication required.</li><li>POST /v1/observations: sensor authentication required.</li></ul>
+<li>GET /v1/metrics: reader authentication required (dashboard metric stream).</li>
+<li>GET /readyz: reader authentication required.</li><li>POST /v1/observations: sensor authentication required.</li>
+<li>POST /v1/telemetry: sensor authentication required (counts-only dashboard feed).</li>
+<li>POST /v1/preemption: reader authentication required.</li></ul>
 <p>Without a healthy sensor feed, the service is not ready and the emulator holds all-red after clearance.</p>
 </main></body></html>""".replace("Bench mode: signal outputs are emulated. No road lamps are connected by this service.",
                 "Low-voltage LED bench mode. GPIO readback only; road lamp operation is unsupported."
@@ -249,19 +252,22 @@ class Handler(BaseHTTPRequestHandler):
                      and 0 <= self.server.runtime.clock() - last <= self.server.runtime.controller.timing.max_tick_gap)
             self._send(200 if alive else 503, {"alive": alive})
             return
-        if self.path not in ("/v1/status", "/readyz"):
+        if self.path not in ("/v1/status", "/readyz", "/v1/metrics"):
             self._send(404, {"error": "not_found"})
             return
         if not self._gate("reader"):
+            return
+        if self.path == "/v1/metrics":
+            self._send(200, self.server.runtime.metrics_snapshot())
             return
         status = self.server.runtime.status()
         self._send(200 if self.path == "/v1/status" or status["ready"] else 503, status)
 
     def do_POST(self):
-        if self.path != "/v1/observations":
+        if self.path not in ("/v1/observations", "/v1/preemption", "/v1/telemetry"):
             self._send(404, {"error": "not_found"})
             return
-        if not self._gate("camera"):
+        if not self._gate("camera" if self.path in ("/v1/observations", "/v1/telemetry") else "reader"):
             return
         if self.headers.get_content_type() != "application/json":
             self._send(415, {"error": "application_json_required"})
@@ -281,6 +287,28 @@ class Handler(BaseHTTPRequestHandler):
             self._body_remaining = max(0, self._body_remaining - len(raw))
             if len(raw) != length:
                 raise ValueError("incomplete body")
+            if self.path == "/v1/preemption":
+                data = load_json(raw)
+                if not isinstance(data, dict) or set(data) != {"approach"}:
+                    raise ValueError("preemption body must be exactly {\"approach\": ...}")
+                approach = data["approach"]
+                if not isinstance(approach, str) or approach not in ("N", "S", "E", "W"):
+                    raise ValueError("approach must be N, S, E or W")
+                self.server.runtime.preempt(approach)
+                self._send(202, {"accepted": True, "approach": approach, "mode": "bench"})
+                return
+            if self.path == "/v1/telemetry":
+                data = load_json(raw)
+                if not isinstance(data, dict) or set(data) != {"counts", "conflict_clear", "healthy"}:
+                    raise ValueError("telemetry body must be exactly {counts, conflict_clear, healthy}")
+                if not isinstance(data["counts"], dict) or set(data["counts"]) != {"N", "S", "E", "W"}:
+                    raise ValueError("counts must contain exactly N, S, E, W")
+                if type(data["conflict_clear"]) is not bool or type(data["healthy"]) is not bool:
+                    raise ValueError("conflict_clear and healthy must be booleans")
+                sequence = self.server.runtime.submit_telemetry(
+                    data["counts"], data["conflict_clear"], data["healthy"])
+                self._send(202, {"accepted_sequence": sequence, "mode": "bench"})
+                return
             observation = Observation.parse(load_json(raw), self.server.runtime.wall())
             self.server.runtime.submit(self.server.settings.source_id, observation)
         except ReplayError:
@@ -317,6 +345,8 @@ def run(settings, adapter_factory=None):
         store = Store(settings.state_path)
         runtime = Runtime(store, settings.timing)
         runtime.adapter = adapter
+        state_dir = os.path.dirname(os.path.abspath(settings.state_path))
+        runtime.set_alert_log(os.path.join(state_dir, "alerts.jsonl"))
         store.event("startup", {"mode": "bench", "timing": settings.timing.__dict__, "source": settings.source_id, "adapter": adapter.name})
         server = Server(settings, runtime)
         runtime.start()

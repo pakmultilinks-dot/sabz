@@ -65,12 +65,13 @@ def main():
                 # This backdating is conservative ONLY if the externally measured
                 # bound is valid. VideoCapture provides no exposure guarantee.
                 boxes=detector.detect(image)
-                detections=tracker.update(boxes,read_at)
+                detections,pedestrians=tracker.update(boxes,read_at)
                 if time.monotonic()-read_at+bound>.15:raise ValueError('Inference/capture age budget exceeded')
                 state=independent_state(args.sensor_state,time.time())
                 data=producer.update(detections,monotonic_now=read_at,captured_at=read_wall-bound,
                     conflict_clear=state['conflict_clear'],downstream_counts=state['downstream_counts'],
-                    downstream_capacity=state['downstream_capacity'],sensors_healthy=state['healthy'])
+                                    downstream_capacity=state['downstream_capacity'],sensors_healthy=state['healthy'],
+                                    pedestrian_queue=pedestrians)
                 if time.time()-state['captured_at']>.15:
                     data['healthy']=False;data['conflict_clear']=False
                 if client:client.send(**data)

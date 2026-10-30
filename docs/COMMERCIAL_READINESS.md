@@ -37,7 +37,7 @@ require physical measurement and site engineering.
 | Overload/starvation | Bounded allocation, phase opportunity tracking, scenario matrix | Validate performance and road-user equity on the actual movement plan; no promise to clear excess demand |
 | Scheduling/storage delay | Deadline/expiry checks, instrumentation and fault tests | Hard timing assessment; earlier 1.17 s first-sample outlier remains unexplained |
 | Privacy/data misuse | Metric bridge emits aggregates, not frames/track identities | Document actual detector retention/access, permissions, incident handling and deployment-specific review |
-| Unsupported movements | Explicit two-phase through-only scope and fifth-approach rejection | Design/validate turns, pedestrians, emergency/rail interaction as required by the chosen site |
+| Unsupported movements | Explicit two-phase through-only scope and fifth-approach rejection; pedestrian demand is a count only (v4); emergency preemption (v5) is an authenticated request with clearance/fault limits, not detection or a certified EVP system | Design/validate turns, pedestrian signal phases, emergency/rail interaction as required by the chosen site |
 
 The table is a preliminary engineering register, not a completed safety case,
 FMEA or independent security assessment. Required evidence must be reviewed by

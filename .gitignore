@@ -22,3 +22,5 @@ dist/
 validation/*-deploy.tar.gz
 
 validation/*.exe
+yolov8n.onnx
+yolov8n.pt

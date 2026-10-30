@@ -1,4 +1,6 @@
 """Local camera inference components. No model/frame downloads or image persistence.
+RoadTracker returns (detections, pedestrian_queue): persons are tallied per
+approach frame-locally and never become tracked detections.
 Contract: approved YOLOv8 raw COCO-80 ONNX export, 640 square letterbox input.
 Detection quality and source exposure timing still need independent validation.
 """
@@ -105,7 +107,7 @@ class RoadTracker:
         if self.last_time is not None and now<=self.last_time:raise ValueError('Frame times must increase')
         if len(boxes)>2000:raise ValueError('Too many boxes')
         self.tracks={k:t for k,t in self.tracks.items() if now-t['at']<=.5}
-        used=set();result=[]
+        used=set();result=[];pedestrians=dict.fromkeys(APPROACHES,0)
         for box in sorted(boxes,key=lambda b:b.score,reverse=True):
             matches=[]
             for approach in APPROACHES:
@@ -114,7 +116,10 @@ class RoadTracker:
                 matches.append((approach,x,d))
             if not matches:continue
             if len(matches)!=1:raise ValueError('Ambiguous overlapping surveyed road regions')
-            if box.class_id==0:raise ValueError('Person in supported road region; pedestrian control not implemented')
+            if box.class_id==0:
+                # Frame-local pedestrian tally per approach; never tracked or identified.
+                pedestrians[matches[0][0]]+=1
+                continue
             if box.class_id not in VEHICLES:continue
             approach,x,d=matches[0]
             best=None;cost=float('inf')
@@ -131,5 +136,5 @@ class RoadTracker:
             result.append(Detection(best,approach,*box.foot,VEHICLES[box.class_id]))
         if len(self.tracks)>4000:self.tracks.clear();raise ValueError('Tracker memory bound exceeded')
         self.last_time=now
-        return result
+        return result,pedestrians
 

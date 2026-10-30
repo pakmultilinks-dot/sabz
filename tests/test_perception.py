@@ -60,8 +60,32 @@ class PerceptionTests(unittest.TestCase):
 
     def test_duplicate_or_unsupported_detection_rejected(self):
         d=Detection(1,'N',50,150,'car')
-        for items in ([d,d],[replace(d,vehicle_class='person')],[replace(d,pixel_y=float('nan'))]):
+        for items in ([d,d],[replace(d,vehicle_class='dog')],[replace(d,pixel_y=float('nan'))]):
             with self.assertRaises(ValueError):self.update(1,items)
+    def test_person_detections_tally_as_pedestrians_not_vehicles(self):
+        d=Detection(1,'N',50,150,'person')
+        data=self.update(1,[d])
+        self.assertEqual(data['counts']['N'],0)
+        self.assertEqual(data['pedestrian_queue']['N'],1)
+        with self.assertRaises(ValueError):self.update(1.1,[d],pedestrian_queue=dict.fromkeys('NSEW',0))
+    def test_pedestrian_queue_validation_and_v4_round_trip(self):
+        with self.assertRaises(ValueError):self.update(1,[],pedestrian_queue={'N':1})
+        with self.assertRaises(ValueError):self.update(1,[],pedestrian_queue={'N':-1,'S':0,'E':0,'W':0})
+        with self.assertRaises(ValueError):self.update(1,[],pedestrian_queue={'N':1.5,'S':0,'E':0,'W':0})
+        with self.assertRaises(ValueError):self.update(1,[],pedestrian_queue={'N':True,'S':0,'E':0,'W':0})
+        self.update(0.9,[])  # warm-up frame: healthy requires a prior frame
+        data=self.update(1,[],pedestrian_queue={'N':7,'S':0,'E':2,'W':0})
+        self.assertTrue(data['healthy'])
+        self.assertEqual(data['pedestrian_queue'],{'N':7,'S':0,'E':2,'W':0})
+        packet=dict(schema_version=4,sequence=1,counts=data['counts'],captured_at=data['captured_at'],
+                    healthy=data['healthy'],conflict_clear=False,**data['traffic_state'],
+                    **data['approach_state'],pedestrian_queue=data['pedestrian_queue'])
+        observation=Observation.parse(packet,1001)
+        self.assertEqual(observation.pedestrian_queue,(7,0,2,0))
+        self.assertEqual(observation.schema_version,4)
+        # v3 packets without pedestrian_queue remain valid.
+        packet.pop('pedestrian_queue');packet['schema_version']=3
+        self.assertEqual(Observation.parse(packet,1001).pedestrian_queue,())
     def test_aggregates_feed_real_schema_and_control_kernel(self):
         d=Detection(1,'N',50,150,'car')
         self.update(1,[d]);data=self.update(1.1,[replace(d,pixel_y=151.2)],conflict_clear=True)

@@ -56,7 +56,8 @@ class CameraClient:
             self.db.execute("INSERT INTO sequence VALUES (1,?) ON CONFLICT(id) DO UPDATE SET value=excluded.value", (value,))
         return value
 
-    def send(self, counts, *, conflict_clear=False, healthy=True, captured_at=None, traffic_state=None, approach_state=None):
+    def send(self, counts, *, conflict_clear=False, healthy=True, captured_at=None, traffic_state=None,
+                 approach_state=None, pedestrian_queue=None, emergency=None, class_counts=None):
         self.last_timings = None
         started = time.perf_counter()
         sequence = self._next_sequence()
@@ -64,6 +65,15 @@ class CameraClient:
         observation = {"schema_version": 1, "sequence": sequence,
                        "captured_at": time.time() if captured_at is None else captured_at,
                        "counts": counts, "conflict_clear": conflict_clear, "healthy": healthy}
+        if class_counts is not None:
+            # Schema v6 carries the full v1-v5 field set; absent pedestrian
+            # demand and preemption requests are honestly reported as zero.
+            if traffic_state is None or approach_state is None:
+                raise ValueError("class_counts requires traffic_state and approach_state")
+            if pedestrian_queue is None:
+                pedestrian_queue = dict.fromkeys(("N", "S", "E", "W"), 0)
+            if emergency is None:
+                emergency = dict.fromkeys(("N", "S", "E", "W"), 0)
         if traffic_state is not None:
             fields = {"downstream_counts", "downstream_capacity", "approaching", "arrival_rate", "oldest_wait_s"}
             if not isinstance(traffic_state, dict) or set(traffic_state) != fields:
@@ -76,6 +86,50 @@ class CameraClient:
                 raise ValueError("approach_state requires all metric fields and traffic_state")
             observation.update(approach_state)
             observation["schema_version"] = 3
+            if pedestrian_queue is not None:
+                fields = {"N", "S", "E", "W"}
+                if traffic_state is None or approach_state is None:
+                    raise ValueError("pedestrian_queue requires traffic_state and approach_state")
+                if not isinstance(pedestrian_queue, dict) or set(pedestrian_queue) != fields:
+                    raise ValueError("pedestrian_queue must contain all observation v4 pedestrian fields")
+                for approach in fields:
+                    value = pedestrian_queue[approach]
+                    if (isinstance(value, bool) or not isinstance(value, (int, float))
+                            or not 0 <= value <= 500 or int(value) != value):
+                        raise ValueError("pedestrian_queue values must be whole numbers in 0..500")
+                observation["pedestrian_queue"] = pedestrian_queue
+                observation["schema_version"] = 4
+        if emergency is not None:
+            fields = {"N", "S", "E", "W"}
+            if traffic_state is None or approach_state is None:
+                raise ValueError("emergency requires traffic_state and approach_state")
+            if not isinstance(emergency, dict) or set(emergency) != fields:
+                raise ValueError("emergency must contain all observation v5 emergency fields")
+            for approach in fields:
+                value = emergency[approach]
+                if (isinstance(value, bool) or not isinstance(value, (int, float))
+                        or value not in (0, 1)):
+                    raise ValueError("emergency values must be 0 or 1")
+            if sum(emergency[a] for a in fields) > 1:
+                raise ValueError("emergency may flag at most one approach")
+            observation["emergency"] = emergency
+            observation["schema_version"] = 5
+        if class_counts is not None:
+            approaches = {"N", "S", "E", "W"}
+            classes = {"car", "motorcycle", "bicycle", "bus", "truck"}
+            if not isinstance(class_counts, dict) or set(class_counts) != approaches:
+                raise ValueError("class_counts must contain all observation v6 approach fields")
+            for approach in sorted(approaches):
+                breakdown = class_counts[approach]
+                if not isinstance(breakdown, dict) or set(breakdown) != classes:
+                    raise ValueError(f"class_counts.{approach} must contain exactly car, motorcycle, bicycle, bus, truck")
+                for name in sorted(classes):
+                    value = breakdown[name]
+                    if (isinstance(value, bool) or not isinstance(value, (int, float))
+                            or not 0 <= value <= 500 or int(value) != value):
+                        raise ValueError("class_counts values must be whole numbers in 0..500")
+            observation["class_counts"] = class_counts
+            observation["schema_version"] = 6
         body = json.dumps(observation, allow_nan=False).encode()
         request = urllib.request.Request(self.endpoint + "/v1/observations", body,
                     {"Content-Type": "application/json", "Authorization": "Bearer " + self.token}, method="POST")

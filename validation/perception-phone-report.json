@@ -1,0 +1,106 @@
+{
+  "video": "sabz_cinematic\\SABZ_Cinematic_v4_web.mp4",
+  "calibration": "validation\\calibration-cinematic-topdown.json",
+  "model": "yolov8n.onnx",
+  "footage_type": "rendered synthetic stand-in (not phone footage)",
+  "frames_total": 3735,
+  "frames_sampled_stride": 6,
+  "frames_processed": 622,
+  "frames_healthy": 158,
+  "frames_unhealthy": 464,
+  "frames_error": 0,
+  "detections_seen": 697,
+  "tracks_seen": 293,
+  "elapsed_s": 301.55,
+  "fps_effective": 2.06,
+  "errors": {},
+  "per_approach": {
+    "N": {
+      "frames_with_counts": 0,
+      "max_count": 0,
+      "max_approaching": 0,
+      "arrivals": 0
+    },
+    "S": {
+      "frames_with_counts": 0,
+      "max_count": 0,
+      "max_approaching": 1,
+      "arrivals": 0
+    },
+    "E": {
+      "frames_with_counts": 0,
+      "max_count": 0,
+      "max_approaching": 2,
+      "arrivals": 0
+    },
+    "W": {
+      "frames_with_counts": 0,
+      "max_count": 0,
+      "max_approaching": 3,
+      "arrivals": 0
+    }
+  },
+  "last_state": {
+    "counts": {
+      "N": 0,
+      "S": 0,
+      "E": 0,
+      "W": 0
+    },
+    "conflict_clear": true,
+    "healthy": false,
+    "captured_at": 1000124.4,
+    "traffic_state": {
+      "downstream_counts": {
+        "N": 0,
+        "S": 0,
+        "E": 0,
+        "W": 0
+      },
+      "downstream_capacity": {
+        "N": 10,
+        "S": 10,
+        "E": 10,
+        "W": 10
+      },
+      "approaching": {
+        "N": 0,
+        "S": 0,
+        "E": 0,
+        "W": 0
+      },
+      "arrival_rate": {
+        "N": 0.0,
+        "S": 0.0,
+        "E": 0.0,
+        "W": 0.0
+      },
+      "oldest_wait_s": {
+        "N": 0,
+        "S": 0,
+        "E": 0,
+        "W": 0
+      }
+    },
+    "approach_state": {
+      "nearest_moving_distance_m": {
+        "N": null,
+        "S": null,
+        "E": null,
+        "W": null
+      },
+      "max_approach_speed_mps": {
+        "N": 0,
+        "S": 0,
+        "E": 0,
+        "W": 0
+      },
+      "distance_uncertainty_m": {
+        "N": 2.0,
+        "S": 2.0,
+        "E": 1.5,
+        "W": 1.5
+      }
+    }
+  }
+}

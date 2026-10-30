@@ -37,20 +37,13 @@ class IntelligenceLayer:
         self.learning_rate = 0.1
 
     def load_dqn(self, path):
-        """Load the real trained DQN brain from checkpoint."""
-        import sabz_rl as R
-        net = R.DQN()
-        d = np.load(path)
-        for k in net.p:
-            key = f"net_{k}" if f"net_{k}" in d else f"p_{k}"
-            if key in d:
-                v = d[key]
-                # shape-tolerant: older brains had fewer state features
-                net.p[k] = v if v.shape == net.p[k].shape else \
-                    R._transfer_matrix(v, net.p[k].shape)
-        self.dqn = net
-        print(f"loaded DQN brain from {path}")
-        return net
+            """Load the real trained DQN brain from checkpoint (strict: refuses
+            incompatible architectures instead of silently partial-transferring)."""
+            import sabz_rl as R
+            net = R.load_net(path, strict=True)
+            self.dqn = net
+            print(f"loaded DQN brain from {path}")
+            return net
 
     def detect_regime(self, state):
         """Classify current traffic regime from state vector."""

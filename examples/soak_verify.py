@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import secrets
+import shutil
 import socket
 import subprocess
 import sys
@@ -25,7 +26,9 @@ def main():
     if args.seconds < 125:
         parser.error("at least 125 seconds required to exercise the full scenario")
     samples = []
-    with tempfile.TemporaryDirectory() as directory:
+    # ignore_cleanup_errors: the hard terminate below can leave a process
+    # holding edge.db for a moment on Windows; cleanup retries below first.
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as directory:
         root = Path(directory)
         with socket.socket() as reservation:
             reservation.bind(("127.0.0.1", 0))
@@ -110,6 +113,18 @@ def main():
                 except subprocess.TimeoutExpired:
                     process.kill(); process.wait(timeout=3)
             process.stderr.close()
+            # terminate() does not cascade to the spawned cabinet child on
+            # Windows; it exits on its own once the pipe breaks and the
+            # controller reaches ALL_RED. Retry until it releases edge.db.
+            deadline = time.monotonic() + 8
+            while True:
+                try:
+                    shutil.rmtree(root)
+                    break
+                except PermissionError:
+                    if time.monotonic() >= deadline:
+                        raise
+                    time.sleep(.05)
 
 
 if __name__ == "__main__":

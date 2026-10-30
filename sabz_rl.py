@@ -32,6 +32,8 @@ Training upgrades over the v1 brain:
   NGSIM headway sampler is rate-modulated so scenario demand shapes are real
   (previously use_real_data=True ignored rates entirely).
 """
+import hashlib
+import json
 import os
 import numpy as np
 from sabz_sim2 import (IntersectionV2, PHASES, MAX_GREEN, MIN_GREEN,
@@ -40,6 +42,8 @@ from sabz_sim2 import (IntersectionV2, PHASES, MAX_GREEN, MIN_GREEN,
 N_POI = 6  # location features: school, mosque, office, hospital, friday, hour
 N_STATE = 18  # 10 traffic + 6 location + 2 starvation
 N_H, N_OUT = 72, 2
+STATE_VERSION = 2  # bump whenever the 18-dim layout or scaling changes
+ARCH = "mlp-18-72-72-72-2"  # exact architecture string for saved brains
 GAMMA = 0.99  # was 0.97 (myopic: 0.97^60 = 0.16, switch payoff invisible);
               # 0.995 caused re-scale shock on transferred weights, 0.99 is
               # the stable middle: 0.99^70 = 0.49, a full cycle stays visible
@@ -206,6 +210,100 @@ BEST = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 DONE_FLAG = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                          "rl_train.done")
 
+# Promotion (BEST) runs on HELD-OUT seeds that scenario_sampler never trains
+# on (training uses 11/22/33 via the bench-exact patterns). A brain is only
+# promoted if it beats the incumbent on these unseen seeds.
+PROMO_SEEDS = (44, 55, 66)
+
+
+def school_rate(a, t, T=3600.0):
+    """Benchmark school demand: N/S surge during the 07-09 morning window.
+
+    t is sim-seconds and the episode [0, T] maps onto one compressed 24h
+    day, so the window sits at t in [7T/24, 9T/24]. The old formula
+    (t/3600 with T=3600) put the whole run inside hour 0-1, so the surge
+    NEVER fired in the benchmark, and at T=900 it never fired in training
+    either. One definition, correct for every episode length; shared by
+    bench, eval, and scenario_sampler.
+    """
+    hour = 24.0 * (t % T) / T
+    return (0.30 if a in ("N", "S") else 0.10) \
+        if 7.0 <= hour <= 9.0 else 0.08
+
+
+def bench_scenarios():
+    """The canonical 3-scenario benchmark (asymmetric, balanced, school).
+
+    One definition for quick_eval, evaluate, train_until_capable.bench and
+    eval_best_net: the school time-window can no longer drift between them.
+    """
+    return {
+        "asymmetric": lambda a, t: 0.25 if a in ("N", "S") else 0.035,
+        "balanced": lambda a, t: 0.22,
+        "school": school_rate,
+    }
+
+
+def weights_sha256(p):
+    """Deterministic SHA-256 over a weight dict (name + dtype + bytes)."""
+    h = hashlib.sha256()
+    for k in sorted(p):
+        a = np.ascontiguousarray(p[k])
+        h.update(k.encode())
+        h.update(str(a.dtype).encode())
+        h.update(str(a.shape).encode())
+        h.update(a.tobytes())
+    return h.hexdigest()
+
+
+def net_metadata(net, extra=None):
+    """Strict architecture/state metadata stored alongside every saved brain."""
+    m = {"format": "sabz-dqn-v2", "arch": ARCH, "n_state": N_STATE,
+         "n_hidden": N_H, "n_out": N_OUT, "state_version": STATE_VERSION,
+         "weights_sha256": weights_sha256(net.p)}
+    if extra:
+        m.update(extra)
+    return m
+
+
+def save_net(path, net, extra=None):
+    """Save a brain with strict metadata (JSON string under key 'meta')."""
+    d = {f"p_{k}": v for k, v in net.p.items()}
+    d["meta"] = np.array(json.dumps(net_metadata(net, extra)))
+    tmp = path + ".tmp"
+    with open(tmp, "wb") as f:
+        np.savez(f, **d)
+    os.replace(tmp, path)
+
+
+def _require_arch(d, path):
+    """Refuse silent partial transfers: every brain must carry metadata.
+
+    Legacy files (no meta) are accepted only if their shapes match the
+    current architecture exactly; anything else raises instead of silently
+    copying an overlapping block of weights.
+    """
+    if "meta" in d:
+        meta = json.loads(str(d["meta"]))
+        if meta.get("arch") != ARCH or meta.get("state_version") \
+                != STATE_VERSION:
+            raise ValueError(
+                f"{path}: incompatible brain arch={meta.get('arch')!r} "
+                f"state_version={meta.get('state_version')} "
+                f"(need {ARCH!r} v{STATE_VERSION}); retrain instead of "
+                "transferring")
+        return meta
+    # Legacy file: require exact shapes (e.g. the old 16-input brains).
+    expected = {"p_W1": (N_STATE, N_H), "p_W2": (N_H, N_H),
+                "p_W3": (N_H, N_H), "p_W4": (N_H, N_OUT)}
+    for k, shape in expected.items():
+        if k in d and d[k].shape != shape:
+            raise ValueError(
+                f"{path}: legacy brain without metadata has {k}"
+                f"{d[k].shape}, expected {shape} (old architecture); "
+                "refusing silent partial transfer")
+    return None
+
 
 def save_ckpt(path, net, tgt, eps, episode, best_score):
     d = {f"net_{k}": v for k, v in net.p.items()}
@@ -216,6 +314,7 @@ def save_ckpt(path, net, tgt, eps, episode, best_score):
     d["eps"] = np.array([eps])
     d["episode"] = np.array([episode])
     d["best_score"] = np.array([best_score])
+    d["meta"] = np.array(json.dumps(net_metadata(net)))
     tmp = path + ".tmp"
     with open(tmp, "wb") as f:
         np.savez(f, **d)
@@ -237,13 +336,13 @@ def _transfer_matrix(old, new_shape, small=0.01, seed=0):
 
 def load_ckpt(path, net, tgt):
     d = np.load(path)
+    _require_arch(d, path)
     for k in net.p:
         old_net = d[f"net_{k}"]
         old_tgt = d[f"tgt_{k}"]
         if old_net.shape != net.p[k].shape:
-            # TRANSFER: e.g. old brain had 16 inputs, new has 18.
-            # Keep learned weights for the overlapping features, small-init
-            # the new rows/cols so the brain starts as its old self.
+            # Metadata passed but shapes differ: a real architecture change.
+            # Transfer explicitly (logged), never silently.
             print(f"transfer: {k} {old_net.shape} -> {net.p[k].shape}",
                   flush=True)
             net.p[k] = _transfer_matrix(old_net, net.p[k].shape, seed=0)
@@ -268,26 +367,18 @@ def load_ckpt(path, net, tgt):
     return float(d["eps"][0]), int(d["episode"][0]), float(d["best_score"][0])
 
 
-def quick_eval(net):
+def quick_eval(net, seeds=PROMO_SEEDS):
     """Greedy policy score on the EXACT benchmark: 3 scenarios x 3 seeds,
-    T=3600. Lower is better. This must match train_until_capable.bench()."""
+    T=3600. Lower is better. Uses HELD-OUT seeds (never trained on) so a
+    promotion means the brain generalizes, not that it memorized seeds
+    11/22/33. Must match train_until_capable.bench()."""
     def rl_decide(state, prio):
         return "switch" if net.act(state_vec_from_dict(state)) == 1 \
             else "stay"
 
-    def asym(a, t):
-        return 0.25 if a in ("N", "S") else 0.035
-
-    def bal(a, t):
-        return 0.22
-
-    def school(a, t):
-        return (0.30 if a in ("N", "S") else 0.10) \
-            if 7 <= (t / 3600) % 24 <= 9 else 0.08
-
     ds = []
-    for rates in (asym, bal, school):
-        for sd in (11, 22, 33):
+    for rates in bench_scenarios().values():
+        for sd in seeds:
             m = run_v2(rl_decide, rates, T=3600.0, seed=sd, safety_on=True)
             ds.append(m["avg_delay_s"])
     return float(np.mean(ds))
@@ -304,7 +395,7 @@ def bc_pretrain(net, episodes=300, T=900.0, lr=3e-3, batch=256):
     rng = np.random.default_rng(11)
     Xs, Ys = [], []
     for ep in range(episodes):
-        rates, sched, loc = scenario_sampler(rng)
+        rates, sched, loc = scenario_sampler(rng, T=T)
         sim = IntersectionV2(seed=int(rng.integers(1e9)), safety_on=True)
         sim.use_real_data = True
         s = get_state(sim, loc)
@@ -338,23 +429,26 @@ def bc_pretrain(net, episodes=300, T=900.0, lr=3e-3, batch=256):
     for step in range(1, 2001):
         idx = rng.integers(n, size=batch)
         xb, yb = X[idx], Y[idx]
-        q, (x, z1, a1, z2, a2) = net.forward(xb)
+        q, (x, z1, a1, z2, a2, z3, a3) = net.forward(xb)
         e = np.exp(q - q.max(1, keepdims=True))
         p = e / e.sum(1, keepdims=True)
         loss = -np.log(p[np.arange(batch), yb] + 1e-12).mean()
         dq = p
         dq[np.arange(batch), yb] -= 1
         dq /= batch
-        dW3 = a2.T @ dq
-        db3 = dq.sum(0)
-        dz2 = (dq @ net.p["W3"].T) * (z2 > 0)
+        dW4 = a3.T @ dq
+        db4 = dq.sum(0)
+        dz3 = (dq @ net.p["W4"].T) * (z3 > 0)
+        dW3 = a2.T @ dz3
+        db3 = dz3.sum(0)
+        dz2 = (dz3 @ net.p["W3"].T) * (z2 > 0)
         dW2 = a1.T @ dz2
         db2 = dz2.sum(0)
         dz1 = (dz2 @ net.p["W2"].T) * (z1 > 0)
         dW1 = x.T @ dz1
         db1 = dz1.sum(0)
         g = {"W1": dW1, "b1": db1, "W2": dW2, "b2": db2,
-             "W3": dW3, "b3": db3}
+             "W3": dW3, "b3": db3, "W4": dW4, "b4": db4}
         b1, b2, eps_ = 0.9, 0.999, 1e-8
         for k in net.p:
             m[k] = b1 * m[k] + (1 - b1) * g[k]
@@ -368,7 +462,7 @@ def bc_pretrain(net, episodes=300, T=900.0, lr=3e-3, batch=256):
     return net
 
 
-def scenario_sampler(rng):
+def scenario_sampler(rng, T=900.0):
     import real_traffic as rt
     hour = int(rng.integers(0, 24))
     r = rng.random()
@@ -384,10 +478,14 @@ def scenario_sampler(rng):
         rates = lambda a, t: 0.22
         return rates, None, loc
     if r < 0.34:
-        loc = [0.0] * N_POI
-        rates = lambda a, t: (0.30 if a in ("N", "S") else 0.10) \
-            if 7 <= (t / 3600) % 24 <= 9 else 0.08
-        return rates, None, loc
+            # BENCH-EXACT school pattern. The window is mapped onto the episode
+            # length (T), so the 07-09 surge actually fires during training
+            # episodes of any length -- the old t/3600 formula never fired at
+            # T=900 (hour stayed < 0.25) and the brain never trained on the
+            # school surge it is scored on.
+            loc = [0.0] * N_POI
+            rates = lambda a, t, T=T: school_rate(a, t, T)
+            return rates, None, loc
     # LOCATION: sample what kind of place this intersection is.
     # The brain sees these 6 features and learns location-aware control.
     loc_r = rng.random()
@@ -490,7 +588,7 @@ def train(episodes=120000, T=900.0, out="sabz_dqn.npz", log_every=100,
     steps = 0
     ep_rewards = []
     for ep in range(start_ep, episodes):
-        rates, sched, loc = scenario_sampler(rng)
+        rates, sched, loc = scenario_sampler(rng, T=T)
         sim = IntersectionV2(seed=int(rng.integers(1e9)), safety_on=True)
         sim.use_real_data = True
         s = get_state(sim, loc)
@@ -550,36 +648,58 @@ def train(episodes=120000, T=900.0, out="sabz_dqn.npz", log_every=100,
         if done_ep % ckpt_every == 0:
             save_ckpt(CKPT, net, tgt, eps, done_ep, best_score)
         if done_ep % eval_every == 0:
-            score = quick_eval(net)
-            if score < best_score:
-                best_score = score
-                np.savez(BEST, **{f"p_{k}": v for k, v in net.p.items()})
-                print(f"ep {done_ep}: NEW BEST eval delay {score:.1f}s",
-                      flush=True)
-            save_ckpt(CKPT, net, tgt, eps, done_ep, best_score)
+                    # Promotion runs on HELD-OUT seeds (PROMO_SEEDS); training
+                    # episodes only ever see 11/22/33 through the bench-exact
+                    # patterns, so a win here is generalization, not memorization.
+                    score = quick_eval(net, seeds=PROMO_SEEDS)
+                    if score < best_score:
+                        best_score = score
+                        save_net(BEST, net, extra={"episode": done_ep,
+                                                   "promo_score": score,
+                                                   "promo_seeds": list(PROMO_SEEDS)})
+                        print(f"ep {done_ep}: NEW BEST (held-out) "
+                              f"eval delay {score:.1f}s", flush=True)
+                    save_ckpt(CKPT, net, tgt, eps, done_ep, best_score)
         if done_ep % log_every == 0:
             print(f"ep {done_ep}/{episodes} eps={eps:.3f} "
                   f"avg_r(last {log_every})={np.mean(ep_rewards[-log_every:]):.1f} "
                   f"best={best_score:.1f}s", flush=True)
-    np.savez(out, **{f"p_{k}": v for k, v in net.p.items()})
-    if os.path.exists(BEST):
-        os.replace(BEST, out)
-    open(DONE_FLAG, "w").write(f"episodes={episodes}\n")
-    print("saved", out)
-    return out
+    # Save the final brain to `out` WITHOUT touching BEST: BEST is the
+        # held-out-promotion incumbent and must never be renamed away (the old
+        # os.replace(BEST, out) made bench() fall back to the latest,
+        # possibly-degraded checkpoint net).
+        save_net(out, net, extra={"episode": episodes})
+        open(DONE_FLAG, "w").write(f"episodes={episodes}\n")
+        print("saved", out)
+        return out
 
 
-def load_net(path):
+def load_net(path, strict=True):
+    """Load a brain. Strict by default: metadata must match this build's
+    architecture/state layout, legacy files must match shapes exactly.
+    strict=False allows an explicit, logged partial transfer (legacy use)."""
     d = np.load(path)
+    meta = _require_arch(d, path) if strict else (
+        json.loads(str(d["meta"])) if "meta" in d else None)
     net = DQN()
     for k in net.p:
         if f"p_{k}" not in d:
             # new layer not in old brain: keep fresh random init
             continue
         v = d[f"p_{k}"]
-        # shape-tolerant: older brains had fewer state features
-        net.p[k] = v if v.shape == net.p[k].shape else \
-            _transfer_matrix(v, net.p[k].shape)
+        if v.shape != net.p[k].shape:
+            if strict:
+                raise ValueError(f"{path}: {k} shape {v.shape} != "
+                                 f"{net.p[k].shape}")
+            print(f"transfer: {k} {v.shape} -> {net.p[k].shape}", flush=True)
+            net.p[k] = _transfer_matrix(v, net.p[k].shape)
+        else:
+            net.p[k] = v
+    if meta and meta.get("weights_sha256") \
+            and meta["weights_sha256"] != weights_sha256(net.p):
+        if strict:
+            raise ValueError(f"{path}: weight hash mismatch after load "
+                             "(file corrupted or partially written)")
     return net
 
 
@@ -590,20 +710,9 @@ def evaluate(path, seeds=(11, 22, 33)):
         return "switch" if net.act(state_vec_from_dict(state)) == 1 \
             else "stay"
 
-    def asym(a, t):
-        return 0.25 if a in ("N", "S") else 0.035
-
-    def bal(a, t):
-        return 0.22
-
-    def school(a, t):
-        return (0.30 if a in ("N", "S") else 0.10) \
-            if 7 <= (t / 3600) % 24 <= 9 else 0.08
-
     print(f"{'scenario':11s}{'controller':10s}{'avg_delay':>10s}"
           f"{'viol':>6s}")
-    for name, rates in (("asymmetric", asym), ("balanced", bal),
-                        ("school", school)):
+    for name, rates in bench_scenarios().items():
         for ctrl in ("actuated", rl_decide):
             ds, vv = [], 0
             for sd in seeds:
